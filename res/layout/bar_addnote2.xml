@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/title_addnote"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:gravity="center" 
+    android:layout_gravity="center|top"
+    android:paddingRight="10dp"
+    android:paddingLeft="10dp">
+
+    <TextView
+        android:id="@+id/note_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:text="記錄事件"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/dark_gray" />
+	
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:id="@+id/note_date_layout">
+        
+    	<TextView
+    	    android:id="@+id/note_tx_date"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="match_parent"
+    	    android:layout_weight="1"
+    	    android:gravity="center|right"
+    	    android:text="今天"
+    	    android:textSize="20sp"
+    	    android:textColor="@color/dark_gray" 
+    	    android:paddingRight="10dp"/>
+
+    	<ImageView
+        	android:id="@+id/note_im_date"
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+        	
+        	android:layout_weight="7"
+        	android:src="@drawable/down_arrow_change"
+        	android:paddingEnd="5dp" />
+    </LinearLayout>
+    
+     <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:id="@+id/note_timeslot_layout">
+        
+    	<TextView
+    	    android:id="@+id/note_tx_timeslot"
+    	    android:layout_width="match_parent"
+    	    android:layout_height="match_parent"
+    	    android:layout_weight="1"
+    	    android:gravity="center|right"
+    	    android:text="今天"
+    	    android:paddingRight="10dp"
+    	    android:textSize="20sp"
+    	    android:textColor="@color/dark_gray" />
+
+    	<ImageView
+        	android:id="@+id/note_im_timeslot"
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+        	
+        	android:layout_weight="7"
+        	android:src="@drawable/down_arrow_change"
+        	android:paddingEnd="5dp" />
+    </LinearLayout>
+
+</LinearLayout>

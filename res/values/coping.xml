@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="coping_page">應對技巧</string>
+    <string name="coping_relaxed">放鬆技巧</string>
+    <string name="coping_breath">閉眼專注觀察呼吸</string>
+    <string name="coping_muscle">專心健走10~30分鐘</string>
+    <string name="coping_music">聆聽舒緩音樂</string>
+    <string name="coping_stretch">伸展運動</string>
+    <string name="coping_meditation">冥想</string>
+    <string name="coping_recreation">休閒活動</string>
+    <string name="coping_default_recreation0">聽音樂</string>
+    <string name="coping_default_recreation1">慢跑</string>
+    <string name="coping_default_recreation2">打球</string>
+    <string name="coping_recreation_dialog">選擇運動記得注意自己的狀況</string>
+    <string name="coping_interperson">生活應對技巧</string>
+    <string name="coping_away">當遇到誘惑時</string>
+    <string name="coping_away_dialog">立即遠離現場避免繼續受到誘惑</string>
+    <string name="coping_told">讓朋友知道你已戒毒</string>
+    <string name="coping_told_dialog">立刻告訴朋友，讓他知道你已戒毒</string>
+    <string name="coping_repeat">增強決心</string>
+    <string name="coping_repeat_dialog">在心中不斷默念『我自己現在正在戒毒』</string>
+    <string name="coping_telephone">撥電話</string>
+    <string name="coping_mms">傳簡訊</string>
+    <string name="coping_sponsor">與家人或朋友聯絡</string>
+    <string name="coping_default_sponsor">聯絡人</string>
+    <string name="coping_information">資訊站</string>
+    <string name="coping_encouragement">勵志短句</string>
+    <string name="coping_encouragement_dialog">你已經在戒毒的路上了，繼續加油</string>
+    <string name="coping_harm">吸毒造成的危害</string>
+    <string name="coping_harm_dialog">研究顯示濫用愷他命，會罹患慢性間質性膀胱炎</string>
+    <string name="coping_lifestyle">生活習慣建議</string>
+    <string name="coping_lifestyle_dialog">放鬆身心，停整作息</string>
+    <string name="coping_lapse">又開始吸毒了怎麼辦?</string>
+    <string name="coping_lapse_dialog">現在放棄就前功盡棄了</string>
+
+	
+    <string name="next">下一步</string>
+    
+    <string-array name="lapse_list">
+        <item>我已決定停用了！</item>
+        <item>我已經開始新的生活了！</item>
+        <item>我值得更好的生活！</item>
+        <item>我是個值得被尊重的人！</item>
+        <item>我正在一點一點地變好！</item>
+        <item>現在放棄就前功盡棄了！</item>
+        <item>這次我一定可以！</item>
+        <item>別走回頭路！</item>
+    </string-array>
+    
+    <string-array name="lifestyle_list">
+        <item>放鬆身心，停整作息</item>
+        <item>多運動有益身心健康</item>
+        <item>早睡早起身體好</item>
+        <item>一天5蔬果，疾病遠離我</item>
+        <item>多喝水沒事，沒事多喝水</item>
+        <item>少吃垃圾食物</item>
+        <item>愛自己的身體</item>
+        <item>充足睡眠</item>
+        <item>遠離菸酒</item>
+    </string-array>
+    
+    <string-array name="coping_list">
+        <item>社交壓力的應對方法：\n當朋友邀約吸毒時，您可以委婉拒絕</item>
+        <item>負面情緒的應對方法：\n可以使用放鬆技巧來緩和情緒</item>
+    </string-array>
+    
+    <string-array name="knowing_list">
+        <item><![CDATA[愷他命屬中樞神經抑制劑，副作用包括<font color=#f2a6a3>心搏過速、血壓上升</font>。]]></item>
+        <item><![CDATA[愷他命副作用包括<font color=#f2a6a3>震顫、肌肉緊張</font>而呈強直性、陣攣性運動。]]></item>
+        <item><![CDATA[研究顯示濫用愷他命，會罹患慢性間質性<font color=#f2a6a3>膀胱炎</font>。]]></item>
+        <item><![CDATA[濫用愷他命會使膀胱容量變小，產生<font color=#f2a6a3>頻尿、小便疼痛、血尿、下腹部疼痛</font>等症狀。]]></item>
+        <item><![CDATA[濫用愷他命會出現<font color=#f2a6a3>尿量減少、水腫等腎功能不全</font>的症狀，甚至須進行膀胱重建手術。]]></item>
+        <item><![CDATA[愷他命藥效約可維持1小時，但<font color=#f2a6a3>影響吸食者感覺、協調及判斷力</font>則可長達16至24小時。]]></item>
+        <item><![CDATA[愷他命藥效會使人產生<font color=#f2a6a3>噁心、嘔吐、複視、視覺模糊、影像扭曲、暫時性失憶及身體失去平衡</font>等症狀。]]></item>
+        <item><![CDATA[拉K會<font color=#f2a6a3>傷害鼻黏膜</font>，而產生不斷流鼻水。]]></item>
+        <item><![CDATA[愷他命長期下來會產生心理依賴性及耐受性，造成強迫使用，<font color=#f2a6a3>不易戒除</font>。]]></item>
+        <item><![CDATA[駕駛者在使用K他命時，<font color=#f2a6a3>手眼協調能力及平衡感，均會下降</font>，因而增加車禍發生的風險。]]></item>
+        <item><![CDATA[愷他命會使使用者辨識周圍環境的<font color=#f2a6a3>危險及警覺性會降低</font>。]]></item>
+        <item><![CDATA[泌尿道症狀後停用K他命時，大約1/3的人膀胱炎症狀會好轉，1/3症狀會持平，1/3症狀繼續惡化。]]></item>
+        <item><![CDATA[研究指出每日使用K他命的個案可能有類似<font color=#f2a6a3>精神分裂者潛伏期的症狀</font>。]]></item>
+        <item><![CDATA[Q： 毒品是否有毒性輕重的區別？<br>A：任何一種毒品都有潛藏的<font color=#f2a6a3>致命性</font>。]]></item>
+        <item><![CDATA[Q： Ketamine是什麼？<br>A：Ketamine被<font color=#f2a6a3>用於人類和動物手術中之麻醉</font>。]]></item>
+        <item><![CDATA[Q： Ketamine如果使用不適當會有什麼害處？<br>A：嚴重時會產生<font color=#f2a6a3>譫妄、健忘、運動功能受損、高血壓</font>。]]></item>
+        <item><![CDATA[Q： 毒癮可能戒掉嗎？<br>A：若不幸染上毒癮，要<font color=#f2a6a3>找專業人員協助，靠著堅強的意志力，還是有可能戒除</font>。]]></item>
+        <item><![CDATA[長期使用愷他命會造成<font color=#f2a6a3>永久性長期與短期記憶力的缺陷</font>。若完全停止使用愷他命長達一年以上，情形是可以改善的。]]></item>
+        <item><![CDATA[頻繁的使用愷他命容易造成往後<font color=#f2a6a3>長期的心情鬱悶、沮喪</font>等症狀。]]></item>
+        <item><![CDATA[想要戒除愷他命，立即<font color=#f2a6a3>停止任何愷他命</font>的使用會比減量使用還來得有效。]]></item>
+        <item><![CDATA[了解自己想要使用愷他命的原因與場合，進而去<font color=#f2a6a3>思考如何避免這些因素</font>，是戒除愷他命的有效方法。]]></item>
+        <item><![CDATA[<font color=#f2a6a3>正常三餐、充足睡眠、減低壓力和健康的娛樂活動</font>可大大幫助戒除愷他命。]]></item>
+        <item><![CDATA[製造、運輸、販賣第三級毒品者，處<font color=#f2a6a3>七年以上有期徒刑，得併科新臺幣七百萬元</font>以下罰金。]]></item>
+        <item><![CDATA[意圖販賣而持有第三級毒品者，處<font color=#f2a6a3>三年以上十年以下有期徒刑，得併科新臺幣三百萬元</font>以下罰金。]]></item>
+        <item><![CDATA[持有第三級毒品純質淨重二十公克以上者，處<font color=#f2a6a3>三年以下有期徒刑，得併科新臺幣三十萬元</font>以下罰金。]]></item>
+        <item><![CDATA[無正當理由持有或施用第三級或第四級毒品者，處<font color=#f2a6a3>新臺幣五萬元以下罰鍰，並接受四小時以上八小時以下講習</font>。]]></item>
+        <item><![CDATA[以強暴、脅迫、欺瞞或其他非法之方法使人施用第三級毒品者，處<font color=#f2a6a3>五年以上有期徒刑，得併科新臺幣五百萬元</font>以下罰金。]]></item>
+        <item><![CDATA[引誘他人施用第三級毒品者，處<font color=#f2a6a3>六月以上五年以下有期徒刑，得併科新臺幣七十萬元</font>以下罰金。]]></item>
+        <item><![CDATA[轉讓第三級毒品者，處<font color=#f2a6a3>三年以下有期徒刑，得併科新臺幣三十萬元</font>以下罰金。]]></item>
+        <item><![CDATA[Q: 若有相關戒毒的問題，民眾可以撥打哪支電話尋求幫助?<br>A： <font color=#f2a6a3>0800&#8211;770&#8211;885</font>。]]></item>
+        <item><![CDATA[Q: 毒癮個案除戒毒還有哪些服務？<br>1.就業需求、職業訓練－就業輔導(勞工處)<br>2.申請社會補助、安養－就養(社會處)<br>3.升學需求、升學資訊－就學輔導(教育處)<br>4.心理諮商、心理輔導－衛生局及本縣社區心理衛生中心<br>5.愛滋病篩檢－本縣各衛生所及醫療機構。]]></item>
+  <!--  <item><![CDATA[<b><font color=#0000FF>Hello world!</b>]]></item>      -->        
+     </string-array>
+        
+        
+        
+    <string-array name="coping_list1">
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>閉眼專注觀察呼吸</font>來緩和情緒。</font>]]></item>
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>閉眼讓肌肉放鬆</font>，緩和一下。</font>]]></item>
+        <!-- <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法</font><br><font face="DFKai-sb">(幫助平靜的圖片)</font>]]></item> -->
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">請點開你的歌單，<font color=#f2a6a3>聆聽一曲</font>你喜愛的歌，平衡一下心情。</font>]]></item> <!-- 本來是寫舒緩音樂 -->
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著想像你漫步在充滿鳥鳴、綠意以及芬多精的氣息的森林中。</font>]]></item>
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著想像海浪一波一波打上你的腳，你的心漸漸像海浪聲一般，開始有了節奏。</font>]]></item>
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著想像陽光灑進屋中，桌几、牆壁以及你的身上，一切都明亮了。</font>]]></item>
+        <!-- <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法</font><br><font face="DFKai-sb">休息</font>]]></item> -->
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">即使只有幾分鐘，做一下你喜愛的<font color=#f2a6a3>休閒活動</font>吧，會有效果的。</font>]]></item>
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>打電話給親友</font>傾訴，會感覺好一些~</font>]]></item>
+        <item><![CDATA[<font color=#C2B5FF face="DFKai-sb">負面情緒</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">心情不好的時候，<font color=#f2a6a3>傳個訊息給親友</font>吧，聊聊可以讓自己不要一直陷在負面的狀態裡。</font>]]></item>
+    </string-array>
+    <string-array name="coping_list2">
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>閉眼專注觀察呼吸</font>來緩和情緒。</font>]]></item>
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>閉眼讓肌肉放鬆</font>，緩和一下。</font>]]></item>
+        <!-- <item>身體不舒服</font><font face="DFKai-sb">的應對方法</font>\n(幫助平靜的圖片)</item> -->
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">請點開你的歌單，<font color=#f2a6a3>聆聽一曲</font>你喜愛的歌，平衡一下心情。</font>]]></item>
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著想像你漫步在充滿鳥鳴、綠意以及芬多精的氣息的森林中，身體漸漸冷靜。</font>]]></item>
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著想像海浪一波一波打上你的腳，你的心漸漸像海浪聲一般跳動，身體被海水所治癒。</font>]]></item>
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著想像溫暖的陽光灑在身上，身上的痛苦慢慢平靜下來了。</font>]]></item>
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">請多多<font color=#f2a6a3>休息</font>，別讓身體累壞了。</font>]]></item>
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">不會更不舒服的話，做一下你喜愛的、適當的<font color=#f2a6a3>休閒活動</font>可以讓你忽略身體上的不適。</font>]]></item>
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb"><font color=#f2a6a3>打個電話給親友</font>聊天轉移注意力吧！</font>]]></item>
+        <item><![CDATA[<font color=#8C7AA8 face="DFKai-sb">身體不舒服</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb"><font color=#f2a6a3>傳訊息給親友</font>聊天轉移注意力吧！</font>]]></item>
+
+    </string-array>
+    <string-array name="coping_list3">
+        <item><![CDATA[<font color=#FF7AA6 face="DFKai-sb">正面情緒</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb"><font color=#f2a6a3>打電話給親友</font>告知他們你的狀態。</font>]]></item>
+        <item><![CDATA[<font color=#FF7AA6 face="DFKai-sb">正面情緒</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">傳訊息給親友告知他們你的狀態。</font>]]></item>
+    </string-array>
+    <string-array name="coping_list4">
+        <item><![CDATA[<font color=#FDC16E face="DFKai-sb">測試自我控制力</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb"><font color=#f2a6a3>打電話給親友</font>聊聊，要知道自己可以控制的話，之前就不會成癮了。</font>]]></item>
+        <item><![CDATA[<font color=#FDC16E face="DFKai-sb">測試自我控制力</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb"><font color=#f2a6a3>打電話給親友聊聊</font>，要知道自己可以控制的話，之前就不會成癮了。</font>]]></item>
+
+    </string-array>
+    <string-array name="coping_list5">
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>閉眼專注觀察呼吸</font>來緩和情緒。</font>]]></item>
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>閉眼讓肌肉放鬆</font>，緩和一下。</font>]]></item>
+        <!-- <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">負面情緒<font face="DFKai-sb">的應對方法</font></font><br><font face="DFKai-sb">(幫助平靜的圖片)</item> -->
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">請點開你的歌單，<font color=#f2a6a3>聆聽一曲</font>你喜愛的歌，並專注在這個歌上，忘卻其他的事務吧。</font>]]></item>
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著想像你漫步在充滿鳥鳴、綠意以及芬多精的氣息的森林中，心中無欲無求。</font>]]></item>
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著想像海浪一波一波打上你的腳，浪潮的聲音有節奏地響著。</font>]]></item>
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著想像陽光灑進屋中，桌几、牆壁以及你的身上，你只想專注在這上面。</font>]]></item>
+        <!-- <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法</font></font><br><font face="DFKai-sb">休息</font>]]></item> -->
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">快做做你喜歡的<font color=#f2a6a3>休閒活動</font>轉移注意力！</font>]]></item>
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>打電話給親友</font>，讓親友轉移你的注意力。</font>]]></item>
+        <item><![CDATA[<font color=#FF8B7D face="DFKai-sb">誘惑與衝動</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>傳訊息給親友</font>，讓親友轉移你的注意力。</font>]]></item>
+
+
+    </string-array>
+    <string-array name="coping_list6">
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>閉眼專注觀察呼吸</font>來緩和情緒。</font>]]></item>
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font></font><br><font face="DFKai-sb">你可以試著<font color=#f2a6a3>閉眼讓肌肉放鬆</font>，緩和一下。</font>]]></item>
+        <!-- <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法</font><br><font face="DFKai-sb">(幫助平靜的圖片)</font>]]></item> -->
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>聆聽舒緩音樂</font>讓自己冷靜下來，再換個角度站在他的立場想想。</font>]]></item>
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著想像你漫步在充滿鳥鳴、綠意以及芬多精的氣息的森林中，自己漸漸變得柔軟。</font>]]></item>
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著想像海浪一波一波打上你的腳，浪潮的聲音有節奏地響著。</font>]]></item>
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">你可以試著想像陽光灑進屋中，桌几、牆壁以及你的身上，你只想專注在這上面。</font>]]></item>
+        <!-- <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法</font><br><font face="DFKai-sb">休息</font>]]></item> -->
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">做一下你喜愛的<font color=#f2a6a3>休閒活動吧</font>~</font>]]></item>
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>遠離現場</font>，先讓自己冷靜下來，別陷入了！</font>]]></item>
+        <!-- <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法</font><br><font face="DFKai-sb">練習拒絕</font>]]></item> -->
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>打電話問問親友的意見</font>，自己一個人的話在這種情況下容易做出不適當的判斷。</font>]]></item>
+        <item><![CDATA[<font color=#71C4BE face="DFKai-sb">與他人相處上遇到困難</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>傳訊息問問親友的意見</font>，自己一個人的話在這種情況下容易做出不適當的判斷。</font>]]></item>
+
+
+    </string-array>
+    <string-array name="coping_list7">
+        <item><![CDATA[<font color=#BBE578 face="DFKai-sb">維持社交</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>遠離現場</font>，替自己爭取找理由的時間。</font>]]></item>
+        <item><![CDATA[<font color=#BBE578 face="DFKai-sb">維持社交</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>練習拒絕</font>，可以看看拒絕人的書或是文章。</font>]]></item>
+        <item><![CDATA[<font color=#BBE578 face="DFKai-sb">維持社交</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>打電話給親友</font>，他們會有方法的。</font>]]></item>
+        <item><![CDATA[<font color=#BBE578 face="DFKai-sb">維持社交</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>傳訊息給親友</font>，他們會有方法的。</font>]]></item>
+    </string-array>
+    <string-array name="coping_list8">
+        <item><![CDATA[<font color=#9AD1F9 face="DFKai-sb">與他人相聚</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>打電話給親友</font>，關係更重要的親友們知道你這樣做會很難過的。</font>]]></item>
+        <item><![CDATA[<font color=#9AD1F9 face="DFKai-sb">與他人相聚</font><font face="DFKai-sb">的應對方法:</font><br><font face="DFKai-sb">想想，普通的親友們知道你這樣做會開始遠離你，得不償失啊！</font>]]></item>
+
+    </string-array>
+    <string-array name="coping_list0">
+        <item><![CDATA[<font face="DFKai-sb">一般的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>打電話</font>給願意幫助你的親友求助吧！</font>]]></item>
+        <item><![CDATA[<font face="DFKai-sb">一般的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>傳訊息</font>給願意幫助你的親友求助吧！</font>]]></item>
+        <item><![CDATA[<font face="DFKai-sb">一般的應對方法:</font><br><font face="DFKai-sb"><font color=#f2a6a3>聆聽舒緩音樂</font>讓自己冷靜下來，再多思考一下後果。</font>]]></item>
+
+    </string-array>
+    
+    
+    
+    <string name="note_check">請填寫完成再送出</string>
+    <string name="countdown">檢測倒數中</string>
+    <string name="test_done">檢測完成</string>
+    
+</resources>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="trigger_list">
+        <item>負面情緒</item>
+        <item>生理因素</item>
+        <item>正面情緒</item>
+        <item>測試自己控制力</item>
+        <item>衝動、誘惑或轉移注意</item>
+        <item>與他人相處上遇到困難</item>
+        <item>維持社交</item>
+        <item>與他人或動物相處</item>
+        <item>自訂</item>
+    </string-array>
+    
+    <string-array name="note_time_slot">
+        <item>上午</item>
+        <item></item>
+        <item></item>
+    </string-array>
+    
+    <string-array name="note_time_slot2">
+        <item>上午</item>
+        <item>下午</item>
+        <item></item>
+    </string-array>
+    
+    <string-array name="note_time_slot3">
+        <item>上午</item>
+        <item>下午</item>
+        <item>晚上</item>
+    </string-array>
+    
+    <string-array name="note_date">
+        <item>今天</item>
+        <item>昨天</item>
+        <item>前天</item>
+    </string-array>
+    
+    <string-array name="note_negative">
+        <item>沮喪</item>
+        <item>走投無路</item>
+        <item>對自己失望</item>
+        <item>無聊</item>
+        <item>寂寞</item>
+        <item>緊張,焦慮</item>
+        <item>感到罪惡</item>
+        <item>壓力大,想逃避</item>
+        <item>對某事感到生氣</item>
+        <item>不知道自己該怎麼辦</item>
+    </string-array>
+    <string-array name="note_notgood">
+        <item>生病,噁心,疲倦</item>
+        <item>失眠</item>
+        <item>想保持清醒,活力</item>
+        <item>想要減重</item>
+        <item>頭痛或其他地方痛</item>
+    </string-array>
+    <string-array name="note_positive">
+        <item>高興</item>
+        <item>感到自在且放鬆</item>
+        <item>興奮</item>
+        <item>對目前生活感到滿意</item>
+        <item>想起以前發生的好事</item>
+    </string-array>
+    <string-array name="note_selftest">
+        <item>想要證明毒品對自己不是問題</item>
+        <item>試試偶爾吸毒但不會上癮</item>
+        <item>試試和曾吸毒的朋友出去但不吸毒</item>
+        <item>試試在大家都吸毒的場合但不吸毒</item>
+    </string-array>
+     <string-array name="note_temptation">
+        <item>在常用K或買K的地方</item>
+        <item>突然看到K</item>
+        <item>看到想用K的東西</item>
+        <item>聽到別人在談論用K經驗</item>
+        <item>喝酒且想用K</item>
+        <item>想到用K後的舒服感</item>
+        <item>沒來由地想用K</item>
+    </string-array>
+     <string-array name="note_conflict">
+        <item>在他人面前感到緊張或不自在</item>
+        <item>難以向他人表達情感</item>
+        <item>不被別人喜歡</item>
+        <item>別人不公平對待</item>
+        <item>他人給過大壓力</item>
+        <item>在職場/學校和別人處得不好</item>
+        <item>家裡有人吵架</item>
+        <item>沒達到他人期望</item>
+        <item>感覺需要勇氣才能面對他人</item>
+        <item>覺得被他人掌控</item> 
+    </string-array>
+    <string-array name="note_social">
+        <item>朋友邀你吸K, 覺得不好拒絕</item>
+        <item>朋友一直建議到某些地方吸Ｋ</item>
+        <item>周遭的人在吸Ｋ，想融入他們</item>
+    </string-array>
+    <string-array name="note_play">
+        <item>與老朋友共度美好時光</item>
+        <item>跟朋友們同樂且想助興</item>
+        <item>想要助性</item>
+    </string-array>
+
+    <string name="note_negative">負面情緒</string>
+    <string name="note_notgood">生理因素</string>
+    <string name="note_positive">正面情緒</string>
+    <string name="note_selftest">測試自己控制力</string>
+    <string name="note_temptation">衝動、誘惑或轉移注意</string>
+    <string name="note_conflict">與他人相處上遇到困難</string>
+    <string name="note_social">維持社交</string>
+    <string name="note_play">與他人或動物相處</string>
+    
+    <string-array name="item_select">
+        <item>請點選類別以選擇</item>
+    </string-array>
+    
+    <string name="hint_note_detail">簡述記事內容</string>
+    <string name="title_activity_list_test">ListTestActivity</string>
+    
+    <string name="note_done">做得很好!</string>
+</resources>

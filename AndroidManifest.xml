@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ubicomp.ketdiary"
+    android:versionCode="106"
+    android:versionName="1.106" >
+
+    
+    <uses-sdk android:minSdkVersion="14" />
+ 	
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+	<uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+ 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+ 	<uses-permission android:name="android.permission.INTERNET"/>
+ 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+ 	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>    
+ 	<uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+ 	<uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+	<supports-screens
+        android:largeScreens="true"
+        android:largestWidthLimitDp="320"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+      
+    <application
+        android:name="com.ubicomp.ketdiary.App"
+        android:allowBackup="true"
+        android:icon="@drawable/k_logo"
+        android:label="@string/app_name" android:theme="@style/AppBaseTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" 
+            android:launchMode="singleTop"
+            android:largeHeap="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
+            android:windowSoftInputMode="stateHidden"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <receiver android:name=".BootBoardcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.EXTERNAL_APPLICATIONS_AVAILABLE" />
+            </intent-filter>
+        </receiver>
+        
+        <receiver
+            android:name=".NetworkChangeReceiver"
+            android:singleUser="true" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+		
+        <receiver
+            android:name=".AlarmReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.android.alarmclock.ALARM_ALERT" />
+        </intent-filter>
+        </receiver>
+        <service android:name=".AlarmService" />
+        <service android:name=".UploadService" />
+        <service android:name="com.ubicomp.ketdiary.noUse.ResultService" />
+        <service android:name="com.ubicomp.ketdiary.noUse.ResultService2" />
+        <service 
+            android:name=".ResultService3">
+            <intent-filter android:priority="1000"></intent-filter>
+        </service>
+
+        <service android:name=".DailyService" />
+        <service
+            android:name="com.ubicomp.ketdiary.test.bluetoothle.BluetoothLeService"
+            android:enabled="true" >
+        </service>
+
+
+        <activity
+            android:name=".InfoActivity"
+            android:label="@string/title_activity_info"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".DevActivity"
+            android:label="@string/title_activity_dev"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        
+        <activity
+            android:name="com.ubicomp.ketdiary.noUse.MainActivity2"
+            android:label="@string/title_activity_dev"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".NoteActivity"
+            android:label="@string/title_activity_dev"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.ubicomp.ketdiary.noUse.EventCopeSkillActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+         <activity
+            android:name=".PreSettingActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.ubicomp.ketdiary.noUse.EmotionActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".CopingActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".SettingActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".ModifyActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".SelectActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".TutorialActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".DeveloperActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".SalivaActivity"
+            android:label="@string/title_activity_dev"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
+        
+    </application>
+
+</manifest>
