@@ -30,7 +30,7 @@ import android.widget.ScrollView;
 
 import com.ubicomp.ketdiary.CopingActivity;
 import com.ubicomp.ketdiary.MainActivity;
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.ResultService3;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.structure.Rank;

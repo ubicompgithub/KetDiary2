@@ -22,6 +22,7 @@ import com.ubicomp.ketdiary.system.clicklog.ClickLogId;
 import com.ubicomp.ketdiary.ui.BarButtonGenerator;
 import com.ubicomp.ketdiary.ui.Typefaces;
 import com.ubicomp.ketdiary.ui.spinnergroup.MultiRadioGroup;
+import com.ubicomp.ketdiary2.R;
 
 /**
  * Activity for Selection Button

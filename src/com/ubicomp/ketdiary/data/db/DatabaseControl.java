@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.ubicomp.ketdiary.App;
+import com.ubicomp.ketdiary.data.structure.Appeal;
 import com.ubicomp.ketdiary.data.structure.Cassette;
 import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
@@ -2071,6 +2072,83 @@ public class DatabaseControl {
 			synchronized (sqlLock) {
 				db = dbHelper.getWritableDatabase();
 				String sql = "UPDATE ExchangeHistory SET upload = 1 WHERE ts = "
+						+ ts;
+				db.execSQL(sql);
+				db.close();
+			}
+		}
+		
+		
+		/**
+		 * Insert a Appeal
+		 * 
+		 * @param data
+		 *            inserted Appeal
+		 * @see ubicomp.soberdiary.data.structure.Appeal
+		 */
+		public void insertAppeal(Appeal data) {
+			Log.i("GG", "inserAppealSQL");
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+
+				ContentValues content = new ContentValues();
+				content.put("ts", data.getTv().getTimestamp());
+				content.put("appealType", data.getAppealType());
+				content.put("appealTimes", data.getAppealTimes());
+				db.insert("Appeal", null, content);
+				db.close();
+				
+			}
+		}
+		
+		/**
+		 * Get all Appeal which are not uploaded to the server
+		 * 
+		 * @return An array of Appeal. If there are no Appeal,
+		 *         return null.
+		 * @see ubicomp.soberdiary.data.structure.Appeal
+		 */
+		public Appeal[] getNotUploadedAppeal() {
+			synchronized (sqlLock) {
+				Appeal[] data = null;
+				db = dbHelper.getReadableDatabase();
+				String sql;
+				Cursor cursor;
+				sql = "SELECT * FROM Appeal WHERE upload = 0";
+				cursor = db.rawQuery(sql, null);
+				int count = cursor.getCount();
+				if (count == 0) {
+					cursor.close();
+					db.close();
+					return null;
+				}
+
+				data = new Appeal[count];
+
+				for (int i = 0; i < count; ++i) {
+					cursor.moveToPosition(i);
+					long ts = cursor.getLong(1);
+					int _type = cursor.getInt(2);
+					int _time = cursor.getInt(3);
+					data[i] = new Appeal(ts, _type, _time);
+				}
+				cursor.close();
+				db.close();
+				return data;
+			}
+		}
+		
+		/**
+		 * Label the Appeal uploaded
+		 * 
+		 * @param ts
+		 *            Timestamp of the uploaded Appeal
+		 * @see ubicomp.soberdiary.data.structure.Appeal
+		 */
+		public void setAppealUploaded(long ts) {
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				String sql = "UPDATE Appeal SET upload = 1 WHERE ts = "
 						+ ts;
 				db.execSQL(sql);
 				db.close();

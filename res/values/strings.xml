@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	
-    <string name="app_name">恢復日記</string>
+    <string name="app_name">恢復日記2</string>
     
     <string name="loading">載入中</string>
     <string name="brac">酒精濃度</string>

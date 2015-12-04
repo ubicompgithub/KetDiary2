@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.ubicomp.ketdiary.App;
 import com.ubicomp.ketdiary.MainActivity;
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.SelectActivity;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;

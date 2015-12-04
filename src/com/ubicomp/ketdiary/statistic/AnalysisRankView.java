@@ -17,7 +17,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.download.UserLevelCollector;
 import com.ubicomp.ketdiary.data.structure.Rank;

@@ -18,7 +18,7 @@ import org.apache.http.params.HttpConnectionParams;
 import android.content.Context;
 import android.util.Log;
 
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.data.structure.Cassette;
 import com.ubicomp.ketdiary.data.upload.ServerUrl;
 

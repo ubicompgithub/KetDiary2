@@ -17,7 +17,7 @@ import com.ubicomp.ketdiary.test.bluetoothle.BluetoothListener;
 import com.ubicomp.ketdiary.test.color.ColorDetectListener;
 import com.ubicomp.ketdiary.test.color.ImageDetection;
 import com.ubicomp.ketdiary.ui.CustomToastSmall;
-
+import com.ubicomp.ketdiary2.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;

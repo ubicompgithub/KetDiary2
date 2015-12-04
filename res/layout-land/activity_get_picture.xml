@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:weightSum="1" >
+ <!-- 
+ <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:layout_width="fill_parent">
+ 
+     <SurfaceView
+      android:id="@+id/surfaceView1"
+      android:layout_width="250dp"
+      android:layout_height="250dp" />
+  
+  <Button android:text="拍照" android:id="@+id/button1" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+ 
+ 
+ 
+ -->
+
+  <SurfaceView
+      android:id="@+id/surfaceView1"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" 
+      />
+  
+  <ImageView
+      android:id="@+id/imageView1"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" 
+      />
+  
+ <Button
+        android:id="@+id/takePic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="拍照" 
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+       android:layout_centerHorizontal="true"
+        />
+ <Button
+        android:id="@+id/nextPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="確認" 
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="150dp"
+         android:visibility="invisible"
+        />
+ <Button
+        android:id="@+id/undoPic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="重拍" 
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="150dp"
+        android:visibility="invisible"
+        />
+  
+</RelativeLayout>

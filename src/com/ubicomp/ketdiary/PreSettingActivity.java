@@ -32,6 +32,7 @@ import com.ubicomp.ketdiary.system.check.StartDateCheck;
 import com.ubicomp.ketdiary.system.cleaner.Cleaner;
 import com.ubicomp.ketdiary.ui.CustomToast;
 import com.ubicomp.ketdiary.ui.CustomToastSmall;
+import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.db.DatabaseRestoreControl;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;

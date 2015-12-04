@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.ubicomp.ketdiary.system.Config;
+import com.ubicomp.ketdiary2.R;
 
 /** Activity for checking if the user belongs to developers */
 public class DeveloperActivity extends Activity {

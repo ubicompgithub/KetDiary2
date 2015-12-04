@@ -26,6 +26,7 @@ import android.util.Log;
 
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.file.MainStorage;
+import com.ubicomp.ketdiary.data.structure.Appeal;
 import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
@@ -73,7 +74,7 @@ public class DataUploader {
 		
 		if (DefaultCheck.check() || !NetworkCheck.networkCheck())
 			return;
-		
+		Log.d("GG", "in upload");
 		if (SynchronizedLock.sharedLock.tryLock()) {
 			SynchronizedLock.sharedLock.lock();
 			uploader = new DataUploadTask();
@@ -168,6 +169,15 @@ public class DataUploader {
 				for (int i = 0; i < ehs.length; ++i) {
 					if (connectToServer(ehs[i]) == ERROR)
 						Log.d(TAG, "FAIL TO UPLOAD - ExchangeHistory");
+				}
+			}
+			
+			//Appeal
+			Appeal[] appeals = db.getNotUploadedAppeal();
+			if (appeals != null) {
+				for (int i = 0; i < appeals.length; ++i) {
+					if (connectToServer(appeals[i]) == ERROR)
+						Log.d(TAG, "FAIL TO UPLOAD - Appeal");
 				}
 			}
 			
@@ -376,6 +386,27 @@ public class DataUploader {
 				if (upload(httpClient, httpPost)){
 					db.setExchangeHistoryUploaded(data.getTv().getTimestamp());
 					Log.d(TAG, "Upload ExchangeHistory Success.");
+				}
+				else
+					return ERROR;
+			} catch (Exception e) {
+				Log.d(TAG, "EXCEPTION:" + e.toString());
+				return ERROR;
+			}
+			return SUCCESS;
+		}
+		
+		private int connectToServer(Appeal data) {// Appeal
+			try {
+				
+				DefaultHttpClient httpClient = HttpSecureClientGenerator
+						.getSecureHttpClient();
+				HttpPost httpPost = HttpPostGenerator.genPost(data);
+				Log.i("GG", "GGG");
+				if (upload(httpClient, httpPost)){
+					Log.i("GG", "GGGxxx");
+					db.setAppealUploaded(data.getTv().getTimestamp());
+					Log.d(TAG, "Upload Appeal Success.");
 				}
 				else
 					return ERROR;

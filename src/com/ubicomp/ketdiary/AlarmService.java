@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.system.PreferenceControl;
+import com.ubicomp.ketdiary2.R;
 
 /**
  * Service for handling message received from AlarmReceiver

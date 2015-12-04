@@ -13,7 +13,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 
 @SuppressLint("ViewConstructor")
 public class RadarChartView extends View {

@@ -27,10 +27,10 @@ public class MainStorage {
 			if (Environment.getExternalStorageState().equals(
 					Environment.MEDIA_MOUNTED))
 				mainStorage = new File(
-						Environment.getExternalStorageDirectory(), "DrugfreeDiary");
+						Environment.getExternalStorageDirectory(), "RehabDiary2");
 			else
 				mainStorage = new File(App.getContext().getFilesDir(),
-						"DrugfreeDiary");
+						"RehabDiary2");
 		}
 		if (!mainStorage.exists())
 			mainStorage.mkdirs();

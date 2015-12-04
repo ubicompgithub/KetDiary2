@@ -16,6 +16,7 @@ import org.apache.http.protocol.HTTP;
 
 import com.ubicomp.ketdiary.App;
 import com.ubicomp.ketdiary.data.file.MainStorage;
+import com.ubicomp.ketdiary.data.structure.Appeal;
 import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
@@ -202,7 +203,7 @@ public class HttpPostGenerator {
 		return httpPost;
 	}
 	
-	public static HttpPost genPost(TestDetail data){
+	/*public static HttpPost genPost(TestDetail data){
 		HttpPost httpPost = new HttpPost(ServerUrl.getTestDetail2Url());
 		String uid = PreferenceControl.getUID();
 		String deviceId=PreferenceControl.getDeviceId();
@@ -233,16 +234,45 @@ public class HttpPostGenerator {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 		} catch (UnsupportedEncodingException e) {}
 		
-		//
+		return httpPost;
+	}*/
+	public static HttpPost genPost(TestDetail data){
+		HttpPost httpPost = new HttpPost(ServerUrl.getTestDetail2Url());
 		
-		/*if(data.getFailedState() == 13){
+		String uid = PreferenceControl.getUID();
+		String deviceId=PreferenceControl.getDeviceId();
+		
+		File mainStorageDir = MainStorage.getMainStorageDirectory();
+		
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.addTextBody("uid", uid);
+		builder.addTextBody("data[]", deviceId);
+		builder.addTextBody("data[]", String.valueOf(data.getCassetteId()));
+		builder.addTextBody("data[]", String.valueOf(data.tv.getTimestamp()));
+		builder.addTextBody("data[]", String.valueOf(data.getFailedState()));
+		builder.addTextBody("data[]", String.valueOf(data.getFirstVoltage()));
+		builder.addTextBody("data[]", String.valueOf(data.getSecondVoltage()));
+		builder.addTextBody("data[]", String.valueOf(data.getDevicePower()));
+		builder.addTextBody("data[]", String.valueOf(data.getColorReading()));
+		builder.addTextBody("data[]", String.valueOf(data.getConnectionFailRate()));
+		builder.addTextBody("data[]", String.valueOf(data.getFailedReason()));
+		builder.addTextBody("data[]", String.valueOf(data.getTv().getWeek()));
+		builder.addTextBody("data[]", String.valueOf(data.getHardwareVersion()));
+		PackageInfo pinfo;
+		try {
+			pinfo = App.getContext().getPackageManager()
+					.getPackageInfo(App.getContext().getPackageName(), 0);
+			String versionName = pinfo.versionName;
+			builder.addTextBody("data[]", versionName);
+		} catch (NameNotFoundException e){}
+		
+		if(data.failedState == 13){
+			httpPost.setEntity(builder.build());
 			return httpPost;
 		}
 		
-		File mainStorageDir = MainStorage.getMainStorageDirectory();
-		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-		File testFile, detectionFile;
 		String _ts = String.valueOf(data.tv.getTimestamp());
+		File testFile, detectionFile;
 		
 		testFile = new File(mainStorageDir.getPath() + File.separator + _ts
 				+ File.separator + "voltage.txt");
@@ -256,11 +286,12 @@ public class HttpPostGenerator {
 		if (detectionFile.exists()){
 			builder.addPart("file[]", new FileBody(detectionFile));
 		}
-		httpPost.setEntity(builder.build());*/
 		
+
+		httpPost.setEntity(builder.build());
 		return httpPost;
+
 	}
-	
 	/**
 	 * Generate POST of test results of QuestionTest
 	 * 
@@ -359,6 +390,49 @@ public class HttpPostGenerator {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 		} catch (UnsupportedEncodingException e) {
 		}
+		return httpPost;
+	}
+	
+	/**
+	 * Generate POST of Appeal 
+	 * 
+	 * @param data
+	 *            Appeal
+	 * @return HttpPost contains Appeal
+	 * @see ubicomp.soberdiary.data.structure.Appeal
+	 */
+	public static HttpPost genPost(Appeal data) {
+		HttpPost httpPost = new HttpPost(ServerUrl.SERVER_URL_APPEAL());
+		String uid = PreferenceControl.getUID();
+		
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+
+		builder.addTextBody("uid", uid);
+
+		builder.addTextBody("data[]", String.valueOf(data.getTv().getTimestamp()));
+		builder.addTextBody("data[]", String.valueOf(data.getAppealType()));
+		builder.addTextBody("data[]", String.valueOf(data.getAppealTimes()));
+		
+		File mainStorageDir = MainStorage.getMainStorageDirectory();
+		
+		String _ts = String.valueOf(data.getTv().getTimestamp());
+		File picFile, voiceFile;
+		
+		picFile = new File(mainStorageDir.getPath() + File.separator + "Appeal"+  
+				File.separator + _ts + File.separator + "picture.jpeg");
+
+		voiceFile = new File(mainStorageDir.getPath() + File.separator + "Appeal"+  
+				File.separator + _ts + File.separator + "record.amr");
+		
+		if (picFile.exists()){
+			builder.addPart("file[]", new FileBody(picFile));
+		}
+		if (voiceFile.exists()){
+			builder.addPart("file[]", new FileBody(voiceFile));
+		}
+		
+
+		httpPost.setEntity(builder.build());
 		return httpPost;
 	}
 	

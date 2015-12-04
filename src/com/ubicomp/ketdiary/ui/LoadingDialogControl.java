@@ -3,7 +3,7 @@ package com.ubicomp.ketdiary.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 
 public class LoadingDialogControl {
 

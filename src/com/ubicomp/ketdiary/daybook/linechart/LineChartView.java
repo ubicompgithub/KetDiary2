@@ -22,7 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.ubicomp.ketdiary.App;
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.TestResult;

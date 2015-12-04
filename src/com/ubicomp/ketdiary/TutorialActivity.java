@@ -15,6 +15,7 @@ import com.ubicomp.ketdiary.system.clicklog.ClickLog;
 import com.ubicomp.ketdiary.system.clicklog.ClickLogId;
 import com.ubicomp.ketdiary.ui.ScaleOnTouchListener;
 import com.ubicomp.ketdiary.ui.Typefaces;
+import com.ubicomp.ketdiary2.R;
 
 /**
  * Activity for user tutorial

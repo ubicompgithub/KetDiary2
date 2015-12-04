@@ -23,6 +23,7 @@ import com.ubicomp.ketdiary.system.clicklog.ClickLogId;
 import com.ubicomp.ketdiary.ui.CustomToastSmall;
 import com.ubicomp.ketdiary.ui.CustomTypefaceSpan;
 import com.ubicomp.ketdiary.ui.Typefaces;
+import com.ubicomp.ketdiary2.R;
 
 /**
  * About Activity  "關於"頁面

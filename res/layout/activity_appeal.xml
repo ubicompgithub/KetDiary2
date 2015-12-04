@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:background="@drawable/bar_titlebar_bg" > >
+    
+    <TextView
+        android:id="@+id/state_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="30dp"
+        android:text="未錄音"
+        android:textColor="@color/text_gray"
+        android:textSize="@dimen/large_text_size"/> />
+    
+    <ImageView
+        android:id="@+id/sound_recorder"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:padding="13.3dp"
+        android:src="@drawable/sound_recorder_able" />
+    
+    <ImageView
+        android:id="@+id/sound_startstop"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="90dp"
+        android:padding="13.3dp"
+        android:src="@drawable/no_play" />
+
+    <Button
+        	android:id="@+id/record_next"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_centerHorizontal="true"
+        	android:layout_marginTop="200dp"
+        	android:text="確認"
+        	android:textAppearance="?android:attr/textAppearanceMedium" />
+
+   <RelativeLayout
+                android:id="@+id/voice_record_bar_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="76dp" >
+
+                <ImageView
+                    android:id="@+id/voice_record_bar_bg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/record_voice_bar_bg" />
+
+                <ImageView
+                    android:id="@+id/voice_record_bar_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/record_voice_bar_start" />
+
+                <ImageView
+                    android:id="@+id/voice_record_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/voice_record_bar_start"
+                    android:adjustViewBounds="false"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/record_voice_bar_progress" />
+
+                <ImageView
+                    android:id="@+id/voice_record_bar_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/voice_record_bar"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/record_voice_bar_end" />
+            </RelativeLayout>
+<!-- 
+   <TextView
+       android:id="@+id/recode_state"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignTop="@+id/sound_recorder"
+       android:layout_toLeftOf="@+id/record_next"
+       android:padding="13.3dp"
+       android:text="未錄音"
+       android:textAppearance="?android:attr/textAppearanceMedium" />
+-->
+</RelativeLayout>

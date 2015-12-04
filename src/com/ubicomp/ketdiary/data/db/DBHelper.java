@@ -120,7 +120,14 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ " cassetteId CHAR[255] NOT NULL,"
 				+ " isUsed INTEGER NOT NULL,"
 				+ " upload INTEGER NOT NULL DEFAULT 0)");
-
+		
+		//Appeal
+		db.execSQL("CREATE TABLE Appeal ("
+				+ " id INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ " ts INTEGER NOT NULL,"
+				+ " appealType INTEGER NOT NULL, "	
+				+ " appealTimes INTEGER NOT NULL, "
+				+ " upload INTEGER NOT NULL DEFAULT 0" + ")");
 
 	}
 

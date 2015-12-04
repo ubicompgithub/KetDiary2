@@ -28,7 +28,7 @@ import com.ubicomp.ketdiary.ui.CustomToast;
 import com.ubicomp.ketdiary.ui.LoadingDialogControl;
 import com.ubicomp.ketdiary.ui.ScreenSize;
 import com.ubicomp.ketdiary.ui.Typefaces;
-
+import com.ubicomp.ketdiary2.R;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.NotificationManager;

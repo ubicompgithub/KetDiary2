@@ -7,7 +7,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.ubicomp.ketdiary.App;
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 
 /** Class for measuring Android phones */
 public class ScreenSize {

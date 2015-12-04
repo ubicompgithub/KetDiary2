@@ -4,7 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.view.Window;
 
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 
 public class FilterDetailDialog extends Dialog{
 

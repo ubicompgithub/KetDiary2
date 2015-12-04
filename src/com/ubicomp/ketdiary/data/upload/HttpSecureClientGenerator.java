@@ -12,7 +12,7 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 
 import com.ubicomp.ketdiary.App;
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 
 import android.app.Application;
 

@@ -5,9 +5,11 @@ import java.text.DecimalFormat;
 import java.util.Random;
 
 import com.ubicomp.ketdiary.App;
+import com.ubicomp.ketdiary.AppealActivity;
+import com.ubicomp.ketdiary.RecordVoiceActivity;
 import com.ubicomp.ketdiary.HelpActivity;
 import com.ubicomp.ketdiary.MainActivity;
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.ResultService3;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.file.ColorRawFileHandler;
@@ -17,6 +19,7 @@ import com.ubicomp.ketdiary.data.file.QuestionFile;
 import com.ubicomp.ketdiary.data.file.TestDataParser2;
 import com.ubicomp.ketdiary.data.file.VoltageFileHandler;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
+import com.ubicomp.ketdiary.data.structure.TimeValue;
 import com.ubicomp.ketdiary.dialog.NoteDialog4;
 import com.ubicomp.ketdiary.dialog.TestQuestionCaller2;
 import com.ubicomp.ketdiary.system.PreferenceControl;
@@ -81,7 +84,8 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	private RelativeLayout main_layout;
 	private LinearLayout water_layout;
 	private TextView label_btn, label_subtitle, label_title, debug_msg, test_msg;
-	private ImageView img_bg, img_ac, img_btn, img_info, img_water1, img_water2, img_water3, img_face, img_help, img_cassette;
+	private ImageView img_bg, img_ac, img_btn, img_info, img_water1, img_water2, 
+					  img_water3, img_face, img_help, img_cassette, img_appeal;
 	
 	private boolean isSkip = PreferenceControl.isSkip();
 	private boolean debug = PreferenceControl.isDebugMode();
@@ -232,6 +236,9 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	private static final int RUN_STATE = 7;	
 	private static final int DRAW_STATE = 8;
 	
+	//Apeal
+	public static TimeValue appealTimeValue;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -279,6 +286,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		test_msg = (TextView) view.findViewById(R.id.test_message);
 
 		img_help = (ImageView) view.findViewById(R.id.iv_help);
+		img_appeal = (ImageView) view.findViewById(R.id.appeal);
 		
 		img_bg = (ImageView)view.findViewById(R.id.iv_bar_bg);
 		img_ac = (ImageView)view.findViewById(R.id.iv_bar_ac);
@@ -350,6 +358,22 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			msgBox.initialize();
 			msgBox.show();
 		}*/
+		
+		img_appeal.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				
+				//ClickLog.Log(ClickLogId.TEST_HELP_BUTTON);
+				long curTs = System.currentTimeMillis();
+				appealTimeValue = TimeValue.generate(curTs);
+				
+				Intent intent = new Intent();
+				intent.setClass(activity, AppealActivity.class); // tmp modify
+				startActivity(intent);
+			}
+		});
+		
+		img_help.setOnTouchListener(new ScaleOnTouchListener());
 		return view;
 	}
 	

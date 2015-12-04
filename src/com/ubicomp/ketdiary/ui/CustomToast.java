@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ubicomp.ketdiary.App;
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 
 public class CustomToast {
 

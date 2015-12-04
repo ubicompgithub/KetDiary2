@@ -1,6 +1,6 @@
 package com.ubicomp.ketdiary.data.upload;
 
-import com.ubicomp.ketdiary.R;
+import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.system.PreferenceControl;
 
 
@@ -9,8 +9,8 @@ import com.ubicomp.ketdiary.system.PreferenceControl;
  * @author Andy Chen
  */
 public class ServerUrl {
-	private static final String SERVER_URL = "https://140.112.30.165/rehabdiary/";
-	private static final String SERVER_URL_DEVELOP = "https://140.112.30.171/rehabdiary/";
+	private static final String SERVER_URL = "https://140.112.30.165/rehabdiary2/";
+	private static final String SERVER_URL_DEVELOP = "https://140.112.30.171/rehabdiary2/";
 	
 	/** create instance*/
 	//public static ServerUrl inst = new ServerUrl();
@@ -137,6 +137,21 @@ public class ServerUrl {
 		else
 			return SERVER_URL + URL;
 	}
+	
+	/**
+	 * URL for inserting table Appeal
+	 * 
+	 * @return url
+	 */
+	public static String SERVER_URL_APPEAL() {
+		final String URL = "test/Appeal.php";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
+	}
+	
 	/**
 	 * URL for uploading clicklog
 	 * 

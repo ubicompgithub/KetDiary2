@@ -16,6 +16,7 @@ import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.structure.Cassette;
 import com.ubicomp.ketdiary.ui.BarButtonGenerator;
 import com.ubicomp.ketdiary.ui.Typefaces;
+import com.ubicomp.ketdiary2.R;
 
 /**
  * Activity for Help Button
