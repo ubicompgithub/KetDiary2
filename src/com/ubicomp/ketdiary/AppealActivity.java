@@ -48,13 +48,14 @@ import com.ubicomp.ketdiary.ui.Typefaces;
 
 public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 	private SurfaceView surfaceView1;
-	private ImageView ImageView1;
+	private ImageView ImageView1, lineView;
 	private SurfaceHolder holder;   
 	private Camera myCamera;  
-    private Button takePicButton, nextButton, undoButton;
     private File dir;
     private boolean picTaked;
     private Bitmap jpegPic, showPic;
+    private ImageView takePicView;
+    private TextView nextText, cancelText, undoText, headerText, hintText, hint2Text;
     
     public Activity activity = null;
     private long ts;
@@ -69,6 +70,8 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
         ImageView1 = (ImageView)findViewById(R.id.imageView1);
         ImageView1.setVisibility(View.INVISIBLE); 
         
+        lineView = (ImageView)findViewById(R.id.take_pic_line);
+        
         surfaceView1 = (SurfaceView)findViewById(R.id.surfaceView1);
         holder = surfaceView1.getHolder();//獲得surfaceHolder引用   
         holder.addCallback(this);   
@@ -78,8 +81,17 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
         
         dir = MainStorage.getMainStorageDirectory();
         
-        takePicButton = (Button)findViewById(R.id.takePic);
-        takePicButton.setOnClickListener(new OnClickListener(){
+        takePicView = (ImageView)findViewById(R.id.take_pic_icon);
+        nextText = (TextView)findViewById(R.id.take_pic_next);
+        undoText = (TextView)findViewById(R.id.take_pic_re);
+        cancelText = (TextView)findViewById(R.id.take_pic_cancel);
+        headerText = (TextView)findViewById(R.id.take_pic_header);
+        hintText = (TextView)findViewById(R.id.take_pic_hint);
+        hint2Text = (TextView)findViewById(R.id.take_pic_hint2);
+        
+        TakePicState();
+        
+        takePicView.setOnClickListener(new View.OnClickListener(){
 			
 			@SuppressWarnings("deprecation")
 			@Override
@@ -107,8 +119,7 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 			
 		});
         
-        nextButton = (Button)findViewById(R.id.nextPic);
-        nextButton.setOnClickListener(new OnClickListener(){
+        nextText.setOnClickListener(new View.OnClickListener(){
 			
 			@SuppressWarnings("deprecation")
 			@Override
@@ -150,9 +161,8 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 			
 			
 		});
-        
-        undoButton = (Button)findViewById(R.id.undoPic);
-        undoButton.setOnClickListener(new OnClickListener(){
+
+        undoText.setOnClickListener(new View.OnClickListener(){
 			
 			@SuppressWarnings("deprecation")
 			@Override
@@ -160,22 +170,61 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 				if(!picTaked)
 					return;
 				
-				ImageView1.setVisibility(View.INVISIBLE); 
-				picTaked = false;
-				takePicButton.setVisibility(View.VISIBLE); 
-	            nextButton.setVisibility(View.INVISIBLE); 
-	            undoButton.setVisibility(View.INVISIBLE); 
+				TakePicState();
 			}
 			
 			
 		});
         
+        cancelText.setOnClickListener(new View.OnClickListener(){
+			
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onClick(View v) {
+				onDestroy();
+				finish();
+			}
+			
+			
+		});
     }
+    
+    private void TakePicState(){
+    	
+    	ImageView1.setVisibility(View.INVISIBLE); 
+		picTaked = false;
+		takePicView.setVisibility(View.VISIBLE); 
+        nextText.setVisibility(View.INVISIBLE); 
+        undoText.setVisibility(View.INVISIBLE);
+        lineView.setVisibility(View.VISIBLE);
+        hintText.setVisibility(View.VISIBLE);
+        hint2Text.setVisibility(View.INVISIBLE);
+        
+        cancelText.setVisibility(View.INVISIBLE); 
+    }
+    
+    private void ViewPicState(){
+    	
+    	ImageView1.setVisibility(View.VISIBLE); 
+		picTaked = true;
+		takePicView.setVisibility(View.INVISIBLE); 
+        nextText.setVisibility(View.VISIBLE); 
+        undoText.setVisibility(View.VISIBLE);
+        lineView.setVisibility(View.INVISIBLE);
+        hintText.setVisibility(View.INVISIBLE);
+        hint2Text.setVisibility(View.VISIBLE);
+        
+        cancelText.setVisibility(View.VISIBLE); 
+    }
+    
+    
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 		// TODO Auto-generated method stub
 		 myCamera.startPreview();         
 	}
+	
+	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
@@ -223,14 +272,8 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
                
                showPic = Bitmap.createBitmap(jpegPic, 0, 0, _width, _height, matrix, true);
                ImageView1.setImageBitmap(showPic);
-               ImageView1.setVisibility(View.VISIBLE); 
-               //File file = new File("/sdcard/wjh.jpg");   
-            
-               
-               picTaked = true;
-               takePicButton.setVisibility(View.INVISIBLE); 
-               nextButton.setVisibility(View.VISIBLE); 
-               undoButton.setVisibility(View.VISIBLE); 
+              
+               ViewPicState();
                
            }catch(Exception e){ 
                e.printStackTrace();   

@@ -1,6 +1,8 @@
 package com.ubicomp.ketdiary;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
@@ -52,11 +54,15 @@ public class RecordVoiceActivity extends Activity {
     private static int RECORDING = 1;
     private static int RECORDED = 2;
     private static int PLAYING = 3;
+    private static int RECORD_STOP = 4;
+    private static int PLAY_STOP = 4;
     
     private MediaRecorder mediaRecorder;
     private MediaPlayer mediaPlayer;
     private File dir, recordFile;
     private long ts;
+    
+    private int filenum;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,22 +88,31 @@ public class RecordVoiceActivity extends Activity {
         mediaRecorder = null;
         mediaPlayer = null;
         
+        topIcon.setImageResource(R.drawable.icon_rec);
+        bottomIcon.setVisibility(View.INVISIBLE); 
+        
+        filenum = 0;
+        
         topIcon.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                if(recordState == NOT_RECORD || recordState == RECORDED){
+                if(recordState == NOT_RECORD || recordState == RECORDED || recordState == RECORD_STOP){
                     recordState = RECORDING;
                     stateText.setText("錄音中....");
-                    bottomIcon.setImageResource(R.drawable.no_play);
+                    topIcon.setImageResource(R.drawable.icon_pause);
+                    bottomIcon.setImageResource(R.drawable.icon_stop);
+                    bottomIcon.setVisibility(View.VISIBLE); 
                     
                     startRecord();
                 }
                 else if(recordState == RECORDING){
-                    stateText.setText("已錄音");
-                    recordState = RECORDED;   
-                    bottomIcon.setImageResource(R.drawable.sound_start);
+                    stateText.setText("暫停錄音");
+                    recordState = RECORD_STOP;   
+                    topIcon.setImageResource(R.drawable.icon_play);
+                    bottomIcon.setImageResource(R.drawable.icon_stop);
                     
                     stopRecord();
                 }
+            
             }
             
         });
@@ -106,21 +121,30 @@ public class RecordVoiceActivity extends Activity {
             public void onClick(View v) {
             	 if(recordState == RECORDED){
                      recordState = PLAYING;
-                     stateText.setText("播放中...");
+                     stateText.setText("播放中....");
                      
-                     topIcon.setImageResource(R.drawable.sound_recorder_enable);
-                     bottomIcon.setImageResource(R.drawable.sound_stop);
+                     topIcon.setVisibility(View.INVISIBLE); 
+                     bottomIcon.setImageResource(R.drawable.icon_stop);
+                    
                      
                      startPlay();
                  }
+            	 else if(recordState == RECORDING || recordState == RECORD_STOP){
+                     stateText.setText("已錄音");
+                     recordState = RECORDED;   
+                     topIcon.setImageResource(R.drawable.icon_rec);
+                     bottomIcon.setImageResource(R.drawable.icon_play);
+                     
+                     endRecord();
+                 }
             	 else if(recordState == PLAYING){
                      recordState = RECORDED;
-                     stateText.setText("已錄音");
+                     stateText.setText("結束播放，已錄音");
                      
-                     topIcon.setImageResource(R.drawable.sound_recorder_able);
-                     bottomIcon.setImageResource(R.drawable.sound_start);
-                     
-                     stopPlay();
+                     topIcon.setImageResource(R.drawable.icon_rec);
+                     bottomIcon.setImageResource(R.drawable.icon_play);
+                     topIcon.setVisibility(View.VISIBLE); 
+                     endPlay();
                  }
             }
             
@@ -155,19 +179,22 @@ public class RecordVoiceActivity extends Activity {
     private void startPlay(){
     	mediaPlayer = new MediaPlayer();
         try {
+        	recordFile = new File(dir + File.separator + "Appeal" + 
+					File.separator + String.valueOf(ts)  + File.separator + "record.amr");
+        	
         	mediaPlayer.setDataSource(recordFile.getAbsolutePath());
         	mediaPlayer.prepare();
         	mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
 				@Override
 				public void onCompletion(MediaPlayer arg0) {
 					try {
-						recordState = RECORDED;
-	                     stateText.setText("已錄音");
+						 recordState = RECORDED;
+	                     stateText.setText("結束播放，已錄音");
 	                     
-	                     topIcon.setImageResource(R.drawable.sound_recorder_able);
-	                     bottomIcon.setImageResource(R.drawable.sound_start);
-	                     
-	                     stopPlay();
+	                     topIcon.setImageResource(R.drawable.icon_rec);
+	                     bottomIcon.setImageResource(R.drawable.icon_play);
+	                     topIcon.setVisibility(View.VISIBLE); 
+	                     endPlay();
 					} catch (IllegalStateException e) {
 					}
 				}
@@ -179,8 +206,11 @@ public class RecordVoiceActivity extends Activity {
         
     }
     
-    
     private void stopPlay(){
+    	mediaPlayer.stop(); 
+    }
+    
+    private void endPlay(){
     	mediaPlayer.stop();
     	mediaPlayer.release();
     	mediaPlayer = null;  
@@ -188,7 +218,7 @@ public class RecordVoiceActivity extends Activity {
     
     @SuppressWarnings("deprecation")
 	private void startRecord(){
-        String fileName = "record.amr";
+        String fileName = "record"+ String.valueOf(filenum) +".amr";
         try {
         	recordFile = new File(dir + File.separator + "Appeal");
 			if(!recordFile.exists())
@@ -204,6 +234,8 @@ public class RecordVoiceActivity extends Activity {
          
          if(recordFile.exists())
         	 recordFile.delete();
+         
+         filenum ++;
          
          mediaRecorder = new MediaRecorder();
 
@@ -228,11 +260,20 @@ public class RecordVoiceActivity extends Activity {
     }
     
     private void stopRecord(){
+        if(mediaRecorder != null) {
+        	mediaRecorder.stop();
+            mediaRecorder.release();
+            mediaRecorder = null;
+        }
+    }
+    
+    private void endRecord(){
          if(mediaRecorder != null) {
              mediaRecorder.stop();
              mediaRecorder.release();
              mediaRecorder = null;
          }
+         mergeAllAmrFiles();
      }
     
     /**onResume of AboutActivity. Override for ClickLog*/
@@ -245,4 +286,83 @@ public class RecordVoiceActivity extends Activity {
     public void onPause() {
         super.onPause();
     }
+    
+    /** 合并所有的音频文件 */
+    public void mergeAllAmrFiles(){ 
+    	int num = filenum;
+    	filenum = 0;
+            // 创建音频文件,合并的文件放这里
+              //File tempFile = new File(recordingFiles.get(0));
+              String fileName = "record.amr";
+              File mergeFile = new File(dir + File.separator + "Appeal" + 
+						File.separator + String.valueOf(ts)  + File.separator + fileName);
+              
+              //Log.d("RECORD", "MERGE : " + mergeFile.getAbsolutePath());
+              FileOutputStream fileOutputStream = null;  
+         
+              if(!mergeFile.exists()){  
+                  try {  
+                      mergeFile.createNewFile();  
+                  } catch (IOException e){  
+                      // TODO Auto-generated catch block  
+                      e.printStackTrace();  
+                  }  
+              }
+      
+              try {  
+                  fileOutputStream=new FileOutputStream(mergeFile);  
+              } catch (IOException e) {  
+                  // TODO Auto-generated catch block  
+                  e.printStackTrace();  
+              } 
+              
+              //list里面为暂停录音 所产生的几段录音文件的名字，中间几段文件的减去前面的6个字节头文件  
+              for(int index = 0; index < num ;index++){  
+                  File file = new File(dir + File.separator + "Appeal" + 
+  						File.separator + String.valueOf(ts)  + File.separator + 
+  						"record"+ String.valueOf(index) +".amr");
+                  
+                  //Log.d("RECORD-PATH", recordingFiles.get(index) + file.length());
+                  try {  
+                      FileInputStream fileInputStream=new FileInputStream(file);  
+                      byte  []myByte = new byte[fileInputStream.available()];
+                      //文件长度  
+                      int length = myByte.length;
+                      //Log.d("RECORD-LENGTH", length  + "");
+        
+                      //头文件  
+                      if(index == 0){  
+                          while(fileInputStream.read(myByte) != -1){ 
+                              fileOutputStream.write(myByte);
+                              //fileOutputStream.write(myByte, 0,length);
+                          }
+                      }
+                      
+                      //之后的文件，去掉前面6个字节（头文件） 
+                      else{  
+                          while(fileInputStream.read(myByte) != -1){            
+                              fileOutputStream.write(myByte, 6, length - 6);  
+                          }
+                      }
+                
+                      fileOutputStream.flush();
+                      fileInputStream.close();
+                      //合并之后删除文件
+                      file.delete();
+                  } catch (Exception e) {  
+                      // TODO Auto-generated catch block  
+                      e.printStackTrace();  
+                  }  
+              }  
+              
+              //结束后关闭流 
+              try {
+                  fileOutputStream.flush();
+                  fileOutputStream.close();  
+              } catch (IOException e) {  
+                  // TODO Auto-generated catch block  
+                  e.printStackTrace();  
+              }
+              
+        }
 }

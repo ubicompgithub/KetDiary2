@@ -313,9 +313,25 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 				R.layout.bar_description, null);
 		
 		TextView dec_title = (TextView)discription_layout.findViewById(R.id.description_title);
-		dec_title.setText("補充說明：");
+		dec_title.setText("當時我感覺：");
 		dec_title.setTypeface(wordTypefaceBold);
+		
 		edtext = (EditText)discription_layout.findViewById(R.id.description_content);
+		/*sp_content = (TextView)spinner_layout.findViewById(R.id.spinner_content);
+		sp_content.setText("");
+		sp_content.setTypeface(wordTypefaceBold);
+		sp_content.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				//listView.setVisibility(View.VISIBLE);
+				if(items!= -1)
+					listViewShowHide();
+			}
+								
+		});
+		
+		listView = (ListView)spinner_layout.findViewById(R.id.item_listview);*/
 //		edtext.setOnFocusChangeListener(new OnFocusChangeListener() {
 //
 //		    @Override

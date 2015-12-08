@@ -1,22 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:weightSum="1" >
- <!-- 
- <LinearLayout android:layout_height="wrap_content" android:id="@+id/linearLayout1" android:layout_width="fill_parent">
- 
-     <SurfaceView
-      android:id="@+id/surfaceView1"
-      android:layout_width="250dp"
-      android:layout_height="250dp" />
-  
-  <Button android:text="拍照" android:id="@+id/button1" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
- 
- 
- 
- -->
+
 
   <SurfaceView
       android:id="@+id/surfaceView1"
@@ -30,36 +17,106 @@
       android:layout_height="fill_parent" 
       />
   
- <Button
-        android:id="@+id/takePic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="拍照" 
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
-       android:layout_centerHorizontal="true"
-        />
- <Button
-        android:id="@+id/nextPic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="確認" 
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="150dp"
-         android:visibility="invisible"
-        />
- <Button
-        android:id="@+id/undoPic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="重拍" 
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="150dp"
-        android:visibility="invisible"
-        />
+  
+  <RelativeLayout
+    android:layout_width="fill_parent"
+   	android:layout_height="fill_parent">
+   	
+  	<ImageView
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" 
+      android:src="@drawable/appeal_take_picture"
+      />
+  	
+  	<ImageView
+      android:id="@+id/take_pic_line"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent" 
+      android:src="@drawable/take_pic_line"
+      />
+  	
+  	<TextView
+  	  android:id="@+id/take_pic_header"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="10dp"
+      android:text="請拍攝檢測錯誤試紙"
+      android:textColor="@color/gray"
+      android:textSize="20dp"/>
+  	
+  	<TextView
+  	  android:id="@+id/take_pic_hint"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="33dp"
+      android:text="請將檢測結果之方框對準中央，如圖示"
+      android:textColor="@color/white"
+      android:textSize="13dp"/>
+  	
+  	<TextView
+  	  android:id="@+id/take_pic_hint2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_alignParentBottom="true"
+      android:layout_marginBottom="33dp"
+      android:text="請確認影像是否清晰，選擇重拍或確定"
+      android:textColor="@color/white"
+      android:textSize="13dp"/>
+  	
+  	<ImageView
+      android:id="@+id/take_pic_icon"
+      android:layout_width="50dp"
+      android:layout_height="50dp" 
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginBottom="115dp"
+      android:layout_marginRight="11dp"
+      android:src="@drawable/take_pic_icon"
+     />
+  	
+  	<TextView
+      android:id="@+id/take_pic_cancel"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginBottom="200dp"
+      android:layout_marginRight="13dp"
+      android:text="取消"
+      android:textColor="@color/white"
+      android:textSize="20dp"/>
+  	
+  	<TextView
+      android:id="@+id/take_pic_re"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginBottom="125dp"
+      android:layout_marginRight="13dp"
+      android:text="重拍"
+      android:textColor="@color/white"
+      android:textSize="20dp"/>
+  	
+  	<TextView
+      android:id="@+id/take_pic_next"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginBottom="50dp"
+      android:layout_marginRight="13dp"
+      android:text="確定"
+      android:textColor="@color/white"
+      android:textSize="20dp"/>
+  </RelativeLayout>
+  
   
 </RelativeLayout>
