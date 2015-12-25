@@ -304,7 +304,7 @@ public class NoteDialog4 implements ChooseItemCaller{
 		TextView dec_title = (TextView)discription_layout.findViewById(R.id.description_title);
 		dec_title.setText("補充說明：");
 		dec_title.setTypeface(wordTypefaceBold);
-		edtext = (EditText)discription_layout.findViewById(R.id.description_content);
+		//edtext = (EditText)discription_layout.findViewById(R.id.description_content);
 //		edtext.setOnFocusChangeListener(new OnFocusChangeListener() {
 //
 //		    @Override

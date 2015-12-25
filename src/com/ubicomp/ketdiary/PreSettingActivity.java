@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -83,7 +84,9 @@ public class PreSettingActivity extends Activity {
 	
 	private AlertDialog.Builder builder;
 	
-	private File file;
+	private static File file;
+	
+	private CheckBox appeal_switch;
 	
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int LOCK_DIALOG_ID = 1;
@@ -145,6 +148,9 @@ public class PreSettingActivity extends Activity {
 		
 		addPass = (EditText) this.findViewById(R.id.add_pass_edit);
 
+		appeal_switch = (CheckBox) this.findViewById(R.id.appeal_mode_switch);
+		appeal_switch.setChecked(PreferenceControl.getAppealOpen());
+		
 		int[] startDateData = PreferenceControl.getStartDateData();
 		mYear = startDateData[0];
 		mMonth = startDateData[1];
@@ -299,7 +305,25 @@ public class PreSettingActivity extends Activity {
 		dummyDataButton = (Button) findViewById(R.id.debug_dummy_data);
 		dummyDataButton.setOnClickListener(new AlertOnClickListener(
 				dummyDataDialog));
-
+		
+		
+		appeal_switch.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
+        {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) 
+                {
+                        if(isChecked) 
+                        {
+                        	PreferenceControl.setAppealOpen(true);
+                        	CustomToastSmall.generateToast("開啟申訴功能");
+                        }
+                        else
+                        {
+                        	PreferenceControl.setAppealOpen(false);
+                        	CustomToastSmall.generateToast("關閉申訴功能");
+                        }
+                }
+        });
 	}
 
 	private class RestoreOnClickListener implements
@@ -460,7 +484,7 @@ public class PreSettingActivity extends Activity {
 		}
 	}
 	
-	private void addTestResult(int result, int year,int month, int day,int intTime){
+	public static void addTestResult(int result, int year,int month, int day,int intTime){
 		
     	
     	//add new result
@@ -536,7 +560,7 @@ public class PreSettingActivity extends Activity {
 			PreferenceControl.setPosition(addPos);
 		
 		
-		CustomToastSmall.generateToast("新增成功");
+		//CustomToastSmall.generateToast("新增成功");
 	}
 	
 	private class AddTestResultOnClickListener implements OnClickListener {

@@ -238,6 +238,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	
 	//Apeal
 	public static TimeValue appealTimeValue;
+	private boolean showAppeal;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -272,7 +273,9 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		test_guide_msg = getResources().getStringArray(R.array.test_guide_msg);
 		//changeTabsHandler.sendEmptyMessage(0);
 		db = new DatabaseControl();
-				
+		
+		/* Appeal */
+		
 	}
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -361,7 +364,9 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		
 		img_appeal.setOnClickListener(new View.OnClickListener(){
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v) {	
+				if(!showAppeal)
+					return;
 				
 				//ClickLog.Log(ClickLogId.TEST_HELP_BUTTON);
 				long curTs = System.currentTimeMillis();
@@ -373,7 +378,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			}
 		});
 		
-		img_help.setOnTouchListener(new ScaleOnTouchListener());
+		img_appeal.setOnTouchListener(new ScaleOnTouchListener());
 		return view;
 	}
 	
@@ -1242,6 +1247,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			setState(new IdleState());
 		}
 		
+		setAppealIcon();
 		LoadingDialogControl.dismiss();
 	}
 	
@@ -2072,6 +2078,25 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	@Override
 	public void displayPower(int power) {
 		devicePower = power;
+	}
+	
+	public void setAppealIcon(){
+		boolean appealOpen = PreferenceControl.getAppealOpen();
+		int appealAble = PreferenceControl.getAppealAble();
+		long _ts = PreferenceControl.getAppealStartTime();
+		long curTs = System.currentTimeMillis();
+		
+		if(curTs - _ts >= 1000*60*5 && appealAble > 0)
+			PreferenceControl.setAppealAble(0);
+		
+		if(appealOpen || appealAble > 0){
+			showAppeal = true;
+			img_appeal.setVisibility(View.VISIBLE);
+		}
+		else{
+			showAppeal = false;
+			img_appeal.setVisibility(View.INVISIBLE);
+		}
 	}
 
 }

@@ -87,8 +87,9 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	private TextView text_self, text_other, text_item, text_impact, text_description,
 	     tv_knowdlege, tv_title, note_title, sp_content, date_txt, timeslot_txt, title_txt, typetext;
 	
-	private EditText edtext;
+	private TextView edtext;
 	private ListView listView;
+	private ListView listView2;
 	
 	private String[] coping_msg;
 	private String[] knowing_msg;
@@ -114,10 +115,10 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	private int day=0;
 	private int timeslot=0; //TODO: default
 	private int type;
-	private int items;
+	private int items, items2;
 	private int impact;
 	private String description;
-	private boolean viewshow = false;
+	private boolean viewshow = false, viewshow2 = false;
 	
 	private CustomScrollView sv;
 	private boolean done = false;
@@ -275,7 +276,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			public void onClick(View v) {
 				//listView.setVisibility(View.VISIBLE);
 				if(items!= -1)
-					listViewShowHide();
+					listViewShowHide(listView);
 			}
 								
 		});
@@ -316,22 +317,27 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		dec_title.setText("當時我感覺：");
 		dec_title.setTypeface(wordTypefaceBold);
 		
-		edtext = (EditText)discription_layout.findViewById(R.id.description_content);
-		/*sp_content = (TextView)spinner_layout.findViewById(R.id.spinner_content);
-		sp_content.setText("");
-		sp_content.setTypeface(wordTypefaceBold);
-		sp_content.setOnClickListener(new OnClickListener(){
+		/*TODO*/
+		/*edtext = (TextView)discription_layout.findViewById(R.id.description_content);
+		edtext.setText("");
+		edtext.setTypeface(wordTypefaceBold);
+		edtext.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
-				//listView.setVisibility(View.VISIBLE);
-				if(items!= -1)
-					listViewShowHide();
+	        	//typetext.setText(R.string.note_mood);
+	        	
+	        	//SetListItem(R.array.note_notgood);
+	        	SetListItemMood();
+	        	//SetItem(sp_item,R.array.note_notgood);
+	        	//spinner_content.performClick();
+	        	
+				listViewShowHide(listView2);
 			}
 								
-		});
+		});*/
 		
-		listView = (ListView)spinner_layout.findViewById(R.id.item_listview);*/
+		listView2 = (ListView)spinner_layout.findViewById(R.id.item_listview2);
 //		edtext.setOnFocusChangeListener(new OnFocusChangeListener() {
 //
 //		    @Override
@@ -344,7 +350,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 //		        }
 //		    }
 //		});
-		edtext.setOnTouchListener(new OnTouchListener() {
+		/*edtext.setOnTouchListener(new OnTouchListener() {
 		    @Override
 		    public boolean onTouch(View v, MotionEvent event) {
 		        if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -353,7 +359,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		        }
 		        return false;
 		    }
-		});
+		});*/
 		
 		//Bottom View
 		View bottom = BarButtonGenerator.createTwoButtonView(R.string.cancel, R.string.ok, new CancelOnClickListener(), endOnClickListener);
@@ -409,13 +415,16 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	    }
 	}
 	
-	private void listViewShowHide(){
+	private void listViewShowHide(ListView listview){
 		if(!viewshow)
-			listView.setVisibility(View.VISIBLE);
+			listview.setVisibility(View.VISIBLE);
 		else
-			listView.setVisibility(View.GONE);
+			listview.setVisibility(View.GONE);
 		
-		viewshow = !viewshow;
+		if(listview == listView)
+			viewshow = !viewshow;
+		if(listview == listView2)
+			viewshow2 = !viewshow2;
 	}
 	
 	public void copingSetting(){
@@ -573,7 +582,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	}
 	
 	
-	private void SetListItem(int array){
+	/*private void SetListItem(int array){
 		//ArrayAdapter adapter = ArrayAdapter.createFromResource(context, array, android.R.layout.simple_list_item_1);
 		items = -1;
 		sp_content.setText(""); //TODO: 假如點到同一個不要清掉
@@ -602,6 +611,37 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		sv.smoothScrollTo(0 , (int)convertDpToPixel((float)200));
 		
 		//.setOnItemSelectedListener(new SpinnerXMLSelectedListener());
+	}*/
+	
+	private void SetListItemMood(){
+		//edtext.setText(""); //TODO: 假如點到同一個不要清掉
+		
+		String[] moods={"開心",
+						"難過",
+						"生氣"};
+		//ArrayAdapter adapter = new ArrayAdapter<String>(context, R.layout.my_listitem, after);
+		//listView.setAdapter(adapter);
+		listView.setOnItemClickListener(new OnItemClickListener(){
+
+		   @Override
+		   public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+			   ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_SELECT_ITEM);
+			   TextView c = (TextView) view.findViewById(android.R.id.text1);
+			    String playerChanged = c.getText().toString();
+			    
+			    items = noteCategory.myNewHashMap.get(playerChanged);
+				Log.d(TAG, items+"");
+			    //Toast.makeText(Settings.this,playerChanged, Toast.LENGTH_SHORT).show();  
+			 sp_content.setText(playerChanged);
+			 listView.setVisibility(View.GONE);
+			 viewshow = false;
+		   }
+		   
+		});
+		setListViewHeightBasedOnItems(listView);
+		listView.setVisibility(View.VISIBLE);
+		viewshow = true;
+		sv.smoothScrollTo(0 , (int)convertDpToPixel((float)200));
 	}
 	
 	private void SetListItem2(int type){
@@ -610,7 +650,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		items = -1;
 		sp_content.setText(""); //TODO: 假如點到同一個不要清掉
 		//ArrayAdapter adapter = ArrayAdapter.createFromResource(context, array, R.layout.my_listitem);
-		String[] type1 = PreferenceControl.getType1();; 
+		String[] type1 = PreferenceControl.getType1();
 		switch(type){
 		case 1:
 			type1 = PreferenceControl.getType1();

@@ -282,7 +282,7 @@
         android:layout_height="65dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="2dp"
-        android:layout_marginTop="67dp"
+        android:layout_marginTop="52dp"
         android:padding="13.3dp"
         android:src="@drawable/appeal" />
     

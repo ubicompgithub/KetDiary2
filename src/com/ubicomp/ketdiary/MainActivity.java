@@ -11,6 +11,7 @@ import com.ubicomp.ketdiary.data.download.CassetteIDCollector;
 import com.ubicomp.ketdiary.data.structure.Cassette;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TestResult;
+import com.ubicomp.ketdiary.data.structure.TimeValue;
 import com.ubicomp.ketdiary.dialog.CheckResultDialog;
 import com.ubicomp.ketdiary.dialog.NoteDialog4;
 import com.ubicomp.ketdiary.main.fragment.DaybookFragment;
@@ -954,6 +955,45 @@ public class MainActivity extends FragmentActivity {
 		if(cassetteId == null)
 			cassetteId = "CT_Test";
 		TestResult testResult = new TestResult(result, timestamp, cassetteId,	1, isFilled, 0, 0);
+		
+		/* Check appeal (Pos) */
+		if(result == 1)
+		{
+			long _ts = PreferenceControl.getAppealLastPos();
+			TimeValue _tv = TimeValue.generate(_ts);
+			TimeValue now_tv = TimeValue.generate(timestamp);
+			int appealAble = PreferenceControl.getAppealAble();
+			
+			if(_ts == 0)
+			{
+				PreferenceControl.setAppealPos(true);
+			}
+			else
+			{
+				boolean sameday = _tv.isSameDay(now_tv);
+				if(!sameday)
+				{
+					PreferenceControl.setAppealPos(true);
+				}
+				else
+				{
+					boolean pre = PreferenceControl.getAppealFail();
+					if(pre)
+					{
+						PreferenceControl.setAppealPos(false);
+						PreferenceControl.setAppealAble(2);
+						PreferenceControl.setAppealStartTime(timestamp);
+					}
+					else
+					{
+						PreferenceControl.setAppealPos(true);
+					}
+				}
+				
+			}
+			PreferenceControl.setAppealLastPos(timestamp);
+		}
+		/* check end */
 		
 		if(db.getTodayTestCount() == 1){
 			addScore = db.insertTestResult(testResult, true);

@@ -43,6 +43,13 @@ public class PreferenceControl {
 	 * perDrinkCost
 	 * startdate
 	 * systemLock
+	 * appealOpen
+	 * appealAble
+	 * appealFail
+	 * appealPos
+	 * appealLastFail
+	 * appealLastPos
+	 * appealStartTime
 	 */
 	
 	/** Default setting at the first time of launching SoberDiary */
@@ -59,6 +66,14 @@ public class PreferenceControl {
 				cal.get(Calendar.DAY_OF_MONTH));
 		
 		setOpenAppTimestamp();
+		
+		setAppealOpen(false);
+		setAppealAble(0);
+		setAppealFail(false);
+		setAppealPos(false);
+		setAppealLastFail(0);
+		setAppealLastPos(0);
+		setAppealStartTime(0);
 	}
 
 	/**
@@ -959,6 +974,37 @@ public class PreferenceControl {
 		edit.commit();
 	}
 	
+	/** Get the names of the */
+	public static String[] getTypeMood() {
+		String[] names = new String[noteNum];
+		names[0] = sp.getString("typeMood_name0", noteCateogry.play.get(900));
+		names[1] = sp.getString("typeMood_name1", noteCateogry.play.get(901));
+		names[2] = sp.getString("typeMood_name2", noteCateogry.play.get(902));
+		names[3] = sp.getString("typeMood_name3", "");
+		names[4] = sp.getString("typeMood_name4", "");
+		names[5] = sp.getString("typeMood_name5", "");
+		names[6] = sp.getString("typeMood_name6", "");
+		names[7] = sp.getString("typeMood_name7", "");
+		names[8] = sp.getString("typeMood_name8", "");
+		names[9] = sp.getString("typeMood_name9", "");
+		return names;
+	}
+
+	public static void setTypeMood(String[] type1) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putString("typeMood_name0", type1[0]);
+		edit.putString("typeMood_name1", type1[1]);
+		edit.putString("typeMood_name2", type1[2]);
+		edit.putString("typeMood_name3", type1[3]);
+		edit.putString("typeMood_name4", type1[4]);
+		edit.putString("typeMood_name5", type1[5]);
+		edit.putString("typeMood_name6", type1[6]);
+		edit.putString("typeMood_name7", type1[7]);
+		edit.putString("typeMood_name8", type1[8]);
+		edit.putString("typeMood_name9", type1[9]);
+		edit.commit();
+	}
+	
 
 
 	public static long getDetectionTimestamp() {
@@ -1222,9 +1268,77 @@ public class PreferenceControl {
 		edit.putLong("lastShowNotification", curTime);
 		edit.commit();
 	}
-
 	
+	/** Appeal **/
+	public static boolean getAppealOpen() {
+		return sp.getBoolean("appealOpen", false);
+	}
 
+	public static void setAppealOpen(boolean isOpen) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putBoolean("appealOpen", isOpen);
+		edit.commit();
+	}
+
+	public static int getAppealAble() {
+		return sp.getInt("appealAble", 0);
+	}
+
+	public static void setAppealAble(int isOpen) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putInt("appealAble", isOpen);
+		edit.commit();
+	}
+	
+	public static boolean getAppealFail() {
+		return sp.getBoolean("appealFail", false);
+	}
+
+	public static void setAppealFail(boolean is) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putBoolean("appealFail", is);
+		edit.commit();
+	}
+	
+	public static boolean getAppealPos() {
+		return sp.getBoolean("appealPos", false);
+	}
+
+	public static void setAppealPos(boolean is) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putBoolean("appealPos", is);
+		edit.commit();
+	}
+	
+	public static long getAppealLastFail() {
+		return sp.getLong("appealLastFail", 0);
+	}
+
+	public static void setAppealLastFail(long ts) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putLong("appealLastFail", ts);
+		edit.commit();
+	}
+	
+	public static long getAppealLastPos() {
+		return sp.getLong("appealLastPos", 0);
+	}
+
+	public static void setAppealLastPos(long ts) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putLong("appealLastPos", ts);
+		edit.commit();
+	}
+	
+	public static long getAppealStartTime() {
+		return sp.getLong("appealStartTime", 0);
+	}
+
+	public static void setAppealStartTime(long ts) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putLong("appealStartTime", ts);
+		edit.commit();
+	}
 	// public static String[] getSponsors() {
 	// 	String[] sponsor = new String[5];
 	// 	sponsor[0] = sp.getString("sponsor0", "");

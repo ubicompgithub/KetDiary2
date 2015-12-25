@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="note_mood">
+        <item>開心</item>
+        <item>難過</item>
+        <item>生氣</item>
+    </string-array>
+</resources>

@@ -7,10 +7,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -37,6 +40,7 @@ import com.ubicomp.ketdiary.data.file.MainStorage;
 import com.ubicomp.ketdiary.main.fragment.TestFragment2;
 import com.ubicomp.ketdiary.system.cleaner.Cleaner;
 import com.ubicomp.ketdiary.ui.BarButtonGenerator;
+import com.ubicomp.ketdiary.ui.LoadingDialogControl;
 import com.ubicomp.ketdiary.ui.Typefaces;
 
 /**
@@ -53,16 +57,28 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 	private Camera myCamera;  
     private File dir;
     private boolean picTaked;
-    private Bitmap jpegPic, showPic;
-    private ImageView takePicView;
-    private TextView nextText, cancelText, undoText, headerText, hintText, hint2Text;
+    public Bitmap jpegPic;
+	public static Bitmap showPic;
+    private ImageView takePicView, nextView, cancelView, undoView;
+    private TextView  nextText, cancelText, undoText,headerText, hintText, hint2Text;
     
     public Activity activity = null;
     private long ts;
+    private Handler mhandler;
+    private boolean camera_using;
     
-    @Override
+    public static boolean End;
+    public static Activity fa;
+    
+    @SuppressWarnings("deprecation")
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        //LoadingDialogControl.show(AppealActivity.this,0);
+        
+        fa = this;
+        
         setContentView(R.layout.activity_get_picture);
         
         ts = TestFragment2.appealTimeValue.getTimestamp();
@@ -73,23 +89,22 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
         lineView = (ImageView)findViewById(R.id.take_pic_line);
         
         surfaceView1 = (SurfaceView)findViewById(R.id.surfaceView1);
-        holder = surfaceView1.getHolder();//獲得surfaceHolder引用   
-        holder.addCallback(this);   
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);//設置類型 
         
         picTaked = false;
-        
-        dir = MainStorage.getMainStorageDirectory();
+        camera_using = false;
         
         takePicView = (ImageView)findViewById(R.id.take_pic_icon);
-        nextText = (TextView)findViewById(R.id.take_pic_next);
-        undoText = (TextView)findViewById(R.id.take_pic_re);
-        cancelText = (TextView)findViewById(R.id.take_pic_cancel);
-        headerText = (TextView)findViewById(R.id.take_pic_header);
+        nextView = (ImageView)findViewById(R.id.take_pic_next);
+        undoView = (ImageView)findViewById(R.id.take_pic_re);
+        cancelView = (ImageView)findViewById(R.id.take_pic_cancel);
+        nextText = (TextView)findViewById(R.id.take_pic_next_text);
+        undoText = (TextView)findViewById(R.id.take_pic_re_text);
+        cancelText = (TextView)findViewById(R.id.take_pic_cancel_text);
+        //headerText = (TextView)findViewById(R.id.take_pic_header);
         hintText = (TextView)findViewById(R.id.take_pic_hint);
         hint2Text = (TextView)findViewById(R.id.take_pic_hint2);
         
-        TakePicState();
+        End = false;
         
         takePicView.setOnClickListener(new View.OnClickListener(){
 			
@@ -99,27 +114,14 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 				if(picTaked)
 					return;
 				
-				myCamera.autoFocus(new AutoFocusCallback() {
-			        @Override
-			        public void onAutoFocus(boolean success, Camera camera) {  
-			            // TODO Auto-generated method stub 
-			            if(success)  
-			             {  
-			                //設置参數,並拍照  
-			                Camera.Parameters params = myCamera.getParameters();   
-			                params.setPictureFormat(PixelFormat.JPEG);  
-			                params.setPreviewSize(640,480);  
-			                myCamera.setParameters(params);   
-			                myCamera.takePicture(null, null, jpegCallback);  
-			            }  
-			        }
-				});
+                myCamera.takePicture(null, null, jpegCallback); 
+
 			}
 			
 			
 		});
         
-        nextText.setOnClickListener(new View.OnClickListener(){
+        nextView.setOnClickListener(new View.OnClickListener(){
 			
 			@SuppressWarnings("deprecation")
 			@Override
@@ -128,6 +130,7 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 					return;
 				try  
 				{ 
+					
 					File picFile = new File(dir + File.separator + "Appeal");
 					if(!picFile.exists())
 						picFile.mkdir();
@@ -146,12 +149,15 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 					bos.flush();   
 					bos.close(); 
 					
+					picTaked = false;
+					camera_using = false;
+					
 					Intent intent = new Intent();
 	                intent.setClass(AppealActivity.this, RecordVoiceActivity.class);
 	                startActivity(intent); 
 					
-					onDestroy();
-					finish();
+					//onDestroy();
+					//finish();
 					
 				} catch (IOException e) {    
 		             e.printStackTrace();  
@@ -162,7 +168,7 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 			
 		});
 
-        undoText.setOnClickListener(new View.OnClickListener(){
+        undoView.setOnClickListener(new View.OnClickListener(){
 			
 			@SuppressWarnings("deprecation")
 			@Override
@@ -176,11 +182,12 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 			
 		});
         
-        cancelText.setOnClickListener(new View.OnClickListener(){
+        cancelView.setOnClickListener(new View.OnClickListener(){
 			
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onClick(View v) {
+				camera_using = false;
 				onDestroy();
 				finish();
 			}
@@ -190,7 +197,11 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
     }
     
     private void TakePicState(){
+    	camera_using = true;
     	
+    	mhandler = new Handler();
+        mhandler.postDelayed(updateTimer, 2000);
+        
     	ImageView1.setVisibility(View.INVISIBLE); 
 		picTaked = false;
 		takePicView.setVisibility(View.VISIBLE); 
@@ -204,6 +215,9 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
     }
     
     private void ViewPicState(){
+    	camera_using = false;
+    	
+    	mhandler = null; 
     	
     	ImageView1.setVisibility(View.VISIBLE); 
 		picTaked = true;
@@ -244,12 +258,13 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
         }   
 	}
 	@Override
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-		myCamera.stopPreview();//停止預覽   
-        myCamera.release();//釋放相機資源  
-        myCamera = null;  
-
+	public void surfaceDestroyed(SurfaceHolder holder) 
+	{
+		if(myCamera != null){
+        	myCamera.stopPreview(); 
+        	myCamera.release(); 
+        	myCamera = null;  
+        }
 	}
 	 
 	private PictureCallback jpegCallback = new PictureCallback() {         
@@ -281,9 +296,84 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 	   } 
 	};
 	
+	
+	private Runnable updateTimer = new Runnable(){
+    	@SuppressWarnings("deprecation")
+    	public void run(){
+    		
+    		if(camera_using){
+    			myCamera.autoFocus(new AutoFocusCallback() {
+    				@Override
+    				public void onAutoFocus(boolean success, Camera camera) {  
+    					// TODO Auto-generated method stub 
+    					if(success)  
+    					{  
+    						Camera.Parameters params = myCamera.getParameters();   
+    						params.setPictureFormat(PixelFormat.JPEG);  
+    						params.setPreviewSize(640,480);  
+    						myCamera.setParameters(params);    
+    					}  
+    				}
+    			});
+    			mhandler.postDelayed(this, 2000);
+    		}
+		 }
+    	
+    };
+    
+    @Override
+    protected void onStart()
+	{ 
+        super.onStart();
+      
+    	holder = surfaceView1.getHolder();
+        holder.addCallback(this);   
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        
+        dir = MainStorage.getMainStorageDirectory();
+    }
+    
+    @Override
+    public void onPause()
+    {
+    	super.onPause();
+    	
+    	camera_using = false;
+    	
+    	if(mhandler != null)
+    		mhandler.removeCallbacksAndMessages(null);
+    	
+    	mhandler = null; 
+    }
+    
+    @Override
+    public void onResume()
+    {
+    	super.onResume();
+    	
+    	if(picTaked)
+    	{
+    		ViewPicState();
+    	}
+    	else if(!picTaked)
+    	{
+    		TakePicState();
+    	}
+    	
+    	//LoadingDialogControl.dismiss();
+    }
+    
 	@Override
-    protected void onDestroy(){ //真正作用區
+    protected void onDestroy()
+	{ 
         super.onDestroy();
+        
+        if(myCamera != null){
+        	myCamera.stopPreview(); 
+        	myCamera.release(); 
+        	myCamera = null;  
+        }
         finish();
     }
+
 }

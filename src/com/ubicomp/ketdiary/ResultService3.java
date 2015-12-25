@@ -9,6 +9,7 @@ import com.ubicomp.ketdiary.data.file.MainStorage;
 import com.ubicomp.ketdiary.data.file.PicFileHandler;
 import com.ubicomp.ketdiary.data.file.TestDataParser2;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
+import com.ubicomp.ketdiary.data.structure.TimeValue;
 import com.ubicomp.ketdiary.dialog.NoteDialog4;
 import com.ubicomp.ketdiary.main.fragment.TestFragment2;
 import com.ubicomp.ketdiary.system.PreferenceControl;
@@ -536,7 +537,46 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 					secondVoltage, devicePower, colorReading,
 	                connectionFailRate, failedReason, hardwardVersion);
 			
-			db.insertTestDetail(testDetail);	
+			/* Check appeal (fail) */
+			if(failedState >= 8 && failedState <= 12)
+			{
+				long _ts = PreferenceControl.getAppealLastFail();
+				TimeValue _tv = TimeValue.generate(_ts);
+				TimeValue now_tv = TimeValue.generate(ts);
+				int appealAble = PreferenceControl.getAppealAble();
+				
+				if(_ts == 0)
+				{
+					PreferenceControl.setAppealFail(true);
+				}
+				else
+				{
+					boolean sameday = _tv.isSameDay(now_tv);
+					if(!sameday)
+					{
+						PreferenceControl.setAppealFail(true);
+					}
+					else
+					{
+						boolean pre = PreferenceControl.getAppealFail();
+						if(pre)
+						{
+							PreferenceControl.setAppealFail(false);
+							PreferenceControl.setAppealAble(1);
+							PreferenceControl.setAppealStartTime(ts);
+						}
+						else
+						{
+							PreferenceControl.setAppealFail(true);
+						}
+					}
+					
+				}
+				PreferenceControl.setAppealLastFail(ts);
+			}
+			/* check end */
+			
+			db.insertTestDetail(testDetail);
 			db.insertCassette(cassetteId);
     	}
     }
