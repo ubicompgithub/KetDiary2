@@ -176,6 +176,7 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
 				if(!picTaked)
 					return;
 				
+				
 				TakePicState();
 			}
 			
@@ -217,6 +218,8 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
     private void ViewPicState(){
     	camera_using = false;
     	
+    	if(mhandler != null)
+    		mhandler.removeCallbacksAndMessages(null);
     	mhandler = null; 
     	
     	ImageView1.setVisibility(View.VISIBLE); 
@@ -310,7 +313,7 @@ public class AppealActivity extends Activity implements SurfaceHolder.Callback{
     					{  
     						Camera.Parameters params = myCamera.getParameters();   
     						params.setPictureFormat(PixelFormat.JPEG);  
-    						params.setPreviewSize(640,480);  
+    						params.setPreviewSize(1280,720);  
     						myCamera.setParameters(params);    
     					}  
     				}
