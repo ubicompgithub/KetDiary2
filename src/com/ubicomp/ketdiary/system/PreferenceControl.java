@@ -977,16 +977,26 @@ public class PreferenceControl {
 	/** Get the names of the */
 	public static String[] getTypeMood() {
 		String[] names = new String[noteNum];
-		names[0] = sp.getString("typeMood_name0", noteCateogry.play.get(900));
-		names[1] = sp.getString("typeMood_name1", noteCateogry.play.get(901));
-		names[2] = sp.getString("typeMood_name2", noteCateogry.play.get(902));
-		names[3] = sp.getString("typeMood_name3", "");
-		names[4] = sp.getString("typeMood_name4", "");
-		names[5] = sp.getString("typeMood_name5", "");
-		names[6] = sp.getString("typeMood_name6", "");
-		names[7] = sp.getString("typeMood_name7", "");
-		names[8] = sp.getString("typeMood_name8", "");
-		names[9] = sp.getString("typeMood_name9", "");
+		/*names[0] = noteCateogry.play.get(900);
+		names[1] = noteCateogry.play.get(901);
+		names[2] = noteCateogry.play.get(902);
+		names[3] = "";
+		names[4] = "";
+		names[5] = "";
+		names[6] = "";
+		names[7] = "";
+		names[8] = "";
+		names[9] = "";*/
+		names[0] = "開心";
+		names[1] = "難過";
+		names[2] = "生氣";
+		names[3] = "悲傷";
+		names[4] = "";
+		names[5] = "";
+		names[6] = "";
+		names[7] = "";
+		names[8] = "";
+		names[9] = "";
 		return names;
 	}
 

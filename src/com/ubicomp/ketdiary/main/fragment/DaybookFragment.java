@@ -53,6 +53,7 @@ import com.ubicomp.ketdiary.daybook.linechart.ChartCaller;
 import com.ubicomp.ketdiary.daybook.linechart.LineChartTitle;
 import com.ubicomp.ketdiary.daybook.linechart.LineChartView;
 import com.ubicomp.ketdiary.dialog.AddNoteDialog2;
+import com.ubicomp.ketdiary.dialog.AddNoteDialogThinking;
 import com.ubicomp.ketdiary.dialog.CheckResultDialog;
 import com.ubicomp.ketdiary.dialog.MyDialog;
 import com.ubicomp.ketdiary.dialog.QuestionCaller;
@@ -141,6 +142,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	public ImageView addButton, randomButton;
 	
 	public AddNoteDialog2 notePage = null;
+	public AddNoteDialogThinking notePage2 = null;
 	public boolean isNotePageShow = false;
 	private boolean isContentAdd = true;
 	private boolean isFilterOpen = false;
@@ -187,6 +189,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	private static final int LINECHART_PAGE = 2;
 	private int frontState;
 		
+	public static int addNoteStep = 0;
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -561,7 +565,9 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 
 		lineChartFilterButton = (ImageView) lineChartBar.findViewById(R.id.line_chart_filter);
 			
-		notePage = new AddNoteDialog2(daybookFragment, fragment_layout);
+		
+		
+		notePage = new AddNoteDialog2(daybookFragment, fragment_layout,activity);
 		addButton.bringToFront();
 		addButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -1941,7 +1947,16 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		}
 	}
 
+	void addNoteThinkingStep()
+	{
+		notePage2 = new AddNoteDialogThinking(daybookFragment, fragment_layout, activity);
 
+				notePage2.initialize();
+				notePage2.show();
+				isNotePageShow = true;
+				addButton.setVisibility(View.INVISIBLE);
+				fragment_layout.setEnabled(false);
+	}
 
 
 }

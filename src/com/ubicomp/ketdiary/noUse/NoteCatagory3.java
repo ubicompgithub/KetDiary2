@@ -2,6 +2,7 @@ package com.ubicomp.ketdiary.noUse;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import android.annotation.SuppressLint;
 
@@ -18,6 +19,7 @@ public class NoteCatagory3 {
 	public HashMap <Integer, String> conflict = new HashMap< Integer, String >();
 	public HashMap <Integer, String> social = new HashMap< Integer, String >();
 	public HashMap <Integer, String> play = new HashMap< Integer, String >();
+	public Map <Integer, String> mood = new TreeMap< Integer, String >();
 	
 	public Map <String, Integer> myNewHashMap = new HashMap<String, Integer>();
 	public HashMap <Integer, String> dictionary = new HashMap< Integer, String >();
@@ -100,6 +102,11 @@ public class NoteCatagory3 {
 		play.put(802, "希望對性行為有幫助");
 		play.put(803, "與動物相處");
 		
+		mood.put(900, "開心");
+		mood.put(901, "難過");
+		mood.put(902, "生氣");
+		mood.put(903, "悲傷");
+		
 		for(Map.Entry<Integer, String> entry : negative.entrySet()){
 		    myNewHashMap.put(entry.getValue(), entry.getKey());
 		}
@@ -122,6 +129,9 @@ public class NoteCatagory3 {
 		    myNewHashMap.put(entry.getValue(), entry.getKey());
 		}
 		for(Map.Entry<Integer, String> entry : play.entrySet()){
+		    myNewHashMap.put(entry.getValue(), entry.getKey());
+		}
+		for(Map.Entry<Integer, String> entry : mood.entrySet()){
 		    myNewHashMap.put(entry.getValue(), entry.getKey());
 		}
 		

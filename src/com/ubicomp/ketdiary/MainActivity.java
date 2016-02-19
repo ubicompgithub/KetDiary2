@@ -1,5 +1,6 @@
 package com.ubicomp.ketdiary;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -17,6 +18,7 @@ import com.ubicomp.ketdiary.dialog.NoteDialog4;
 import com.ubicomp.ketdiary.main.fragment.DaybookFragment;
 import com.ubicomp.ketdiary.main.fragment.StatisticFragment;
 import com.ubicomp.ketdiary.main.fragment.TestFragment2;
+import com.ubicomp.ketdiary.main.fragment.TestFragment2.OnFragmentListener;
 import com.ubicomp.ketdiary.system.Config;
 import com.ubicomp.ketdiary.system.PreferenceControl;
 import com.ubicomp.ketdiary.system.check.StartDateCheck;
@@ -33,6 +35,7 @@ import com.ubicomp.ketdiary2.R;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -48,6 +51,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -61,6 +65,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -75,7 +80,7 @@ import android.widget.TextView;
  * 
  * @author Andy Chen
  */
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements OnFragmentListener {
 	
 	
 	private static MainActivity mainActivity = null;
@@ -143,6 +148,8 @@ public class MainActivity extends FragmentActivity {
 	public static long WAIT_RESULT_TIME = PreferenceControl.getAfterCountDown() * 1000;
 	public static final int ACTION_RECORD = 1;
 	public static final int ACTION_QUESTIONNAIRE = 2;
+
+	private static final int RESULT_SPEECH = 0;
 	
 	private ImageDetectionValidate imageDetectionValidate;
 	
@@ -1159,6 +1166,34 @@ public class MainActivity extends FragmentActivity {
         });
         //dialogOKButton.setOnClickListener(new EndOnClickListener() );
 	}
-
 	
+	public void onFragmentAction(int flag) {
+
+		//final ProgressDialog dialogg = ProgressDialog.show(MainActivity.this,
+                //"讀取中", "請等待3秒...",true);
+		LoadingDialogControl.show(MainActivity.this);
+
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+	   
+        switch (requestCode) {
+        case RESULT_SPEECH: {
+        	Log.i("GG", "inin");
+            if (resultCode == RESULT_OK && null != data) {
+   
+               ArrayList<String> text = data
+                       .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+               
+               EditText thinking_text = (EditText)findViewById(R.id.description_thinking_content);
+               if (text.size() > 0)
+                thinking_text.setText(text.get(0));
+            }
+           break;
+        }
+   
+        }
+    }
 }

@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.speech.RecognizerIntent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -53,6 +56,7 @@ import com.ubicomp.ketdiary.ui.CustomScrollView;
 import com.ubicomp.ketdiary.ui.CustomToast;
 import com.ubicomp.ketdiary.ui.CustomToastSmall;
 import com.ubicomp.ketdiary.ui.Typefaces;
+import com.ubicomp.ketdiary.main.fragment.DaybookFragment;
 
 
 /**
@@ -65,6 +69,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	private Activity activity;
 	private AddNoteDialog2 addNoteDialog = this;
 	private static final String TAG = "ADD_PAGE";
+	public AddNoteDialogThinking notePage2 = null;
 	
 	private TestQuestionCaller2 testQuestionCaller;
 	private Context context;
@@ -108,6 +113,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	//Listener
 
 	private EndOnClickListener endOnClickListener;
+	private NextOnClickListener nextOnClickListener;
 	private GoResultOnClickListener goResultOnClickListener;
 	private GoCopingToResultOnClickListener goCopingToResultOnClickListener;
 	private MyOnPageChangeListener myOnPageChangeListener;
@@ -117,6 +123,8 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	private int type;
 	private int items, items2;
 	private int impact;
+	private int moodNum;
+	private boolean[] moodFlag = new boolean[20];
 	private String description;
 	private boolean viewshow = false, viewshow2 = false;
 	
@@ -130,12 +138,17 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	
 	private static final String[] Timeslot_str = {"上午", "下午", "晚上"};
 	private static final String[] Date_str = {"今天", "昨天", "前天"};
+	protected static final int RESULT_SPEECH = 0;
 	
 	private static Typeface wordTypefaceBold = Typefaces.getWordTypefaceBold();
 	private static Typeface wordTypeface = Typefaces.getWordTypeface();
 	
-	public AddNoteDialog2(TestQuestionCaller2 testQuestionCaller, RelativeLayout mainLayout){
-		
+	private ImageView speech_button, check_bar, check_out;
+	private EditText thinking_text;
+	private boolean notification_yes;
+	
+	public AddNoteDialog2(TestQuestionCaller2 testQuestionCaller, RelativeLayout mainLayout, Activity activity){
+		this.activity = activity;
 		this.testQuestionCaller = testQuestionCaller;
 		this.context = App.getContext();
 		this.inflater = (LayoutInflater) context
@@ -148,6 +161,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	    
 		//view = inflater.inflate(R.layout.fragment_note, container, false);
 		endOnClickListener = new EndOnClickListener();
+		nextOnClickListener = new NextOnClickListener();
 		goResultOnClickListener = new GoResultOnClickListener();
 		goCopingToResultOnClickListener = new GoCopingToResultOnClickListener();
 				
@@ -309,6 +323,42 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		TextView impact_title = (TextView)impact_layout.findViewById(R.id.impact_title);
 		impact_title.setTypeface(wordTypefaceBold);
 		
+		
+		
+		//當時的行為
+		LinearLayout description_thinking_layout = (LinearLayout) inflater.inflate(
+				R.layout.bar_description_thinking, null);
+		
+		TextView thinking_title = (TextView)description_thinking_layout.findViewById(R.id.description_thinking_title);
+		thinking_title.setTypeface(wordTypefaceBold);
+		thinking_title.setText("當時我做了什麼：");
+		
+		speech_button = (ImageView) description_thinking_layout.findViewById(R.id.speech_to_text);
+		thinking_text = (EditText) description_thinking_layout.findViewById(R.id.description_thinking_content);
+		
+		thinking_text.setText("");
+		
+		speech_button.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				
+				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "zh-TW"); // en-US
+				try {
+					activity.startActivityForResult(intent, RESULT_SPEECH);
+				 } catch (ActivityNotFoundException a) {
+	                    Toast t = Toast.makeText(activity.getApplicationContext(),
+	                            "Opps! Your device doesn't support Speech to Text",
+	                            Toast.LENGTH_SHORT);
+	                    t.show();	       
+	             }
+				
+			}
+								
+		});
+		
 		//Description
 		LinearLayout discription_layout = (LinearLayout) inflater.inflate(
 				R.layout.bar_description, null);
@@ -318,26 +368,52 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		dec_title.setTypeface(wordTypefaceBold);
 		
 		/*TODO*/
-		/*edtext = (TextView)discription_layout.findViewById(R.id.description_content);
+		edtext = (TextView)discription_layout.findViewById(R.id.description_content);
 		edtext.setText("");
 		edtext.setTypeface(wordTypefaceBold);
 		edtext.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
-	        	//typetext.setText(R.string.note_mood);
-	        	
-	        	//SetListItem(R.array.note_notgood);
-	        	SetListItemMood();
-	        	//SetItem(sp_item,R.array.note_notgood);
-	        	//spinner_content.performClick();
-	        	
+
+	        	//Log.d("GG", "01");
 				listViewShowHide(listView2);
+				
 			}
 								
-		});*/
+		});
 		
-		listView2 = (ListView)spinner_layout.findViewById(R.id.item_listview2);
+		listView2 = (ListView)discription_layout.findViewById(R.id.item_listview2);
+		
+		SetListItemFeeling();
+		
+		for(int i = 0;i < 10; ++i)
+    		moodFlag[i] = false;
+		
+		//提醒
+		LinearLayout notification_layout = (LinearLayout) inflater.inflate(
+				R.layout.bar_notification, null);
+		
+		check_bar = (ImageView) notification_layout.findViewById(R.id.check_in);
+		check_out = (ImageView) notification_layout.findViewById(R.id.check_out);
+		
+		check_bar.setImageResource(R.drawable.check_in);
+		notification_yes = false;
+		check_out.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				if(notification_yes)
+					check_bar.setImageResource(0);
+				else
+					check_bar.setImageResource(R.drawable.check_in);
+				
+				notification_yes = !notification_yes;
+			}
+			
+			
+		});
+		
 //		edtext.setOnFocusChangeListener(new OnFocusChangeListener() {
 //
 //		    @Override
@@ -362,13 +438,16 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		});*/
 		
 		//Bottom View
-		View bottom = BarButtonGenerator.createTwoButtonView(R.string.cancel, R.string.ok, new CancelOnClickListener(), endOnClickListener);
+		View bottom = BarButtonGenerator.createThreeButtonView(R.string.cancel, R.string.end_record,R.string.next_step, 
+														new CancelOnClickListener(), endOnClickListener, nextOnClickListener);
 		
 		main_layout.addView(center_layout);
 		main_layout.addView(type_layout);
 		main_layout.addView(spinner_layout);
-		main_layout.addView(impact_layout);
+		main_layout.addView(description_thinking_layout);
 		main_layout.addView(discription_layout);
+		main_layout.addView(impact_layout);
+		main_layout.addView(notification_layout);
 		
 //		center_layout.setOnClickListener(new OnClickListener(){
 //
@@ -416,15 +495,21 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	}
 	
 	private void listViewShowHide(ListView listview){
-		if(!viewshow)
-			listview.setVisibility(View.VISIBLE);
-		else
-			listview.setVisibility(View.GONE);
-		
-		if(listview == listView)
+		if(listview == listView){
+			if(!viewshow)
+				listview.setVisibility(View.VISIBLE);
+			else
+				listview.setVisibility(View.GONE);
 			viewshow = !viewshow;
-		if(listview == listView2)
+		}
+		if(listview == listView2){
+			//Log.d("GG","02");
+			if(!viewshow2)
+				listview.setVisibility(View.VISIBLE);
+			else
+				listview.setVisibility(View.GONE);
 			viewshow2 = !viewshow2;
+		}
 	}
 	
 	public void copingSetting(){
@@ -582,67 +667,6 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 	}
 	
 	
-	/*private void SetListItem(int array){
-		//ArrayAdapter adapter = ArrayAdapter.createFromResource(context, array, android.R.layout.simple_list_item_1);
-		items = -1;
-		sp_content.setText(""); //TODO: 假如點到同一個不要清掉
-		ArrayAdapter adapter = ArrayAdapter.createFromResource(context, array, R.layout.my_listitem);
-		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(new OnItemClickListener(){
-		   View view2; //保存點選的View
-	       int select_item=-1;
-		   @Override
-		   public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-			   TextView c = (TextView) view.findViewById(android.R.id.text1);
-			    String playerChanged = c.getText().toString();
-			    
-			    items = 100*type + position;
-				Log.d(TAG, items+"");
-			    //Toast.makeText(Settings.this,playerChanged, Toast.LENGTH_SHORT).show();  
-			 sp_content.setText(playerChanged);
-			 listView.setVisibility(View.GONE);
-			 viewshow = false;
-		   }
-		   
-		});
-		setListViewHeightBasedOnItems(listView);
-		listView.setVisibility(View.VISIBLE);
-		viewshow = true;
-		sv.smoothScrollTo(0 , (int)convertDpToPixel((float)200));
-		
-		//.setOnItemSelectedListener(new SpinnerXMLSelectedListener());
-	}*/
-	
-	private void SetListItemMood(){
-		//edtext.setText(""); //TODO: 假如點到同一個不要清掉
-		
-		String[] moods={"開心",
-						"難過",
-						"生氣"};
-		//ArrayAdapter adapter = new ArrayAdapter<String>(context, R.layout.my_listitem, after);
-		//listView.setAdapter(adapter);
-		listView.setOnItemClickListener(new OnItemClickListener(){
-
-		   @Override
-		   public void onItemClick(AdapterView<?> parent, View view, int position, long id){
-			   ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_SELECT_ITEM);
-			   TextView c = (TextView) view.findViewById(android.R.id.text1);
-			    String playerChanged = c.getText().toString();
-			    
-			    items = noteCategory.myNewHashMap.get(playerChanged);
-				Log.d(TAG, items+"");
-			    //Toast.makeText(Settings.this,playerChanged, Toast.LENGTH_SHORT).show();  
-			 sp_content.setText(playerChanged);
-			 listView.setVisibility(View.GONE);
-			 viewshow = false;
-		   }
-		   
-		});
-		setListViewHeightBasedOnItems(listView);
-		listView.setVisibility(View.VISIBLE);
-		viewshow = true;
-		sv.smoothScrollTo(0 , (int)convertDpToPixel((float)200));
-	}
 	
 	private void SetListItem2(int type){
 		ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_SELECT_TYPE + type);
@@ -777,6 +801,87 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 
 		}
 	}
+	
+	//到下一步
+	class NextOnClickListener implements View.OnClickListener{
+		public void onClick(View v){
+			//CustomToastSmall.generateToast("下一步");
+			if(!done){
+				//Toast.makeText(context, "確定要送出結果嗎?" ,Toast.LENGTH_SHORT).show();
+				CustomToastSmall.generateToast("確定要到下一步嗎?");
+				done = true;
+			}
+			else{
+				Log.d(TAG, items+" "+impact);
+				if(state == STATE_NOTE){
+					if(type <= 0 || items < 100){
+						//CustomToastSmall.generateToast(R.string.note_check);
+						//Toast.makeText(context, R.string.note_check ,Toast.LENGTH_SHORT).show();
+						CustomToastSmall.generateToast(R.string.note_check);
+					}
+					else{
+						if(listView.getVisibility() == View.VISIBLE){
+							//Toast.makeText(context, "請選擇項目再送出", Toast.LENGTH_SHORT).show();
+							CustomToastSmall.generateToast("請選擇項目再送出");
+							listView.setVisibility(View.GONE);
+						}
+						else{
+							ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_CONFIRM);
+							
+							impact = impactSeekBar.getProgress();
+							
+							
+							//set next page
+							LinearLayout temp_layout1 = (LinearLayout) inflater.inflate(
+									R.layout.bar_description_date, null);
+							TextView date_text = (TextView)temp_layout1.findViewById(R.id.description_date_content);
+							
+							LinearLayout temp_layout2 = (LinearLayout) inflater.inflate(
+									R.layout.bar_description_date, null);
+							TextView event_text = (TextView)temp_layout2.findViewById(R.id.description_event_content);
+							
+							LinearLayout temp_layout3 = (LinearLayout) inflater.inflate(
+									R.layout.bar_description_date, null);
+							TextView mood_text = (TextView)temp_layout3.findViewById(R.id.description_mood_content);
+							
+							Calendar c = Calendar.getInstance();
+							c.add(Calendar.DAY_OF_MONTH, day*-1);
+							
+							int _year =  c.get(Calendar.YEAR);
+							int _month = c.get(Calendar.MONTH) + 1;         
+							int _day = c.get(Calendar.DAY_OF_MONTH); 
+							
+							
+							//DaybookFragment.addNoteStep = 1;
+							notePage2 = new AddNoteDialogThinking(testQuestionCaller, mainLayout, activity);
+							
+							String ts = thinking_text.getText().toString();
+							
+							notePage2.initialize();
+							notePage2.setAllText( _year+"年"+_month+"月"+_day+"日",sp_content.getText().toString(), edtext.getText().toString(), ts);
+							notePage2.show();
+							
+							close();
+							clear();
+					
+							
+						}
+					}
+					
+				}
+				
+				else if(state == STATE_COPE){
+					//knowingSetting();
+					//
+					//testQuestionCaller.resetView();
+					close();
+					clear();
+				}
+				
+			}
+	    }
+	}
+	
 	
 	class GoResultOnClickListener implements View.OnClickListener{
 		public void onClick(View v){
@@ -1066,32 +1171,45 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		 * @param listView to be resized
 		 * @return true if the listView is successfully resized, false otherwise
 		 */
-		public boolean setListViewHeightBasedOnItems(ListView listView) {
+		public boolean setListViewHeightBasedOnItems(ListView listview) {
 
-		    ListAdapter listAdapter = listView.getAdapter();
+		    ListAdapter listAdapter = listview.getAdapter();
 		    if (listAdapter != null) {
-
+		    	
 		        int numberOfItems = listAdapter.getCount();
-
+		        
+		        //listview2 : mood
+		        if(listview == listView2)
+		        {
+		        	moodNum = numberOfItems;
+		   
+		        }
+		        
 		        // Get total height of all items.
 		        int totalItemsHeight = 0;
 		        for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
-		            View item = listAdapter.getView(itemPos, null, listView);
+		            View item = listAdapter.getView(itemPos, null, listview);
+		            
 		            item.measure(0, 0);
+		            
 		            totalItemsHeight += item.getMeasuredHeight();
 		        }
-
+		        
 		        // Get total height of all item dividers.
-		        int totalDividersHeight = listView.getDividerHeight() * 
+		        int totalDividersHeight = listview.getDividerHeight() * 
 		                (numberOfItems - 1);
-
+		        
 		        // Set list height.
-		        ViewGroup.LayoutParams params = listView.getLayoutParams();
+		        ViewGroup.LayoutParams params = listview.getLayoutParams();
 		        //params.height = totalItemsHeight + totalDividersHeight;
 		        params.height = (int) (convertDpToPixel((float)40)* numberOfItems) + totalDividersHeight;
-		        listView.setLayoutParams(params);
-		        listView.requestLayout();
-
+		        
+		        listview.setLayoutParams(params);
+		        listview.requestLayout();
+		        	
+		        //Log.d("GG", "Iheight : "+totalItemsHeight);
+		        //Log.d("GG", "Dheight : "+totalDividersHeight);
+		        
 		        return true;
 
 		    } else {
@@ -1123,6 +1241,68 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			}
 			
 			
+		}
+		
+		/* feeling : listview item*/
+		private void SetListItemFeeling(){
+			//listView2.setVisibility(View.GONE);
+			//viewshow2 = false;
+			
+			String[] type1 = PreferenceControl.getTypeMood();
+			String[] after = clean(type1);
+			
+			ArrayAdapter adapter = new ArrayAdapter<String>(context, R.layout.my_listitem, after);
+			listView2.setAdapter(adapter);
+			listView2.setOnItemClickListener(new OnItemClickListener(){
+
+			   @Override
+			   public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+				   //ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_SELECT_ITEM);	
+				   
+				   TextView c = (TextView) view.findViewById(android.R.id.text1);
+				    String playerChanged = c.getText().toString();
+				    String showText = "";
+				    int nowMood = noteCategory.myNewHashMap.get(playerChanged);
+				    
+				    int tm = 0;
+					for(int i = 0; i < moodNum; i++)
+					{
+					    if(!moodFlag[i])
+					    	continue;
+					   	tm++;
+					}
+					if(tm >= 3 && !moodFlag[nowMood - 900])
+					   return;
+				    
+				   	
+				   	moodFlag[nowMood - 900] = !moodFlag[nowMood - 900];
+				   	
+
+				   	
+				    //Toast.makeText(Settings.this,playerChanged, Toast.LENGTH_SHORT).show();  
+				    for(int i = 0; i < moodNum; i++)
+				    {
+				    	if(!moodFlag[i])
+				    		continue;
+				    	String ts =  noteCategory.dictionary.get(i+900);
+				    	if(showText != "")
+				    		showText += ", ";
+				    	showText += ts;
+				    	
+				    		
+				    }
+				   	
+					edtext.setText(showText);
+				    //listView2.setVisibility(View.GONE);
+				    //viewshow2 = false;
+			   }
+			   
+			});
+			
+			setListViewHeightBasedOnItems(listView2);
+			listView2.setVisibility(View.GONE);
+			viewshow2 = false;
+			sv.smoothScrollTo(0 , (int)convertDpToPixel((float)200));
 		}
 	
 }

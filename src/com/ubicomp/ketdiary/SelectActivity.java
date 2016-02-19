@@ -45,6 +45,7 @@ public class SelectActivity extends Activity {
 	private MultiRadioGroup noteGroup6;
 	private MultiRadioGroup noteGroup7;
 	private MultiRadioGroup noteGroup8;
+	private MultiRadioGroup noteGroupMood;
 	
 	private boolean[] result1;
 	private boolean[] result2;
@@ -54,6 +55,7 @@ public class SelectActivity extends Activity {
 	private boolean[] result6;
 	private boolean[] result7;
 	private boolean[] result8;
+	private boolean[] resultMood;
 	
 	private View type1View;	
 	private View type2View;
@@ -63,6 +65,8 @@ public class SelectActivity extends Activity {
 	private View type6View;
 	private View type7View;
 	private View type8View;
+	private View typeMoodView;
+	
 	private String[] Type1Content;
 	private String[] Type2Content;
 	private String[] Type3Content;
@@ -71,6 +75,7 @@ public class SelectActivity extends Activity {
 	private String[] Type6Content;
 	private String[] Type7Content;
 	private String[] Type8Content;
+	private String[] TypeMoodContent;
 	
 
 	private Activity activity;
@@ -585,6 +590,17 @@ private void setViews8(){
 				socialSelections[social_idx++] = Type8Content[i];
 		}
 		PreferenceControl.setType8(socialSelections);
+	}
+	private void storeTypeMood(){
+		//String[] socialSelections = new String[NOTE_UPPER_BOUND];
+		String[] socialSelections = {"","","","","","","","","",""};
+		int social_idx = 0;
+		boolean[] socialSelected = noteGroupMood.getResult();
+		for (int i = 0; i < socialSelected.length; ++i) {
+			if (socialSelected[i])
+				socialSelections[social_idx++] = TypeMoodContent[i];
+		}
+		PreferenceControl.setTypeMood(socialSelections);
 	}
 	
 

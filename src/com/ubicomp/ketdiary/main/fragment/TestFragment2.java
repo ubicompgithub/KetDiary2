@@ -42,6 +42,7 @@ import com.ubicomp.ketdiary.ui.Typefaces;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -71,6 +72,8 @@ import android.widget.TextView;
 
 public class TestFragment2 extends Fragment implements BluetoothListener, CameraCaller, TestQuestionCaller2{
 	
+	private OnFragmentListener mListener;
+	
 	private static final String TAG = "TEST_PAGE";
 	private static final String TAG2 = "debug";
 	private static final String TAG3 = "-State-";
@@ -83,9 +86,10 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	
 	private RelativeLayout main_layout;
 	private LinearLayout water_layout;
-	private TextView label_btn, label_subtitle, label_title, debug_msg, test_msg;
+	private TextView label_btn, label_subtitle, label_title, debug_msg, test_msg, test_progress_text;
 	private ImageView img_bg, img_ac, img_btn, img_info, img_water1, img_water2, 
-					  img_water3, img_face, img_help, img_cassette, img_appeal;
+					  img_water3, img_face, img_help, img_cassette, img_appeal, test_progress_bk;
+	private ProgressDialog dialog;
 	
 	private boolean isSkip = PreferenceControl.isSkip();
 	private boolean debug = PreferenceControl.isDebugMode();
@@ -371,10 +375,29 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 				//ClickLog.Log(ClickLogId.TEST_HELP_BUTTON);
 				long curTs = System.currentTimeMillis();
 				appealTimeValue = TimeValue.generate(curTs);
+	
+				mListener.onFragmentAction(1);
 				
-				Intent intent = new Intent();
-				intent.setClass(activity, AppealActivity.class); // tmp modify
-				startActivity(intent);
+				new Thread(new Runnable(){
+		            @Override
+		            public void run() {
+		                try{
+		                    Thread.sleep(500);
+		                }
+		                catch(Exception e){
+		                    e.printStackTrace();
+		                }
+		                finally{
+		                	Intent intent = new Intent();
+		    				intent.setClass(activity, AppealActivity.class); // tmp modify
+		    				startActivity(intent);
+		                }
+		            } 
+		       }).start();
+				
+				//Intent intent = new Intent();
+				//intent.setClass(activity, AppealActivity.class); // tmp modify
+				//startActivity(intent);
 			}
 		});
 		
@@ -2097,6 +2120,24 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			showAppeal = false;
 			img_appeal.setVisibility(View.INVISIBLE);
 		}
+	}
+	
+	@Override
+
+	public void onAttach(Activity activity) {
+
+		super.onAttach(activity);
+
+		try{
+			mListener = (OnFragmentListener) activity;
+		} catch (ClassCastException e) {
+
+		}
+	}
+	 
+	public interface OnFragmentListener {
+		public void onFragmentAction(int flag);
+
 	}
 
 }

@@ -105,6 +105,7 @@ public class NoteCategory4 {
 		mood.put(900, "開心");
 		mood.put(901, "難過");
 		mood.put(902, "生氣");
+		mood.put(903, "悲傷");
 		
 		for(Map.Entry<Integer, String> entry : negative.entrySet()){
 		    myNewHashMap.put(entry.getValue(), entry.getKey());

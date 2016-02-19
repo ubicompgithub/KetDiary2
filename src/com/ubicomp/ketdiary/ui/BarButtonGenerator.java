@@ -47,6 +47,31 @@ public class BarButtonGenerator {
 		return layout;
 	}
 	
+	public static View createThreeButtonView(int leftTextId,int midTextId, int rightTextId,
+			OnClickListener leftListener,OnClickListener midListener, OnClickListener rightListener) {
+		LinearLayout layout = (LinearLayout) inflater.inflate(
+				R.layout.bar_three_buttons, null);
+		TextView textLeft = (TextView) layout
+				.findViewById(R.id.bar_button_1);
+		textLeft.setText(leftTextId);
+		textLeft.setTypeface(wordTypefaceBold);
+		textLeft.setOnClickListener(leftListener);
+		
+		TextView textMid = (TextView) layout
+				.findViewById(R.id.bar_button_2);
+		textMid.setText(midTextId);
+		textMid.setTypeface(wordTypefaceBold);
+		textMid.setOnClickListener(midListener);
+
+		TextView textRight = (TextView) layout
+				.findViewById(R.id.bar_button_3);
+		textRight.setText(rightTextId);
+		textRight.setTypeface(wordTypefaceBold);
+		textRight.setOnClickListener(rightListener);
+
+		return layout;
+	}
+	
 	public static View createAddNoteView(OnItemSelectedListener itemselectedListener1, OnItemSelectedListener itemselectedListener2){
 		LinearLayout layout = (LinearLayout) inflater.inflate(
 				R.layout.bar_addnote, null);

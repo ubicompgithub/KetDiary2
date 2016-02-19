@@ -18,11 +18,13 @@ import com.ubicomp.ketdiary.system.Config;
 import com.ubicomp.ketdiary.system.clicklog.ClickLog;
 import com.ubicomp.ketdiary.system.clicklog.ClickLogId;
 import com.ubicomp.ketdiary.ui.CustomToastSmall;
+import com.ubicomp.ketdiary.ui.LoadingDialogControl;
 import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.system.PreferenceControl;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -134,6 +136,8 @@ public class RecordVoiceActivity extends Activity {
         filenum = 0;
         
         builder = new AlertDialog.Builder(this);
+        
+        //LoadingDialogControl.dismiss();
         
         leftIcon.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
@@ -392,6 +396,7 @@ public class RecordVoiceActivity extends Activity {
 			}
 			
 		});
+        
         
     }
     

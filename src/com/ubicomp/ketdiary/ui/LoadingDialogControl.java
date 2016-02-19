@@ -2,6 +2,7 @@ package com.ubicomp.ketdiary.ui;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 
 import com.ubicomp.ketdiary2.R;
 
@@ -19,12 +20,14 @@ public class LoadingDialogControl {
 				dialog.cancel();
 			} catch (Exception e) {
 			}
+			
 			dialog = new ProgressDialog(context);
 			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		}
 		dialog.setCancelable(false);
 		if (!dialog.isShowing()) {
 			try {
+				Log.d("GG", "fuck2");
 				dialog.show();
 				if (type == 0)
 					dialog.setContentView(R.layout.dialog_loading);

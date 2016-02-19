@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    
+    <LinearLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+   	 	android:background="@color/white"
+    	android:orientation="horizontal"
+    	android:layout_marginTop="20dp"
+    	android:layout_marginBottom="40dp" >
+    	
+         <RelativeLayout
+    		android:layout_width="match_parent"
+    		android:layout_height="20dp">
+         	
+         	<ImageView
+		        android:id="@+id/check_out"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:layout_centerVertical="true"
+
+		        android:layout_marginLeft="20dp"
+    			android:layout_marginRight="115dp"/>
+    	
+        <LinearLayout
+    		android:layout_width="match_parent"
+    		android:layout_height="wrap_content">
+    	
+        <RelativeLayout
+    		android:layout_width="18dp"
+    		android:layout_height="18dp"
+    		android:layout_marginLeft="20dp">
+    		
+            
+	        <ImageView
+		        
+		        android:layout_width="10dp"
+		        android:layout_height="10dp"
+		        android:layout_centerVertical="true"
+		        android:layout_centerHorizontal="true"
+		        android:src="@drawable/check_out" />
+	        
+	        <ImageView
+		        android:id="@+id/check_in"
+		        android:layout_width="6dp"
+		        android:layout_height="6dp"
+		        android:layout_centerVertical="true"
+		        android:layout_centerHorizontal="true"
+		        android:src="@drawable/check_in" />
+        
+        </RelativeLayout>
+        
+	    	<TextView
+	        	android:id="@+id/description_date_title"
+	        	android:layout_width="wrap_content"
+	            android:layout_height="20dp"
+	            android:layout_marginLeft="10dp"
+	            android:text="提醒我要填寫想法與反思"
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+	            android:textColor="@color/dark_gray"
+	            android:textSize="14sp"  />
+
+	    	</LinearLayout>
+    	</RelativeLayout>
+ 
+    </LinearLayout>
+	
+    
+
+</LinearLayout>

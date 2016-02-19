@@ -12,7 +12,7 @@
        android:layout_marginLeft="20dp"
        android:layout_marginTop="15dp"
        android:gravity="left"
-       android:text="對你持續戒毒是好或壞的影響："
+       android:text="對我戒毒的影響："
        android:textColor="@color/dark_gray"
        android:textSize="16sp" />
 
@@ -20,7 +20,7 @@
          android:id="@+id/msg_craving_seek_bar_layout"
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
-         android:layout_marginTop="-40dp" 
+         android:layout_marginTop="-30dp" 
          android:gravity="center"
          android:layout_marginLeft="20dp"
          android:layout_marginRight="20dp">
@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerInParent="true"
-                    android:max="6"
+                    android:max="4"
                     android:paddingBottom="10dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -54,9 +54,9 @@
        		  android:id="@+id/impact_dot"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:src="@drawable/impact_dot"
+              android:src="@drawable/impact_dot2"
               android:layout_below="@+id/msg_craving_bar_bg"
-              android:layout_marginTop="23dp"
+              android:layout_marginTop="15dp"
               android:layout_marginRight="20dp"
               android:layout_marginLeft="20dp" />     
                 
@@ -66,7 +66,7 @@
          	android:layout_height="wrap_content"
          	android:orientation="horizontal"
          	android:layout_below="@+id/msg_craving_bar_bg"
-         	android:layout_marginTop="30dp">
+         	android:layout_marginTop="25dp">
          	
          		<TextView
                     android:id="@+id/msg_craving_num0"
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="-3\n極壞"
+                    android:text="沒影響"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1"/>
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="-2\n很壞"
+                    android:text="普通"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1" />
@@ -95,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="-1\n壞"
+                    android:text="一點點"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1" />
@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="0\n普通"
+                    android:text="大"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1" />
@@ -117,37 +117,25 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="1\n好"
+                    android:text="非常大"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1" />
 
-                <TextView
-                    android:id="@+id/msg_craving_num5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:gravity="center"
-                    android:text="2\n很好"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="@dimen/normal_text_size"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/msg_craving_num6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:gravity="center"
-                    android:text="3\n極好"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="@dimen/normal_text_size"
-                    android:layout_weight="1" />
 			</LinearLayout>
 
 
 
       </RelativeLayout>
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:gravity="center"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/dark_gray">
+    </TextView>
     
     
 </LinearLayout>
