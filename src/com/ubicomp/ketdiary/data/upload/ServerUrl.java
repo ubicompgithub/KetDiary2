@@ -153,6 +153,20 @@ public class ServerUrl {
 	}
 	
 	/**
+	 * URL for inserting table Reflection
+	 * 
+	 * @return url
+	 */
+	public static String getReflectionUrl(){
+		final String URL = "test/Reflection.php";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
+	}
+	
+	/**
 	 * URL for uploading clicklog
 	 * 
 	 * @return url
@@ -169,7 +183,8 @@ public class ServerUrl {
 	public static int SERVER_CERTIFICATE(){
 		boolean develop = PreferenceControl.isDeveloper();
 		if (develop)
-			return R.raw.keys;
+			//return R.raw.keys;
+			return R.raw.rehabkey;
 		else
 			return R.raw.alcohol_certificate;
 		

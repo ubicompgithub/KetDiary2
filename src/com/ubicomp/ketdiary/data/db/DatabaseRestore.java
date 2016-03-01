@@ -229,18 +229,30 @@ public class DatabaseRestore extends AsyncTask<Void, Void, Void> {
 
 						StringBuilder sb = new StringBuilder();
 
-						sb.append(data[8]);
+						/*sb.append(data[8]);
 						for (int i = 6; i < data.length; ++i) {
 							sb.append(",");
 							sb.append(data[i]);
 						}
 						
-						String description = sb.toString();
-						int score = Integer.valueOf(data[9]);
+						String description = sb.toString();*/
+						sb.append(data[8]);
+						String action = sb.toString();
 						
+						sb = new StringBuilder();
+						sb.append(data[9]);
+						String feeling = sb.toString();
+						
+						sb = new StringBuilder();
+						sb.append(data[10]);
+						String thinking = sb.toString();
+						
+						int finished = Integer.valueOf(data[11]);
+						int score = Integer.valueOf(data[12]);
+						int key = Integer.valueOf(data[13]);
 						NoteAdd noteAdd = new NoteAdd(isAfterTest,
 								timestamp, year, month, day, timeslot,
-								category, type, items, impact, description, 0, score);
+								category, type, items, impact, action, feeling, thinking, finished, 0, score, key);
 						db.restoreNoteAdd(noteAdd);
 					}
 				}

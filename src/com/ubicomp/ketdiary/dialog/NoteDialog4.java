@@ -640,7 +640,7 @@ public class NoteDialog4 implements ChooseItemCaller{
 							
 							PreferenceControl.setIsFilled(1);
 							impact = impactSeekBar.getProgress();
-							testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
+							//testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
 							
 							copingSetting();
 						}
@@ -678,7 +678,7 @@ public class NoteDialog4 implements ChooseItemCaller{
 			if(state == STATE_NOTE){
 				//impact = impactSeekBar.getProgress();
 				ClickLog.Log(ClickLogId.TEST_QUESTION_CANCEL);
-				testQuestionCaller.writeQuestionFile(day, timeslot, -1, -1, -1, edtext.getText().toString());
+				//testQuestionCaller.writeQuestionFile(day, timeslot, -1, -1, -1, edtext.getText().toString());
 				
 				PreferenceControl.setIsFilled(0);
 				type = 0;

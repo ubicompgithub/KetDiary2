@@ -17,6 +17,7 @@ import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.QuestionTest;
 import com.ubicomp.ketdiary.data.structure.Rank;
+import com.ubicomp.ketdiary.data.structure.Reflection;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TestResult;
 import com.ubicomp.ketdiary.data.structure.TimeValue;
@@ -724,7 +725,7 @@ public class DatabaseControl {
 				int month = cal.get(Calendar.MONTH);
 				int day = cal.get(Calendar.DAY_OF_MONTH);
 				
-				return new NoteAdd(0, 0, year, month, day,0 , 0, 0, 0, 0, null, 0, 0);
+				return new NoteAdd(0, 0, year, month, day,0 , 0, 0, 0, 0, null,null,null,0, 0, 0, 0);
 			}
 			int isAfterTest = cursor.getInt(1);
 			long ts = cursor.getLong(5);
@@ -736,12 +737,16 @@ public class DatabaseControl {
 			int type = cursor.getInt(12);
 			int items = cursor.getInt(13);
 			int impact = cursor.getInt(14);
-			String reason = cursor.getString(15);
-			int weeklyScore = cursor.getInt(16);
-			int score = cursor.getInt(17);
-			
+			//String reason = cursor.getString(15);
+			String action = cursor.getString(15);
+			String feeling = cursor.getString(16);
+			String thinking = cursor.getString(17);
+			int finished = cursor.getInt(18);
+			int weeklyScore = cursor.getInt(19);
+			int score = cursor.getInt(20);
+			int key = cursor.getInt(21);
 			NoteAdd noteAdd = new NoteAdd(isAfterTest, ts, year, month, day, timeslot, 
-					category, type, items, impact, reason, weeklyScore, score);
+					category, type, items, impact, action, feeling,thinking,finished, weeklyScore, score, key);
 			
 			cursor.close();
 			db.close();
@@ -782,9 +787,13 @@ public class DatabaseControl {
 			content.put("type", data.getType());
 			content.put("items", data.getItems());
 			content.put("impact", data.getImpact());
-			content.put("description", data.getDescription());
+			content.put("action", data.getAction());
+			content.put("feeling", data.getFeeling());
+			content.put("thinking", data.getThinking());
+			content.put("finished", data.getFinished());
 			content.put("weeklyScore", prev_data.getWeeklyScore() + addScore);
 			content.put("score", prev_data.getScore() + addScore);
+			content.put("relationKey", data.getKey());
 			db.insert("NoteAdd", null, content);
 			db.close();
 			return addScore;
@@ -830,10 +839,15 @@ public class DatabaseControl {
 				int type = cursor.getInt(12);
 				int items = cursor.getInt(13);
 				int impact = cursor.getInt(14);
-				String reason = cursor.getString(15);
-				int weeklyScore = cursor.getInt(16);
-				int score = cursor.getInt(17);
-				data[i] = new NoteAdd(isAfterTest, ts, year, month, day, timeslot, category, type, items, impact, reason, weeklyScore, score);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				int key = cursor.getInt(21);
+				data[i] = new NoteAdd(isAfterTest, ts, year, month, day, timeslot, category, type, items, impact, action, feeling, thinking, finished, weeklyScore, score, key);
 			}
 
 			cursor.close();
@@ -895,11 +909,16 @@ public class DatabaseControl {
 				int type = cursor.getInt(12);
 				int items = cursor.getInt(13);
 				int impact = cursor.getInt(14);
-				String reason = cursor.getString(15);
-				int weeklyScore = cursor.getInt(16);
-				int score = cursor.getInt(17);
+				//String reason = cursor.getString(15);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				int key = cursor.getInt(21); 
 				noteAdd[i] = new NoteAdd(isAfterTest, ts, year, month, day, 
-						timeslot, category, type, items, impact, reason, weeklyScore, score);
+						timeslot, category, type, items, impact, action, feeling, thinking, finished, weeklyScore, score, key);
 			}
 
 			cursor.close();
@@ -956,11 +975,16 @@ public class DatabaseControl {
 				int type = cursor.getInt(12);
 				int items = cursor.getInt(13);
 				int impact = cursor.getInt(14);
-				String reason = cursor.getString(15);
-				int weeklyScore = cursor.getInt(16);
-				int score = cursor.getInt(17);
+				//String reason = cursor.getString(15);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				int key = cursor.getInt(21);
 				data[i] = new NoteAdd(isAfterTest, ts, year, month, day, 
-						timeslot, category, type, items, impact, reason, weeklyScore, score);
+						timeslot, category, type, items, impact, action, feeling, thinking, finished, weeklyScore, score, key);
 			}
 
 			cursor.close();
@@ -1004,11 +1028,16 @@ public class DatabaseControl {
 				int type = cursor.getInt(12);
 				int items = cursor.getInt(13);
 				int impact = cursor.getInt(14);
-				String reason = cursor.getString(15);
-				int weeklyScore = cursor.getInt(16);
-				int score = cursor.getInt(17);
+				//String reason = cursor.getString(15);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				int key = cursor.getInt(21);
 				data[i] = new NoteAdd(isAfterTest, ts, year, month, day, 
-						timeslot, category2, type, items, impact, reason, weeklyScore, score);
+						timeslot, category2, type, items, impact, action, feeling,thinking, finished, weeklyScore, score, key);
 			}
 
 			cursor.close();
@@ -1049,7 +1078,7 @@ public class DatabaseControl {
 				int month = cal.get(Calendar.MONTH);
 				int day = cal.get(Calendar.DAY_OF_MONTH);
 				
-				return new NoteAdd(0, 0, year, month, day, -1 , -1, -1, -1, -1, null, 0, 0);
+				return new NoteAdd(0, 0, year, month, day, -1 , -1, -1, -1, -1, null,null,null,0, 0, 0, 0);
 			}
 			int isAfterTest = cursor.getInt(1);
 			//long ts = cursor.getLong(5);
@@ -1061,12 +1090,16 @@ public class DatabaseControl {
 			int type = cursor.getInt(12);
 			int items = cursor.getInt(13);
 			int impact = cursor.getInt(14);
-			String reason = cursor.getString(15);
-			int weeklyScore = cursor.getInt(16);
-			int score = cursor.getInt(17);
-			
+			//String reason = cursor.getString(15);
+			String action = cursor.getString(15);
+			String feeling = cursor.getString(16);
+			String thinking = cursor.getString(17);
+			int finished = cursor.getInt(18);
+			int weeklyScore = cursor.getInt(19);
+			int score = cursor.getInt(20);
+			int key = cursor.getInt(21);
 			NoteAdd noteAdd = new NoteAdd(isAfterTest, ts, year, month, day, timeslot, 
-					category, type, items, impact, reason, weeklyScore, score);
+					category, type, items, impact, action, feeling, thinking, finished, weeklyScore, score, key);
 			
 			cursor.close();
 			db.close();
@@ -1108,11 +1141,16 @@ public class DatabaseControl {
 				int type = cursor.getInt(12);
 				int items = cursor.getInt(13);
 				int impact = cursor.getInt(14);
-				String reason = cursor.getString(15);
-				int weeklyScore = cursor.getInt(16);
-				int score = cursor.getInt(17);
+				//String reason = cursor.getString(15);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				int key = cursor.getInt(21);
 				data[i] = new NoteAdd(isAfterTest, ts, year, month, day, 
-						timeslot, category, type, items, impact, reason, weeklyScore, score);
+						timeslot, category, type, items, impact, action, feeling, thinking, finished, weeklyScore, score, key);
 			}
 
 			cursor.close();
@@ -2087,7 +2125,6 @@ public class DatabaseControl {
 		 * @see ubicomp.soberdiary.data.structure.Appeal
 		 */
 		public void insertAppeal(Appeal data) {
-			Log.i("GG", "inserAppealSQL");
 			synchronized (sqlLock) {
 				db = dbHelper.getWritableDatabase();
 
@@ -2149,6 +2186,86 @@ public class DatabaseControl {
 			synchronized (sqlLock) {
 				db = dbHelper.getWritableDatabase();
 				String sql = "UPDATE Appeal SET upload = 1 WHERE ts = "
+						+ ts;
+				db.execSQL(sql);
+				db.close();
+			}
+		}
+		
+		/**
+		 * Insert a Reflection
+		 * 
+		 * @param data
+		 *            inserted Reflection
+		 * @see ubicomp.soberdiary.data.structure.Reflection
+		 */
+		public void insertReflection(Reflection data) {
+			Log.i("GG", "inserReflectionSQL");
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				ContentValues content = new ContentValues();
+				
+				content.put("ts", data.getTv().getTimestamp());
+				content.put("action", data.getAction());
+				content.put("feeling", data.getFeeling());
+				content.put("thinking", data.getThinking());
+				content.put("relationKey", data.getKey());
+				db.insert("Reflection", null, content);
+				db.close();
+			}
+		}
+		
+		/**
+		 * Get all Reflection which are not uploaded to the server
+		 * 
+		 * @return An array of Reflection. If there are no Reflection,
+		 *         return null.
+		 * @see ubicomp.soberdiary.data.structure.Reflection
+		 */
+		public Reflection[] getNotUploadedReflection() {
+			Log.i("GG", "getNotUploadReflectionSQL");
+			synchronized (sqlLock) {
+				Reflection[] data = null;
+				db = dbHelper.getReadableDatabase();
+				String sql;
+				Cursor cursor;
+				sql = "SELECT * FROM Reflection WHERE upload = 0";
+				cursor = db.rawQuery(sql, null);
+				int count = cursor.getCount();
+				if (count == 0) {
+					cursor.close();
+					db.close();
+					return null;
+				}
+
+				data = new Reflection[count];
+
+				for (int i = 0; i < count; ++i) {
+					cursor.moveToPosition(i);
+					long ts = cursor.getLong(1);
+					String action = cursor.getString(2);
+					String feeling = cursor.getString(3);
+					String thinking = cursor.getString(4);
+					int key = cursor.getInt(5);
+					data[i] = new Reflection(ts, action, feeling, thinking, key);
+				}
+				cursor.close();
+				db.close();
+				return data;
+			}
+		}
+		
+		/**
+		 * Label the Appeal uploaded
+		 * 
+		 * @param ts
+		 *            Timestamp of the uploaded Appeal
+		 * @see ubicomp.soberdiary.data.structure.Appeal
+		 */
+		public void setReflectionUploaded(long ts) {
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				String sql = "UPDATE Reflection SET upload = 1 WHERE ts = "
 						+ ts;
 				db.execSQL(sql);
 				db.close();

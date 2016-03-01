@@ -151,6 +151,8 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 
 	private static final int RESULT_SPEECH = 0;
 	
+	public static boolean networkState; 
+	
 	private ImageDetectionValidate imageDetectionValidate;
 	
 	static {
@@ -1187,9 +1189,9 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
                ArrayList<String> text = data
                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                
-               EditText thinking_text = (EditText)findViewById(R.id.description_thinking_content);
+               EditText thinking_text = (EditText)findViewById(R.id.edit_thinking_content);
                if (text.size() > 0)
-                thinking_text.setText(text.get(0));
+                thinking_text.setText(thinking_text.getText().toString() + text.get(0));
             }
            break;
         }

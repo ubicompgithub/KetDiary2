@@ -5,93 +5,35 @@
     android:orientation="vertical" >
 
     
-    <RelativeLayout
-    	android:layout_width="match_parent"
-    	android:layout_height="wrap_content"
-   	 	android:background="@color/white"
-    	android:layout_marginTop="20dp" >
-    	
-    	<TextView
-        	android:id="@+id/description_thinking_title"
-        	android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="當時在想什麼 :"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_gray"
-            android:textSize="16sp"  />
-    	
-    	<ImageView
-	        android:layout_width="16dp"
-	        android:layout_height="16dp"
-	        android:layout_marginRight="0dp"
-	        android:background="@color/text_bg_gray"/>
-
-    </RelativeLayout>
-    
     <LinearLayout
     	android:layout_width="match_parent"
     	android:layout_height="wrap_content"
    	 	android:background="@color/white"
     	android:orientation="horizontal"
     	android:layout_marginBottom="10dp" >
-    
-    <EditText
+    	
+    	<TextView
+        	android:id="@+id/description_thinking_title"
+        	android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="當時想法 :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp"  />
+
+    <TextView
         android:id="@+id/description_thinking_content"
-        android:layout_width="220dp"
+        android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:gravity="center"
+        android:gravity="left|center_vertical"
         android:layout_marginLeft="15dp"
+        android:layout_marginRight="30dp"
         android:layout_marginTop="10dp"
-        android:background="@color/text_bg_gray"
         android:textColor="@color/dark_gray"       
-        android:textSize="16sp" /> 
-    
-    <RelativeLayout
-    	android:layout_width="35dp"
-    	android:layout_height="35dp"
-    	android:layout_marginTop="10dp" >
-	    
-	 	<ImageView
-	        android:layout_width="35dp"
-	        android:layout_height="35dp"
-	        android:layout_centerVertical="true"
-	        android:background="@color/text_bg_gray"/>
-	 	
-	 	 <ImageView
-	        android:id="@+id/speech_to_text"
-	        android:layout_width="20dp"
-	        android:layout_height="20dp"
-	        android:layout_centerVertical="true"
-	        android:layout_centerHorizontal="true"
-	        android:src="@drawable/speech_icon" />
-    
-     </RelativeLayout>
-     
-    <RelativeLayout
-    	android:layout_width="35dp"
-    	android:layout_height="35dp"
-    	android:layout_marginTop="10dp" >
-	    
-	 	<ImageView
-	        android:layout_width="35dp"
-	        android:layout_height="35dp"
-	        android:layout_centerVertical="true"
-	        android:background="@color/show_icon_gray"/>
-	 	
-	 	 <ImageView
-	        android:id="@+id/show_text_list"
-	        android:layout_width="14dp"
-	        android:layout_height="10dp"
-	        android:layout_centerVertical="true"
-	        android:layout_centerHorizontal="true"
-	        android:src="@drawable/list_show" />
-    
-     </RelativeLayout>
-     
+        android:textSize="16sp" />
     </LinearLayout>
-    
-    
 	
     
 

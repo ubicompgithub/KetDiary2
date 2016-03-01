@@ -27,7 +27,7 @@
         android:id="@+id/description_mood_content"
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:gravity="center"
+        android:gravity="left|center_vertical"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="10dp"

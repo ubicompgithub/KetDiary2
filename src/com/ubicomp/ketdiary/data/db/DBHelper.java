@@ -50,9 +50,12 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ " recordDay INTEGER NOT NULL," 
 				+ " timeSlot INTEGER NOT NULL," + " category INTEGER NOT NULL,"
 				+ " type INTEGER NOT NULL," + " items INTEGER NOT NULL, "
-				+ " impact INTEGER NOT NULL, "+ " description CHAR[255], "
+				+ " impact INTEGER NOT NULL, "+ " action CHAR[255], "
+				+ " feeling CHAR[255], " + " thinking CHAR[255], "
+				+ " finished INTEGER NOT NULL,"
 				+ " weeklyScore INTEGER NOT NULL," + " score INTEGER NOT NULL,"
-				+ " upload INTEGER NOT NULL DEFAULT 0" + ")");
+				+ " relationKey INTEGER NOT NULL,"
+				+" upload INTEGER NOT NULL DEFAULT 0" + ")");
 		
 		
 		db.execSQL("CREATE TABLE TestDetail ("
@@ -128,7 +131,16 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ " appealType INTEGER NOT NULL, "	
 				+ " appealTimes INTEGER NOT NULL, "
 				+ " upload INTEGER NOT NULL DEFAULT 0" + ")");
-
+		
+		//reflection
+		db.execSQL("CREATE TABLE Reflection ("
+				+ " id INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ " ts INTEGER NOT NULL,"
+				+ " action CHAR[255], "	
+				+ " feeling CHAR[255], "
+				+ " thinking CHAR[255], "
+				+ " relationKey INTEGER NOT NULL," 
+				+ " upload INTEGER NOT NULL DEFAULT 0" + ")");
 	}
 
 	@Override

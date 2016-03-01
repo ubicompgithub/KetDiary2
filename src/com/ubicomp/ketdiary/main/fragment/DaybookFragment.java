@@ -1014,7 +1014,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			int slot = noteAdds[i].getTimeSlot();
 			type = noteAdds[i].getType();
 			int items = noteAdds[i].getItems();
-			String descripton = noteAdds[i].getDescription();
+			String descripton = noteAdds[i].getAction();
 			int impact = noteAdds[i].getImpact();
 			
 
@@ -1157,7 +1157,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				int slot = noteAdds[i].getTimeSlot();
 				type = noteAdds[i].getType();
 				int items = noteAdds[i].getItems();
-				String descripton = noteAdds[i].getDescription();
+				String descripton = noteAdds[i].getAction();
 				int impact = noteAdds[i].getImpact();
 				
 	
@@ -1278,7 +1278,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				int slot = noteAdds[i].getTimeSlot();
 				type = noteAdds[i].getType();
 				int items = noteAdds[i].getItems();
-				String descripton = noteAdds[i].getDescription();
+				String descripton = noteAdds[i].getAction();
 				int impact = noteAdds[i].getImpact();
 				
 	
@@ -1734,13 +1734,13 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
     		}
     	}
     
-    public void writeQuestionFile(int day, int slot, int type, int items, int impact, String description) {
+    /*public void writeQuestionFile(int day, int slot, int type, int items, int impact, String action, String feeling, String thinking, int finished) {
     	
     	TDP = new TestDataParser2(0); 
 		if( TDP!= null ){
 			//TDP.startAddNote();
 			//TDP.getQuestionResult2(textFile)
-			TDP.startAddNote2(0, day, slot, type, items, impact, description);
+			TDP.startAddNote2(0, day, slot, type, items, impact, action, feeling, thinking, finished);
 		}
 		//update Recent Calendar
 		mSectionsPagerAdapter.updateRecentDay();
@@ -1817,7 +1817,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 //	
 //	diaryList.addView(diaryItem);
 		sv.fullScroll(View.FOCUS_DOWN);
-	}
+	}*/
 
     public static int getChartType () {
 		return chart_type;
@@ -1958,5 +1958,27 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				fragment_layout.setEnabled(false);
 	}
 
+
+	@Override
+	public int writeQuestionFile(int day, int slot, int type, int items, int impact, String action, String feeling,
+			String thinking, int finished, int key) {
+		// TODO Auto-generated method stub
+		int nowKey = -1;
+		TDP = new TestDataParser2(0); 
+		if( TDP!= null ){
+			//TDP.startAddNote();
+			//TDP.getQuestionResult2(textFile)
+			nowKey = TDP.startAddNote2(0, day, slot, type, items, impact, action, feeling, thinking, finished, key);
+		}
+		
+		//update Recent Calendar
+		mSectionsPagerAdapter.updateRecentDay();
+		
+		updateDiaryHandler.sendEmptyMessage(0);
+
+		sv.fullScroll(View.FOCUS_DOWN);
+		
+		return nowKey;
+	}
 
 }

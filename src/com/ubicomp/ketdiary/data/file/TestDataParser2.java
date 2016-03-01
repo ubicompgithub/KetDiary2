@@ -12,6 +12,7 @@ import com.ubicomp.ketdiary.App;
 import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
+import com.ubicomp.ketdiary.data.structure.Reflection;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TestResult;
 import com.ubicomp.ketdiary.system.PreferenceControl;
@@ -52,7 +53,7 @@ public class TestDataParser2 {
 	}
 	
 	/** start to handle the noteAdd data */
-	public void startAddNote2(int isAfterTest, int day, int timeslot, int type, int items, int impact, String descripiton) {
+	public int startAddNote2(int isAfterTest, int day, int timeslot, int type, int items, int impact, String action, String feeling, String thinking, int finished, int key) {
 
 		Log.i(TAG, "TDP AddNote2 Start");
 		Calendar cal = Calendar.getInstance();
@@ -74,15 +75,19 @@ public class TestDataParser2 {
 			items = -1;
 			impact = -1;
 			
-			return;
+			return -1;
 		}
 
 		if(ts == 0)
 			ts = System.currentTimeMillis();
 		
-		noteAdd = new NoteAdd(isAfterTest, ts, year, month, date, timeslot, category, type, items, impact, descripiton, 0, 0);
 
-
+		NoteAdd lastNoteAdd = db.getLatestNoteAdd();
+		
+		int nowKey;
+		nowKey = lastNoteAdd.getKey()+1;
+		Log.d("GG", "nowKey = "+nowKey);
+		noteAdd = new NoteAdd(isAfterTest, ts, year, month, date, timeslot, category, type, items, impact, action, feeling, thinking, finished, 0, 0, nowKey);
 		
 		int addScore  = db.insertNoteAdd(noteAdd);
 		CustomToast.generateToast(R.string.note_done, addScore);
@@ -90,11 +95,12 @@ public class TestDataParser2 {
 			PreferenceControl.setCouponChange(true);
 		
 		PreferenceControl.setPoint(addScore);
-
+		
+		return nowKey;
 	}
 	
 	/** start to handle the noteAdd data */
-	public static void startAfterAddNote3(int isAfterTest, int day, int timeslot, int type, int items, int impact, String descripiton) {
+	public static void startAfterAddNote3(int isAfterTest, int day, int timeslot, int type, int items, int impact, String action, String feeling, String thinking, int finished, int key) {
 
 		Log.i(TAG, "TDP AddNote3 Start");
 		Calendar cal = Calendar.getInstance();
@@ -124,7 +130,7 @@ public class TestDataParser2 {
 		
 		long ts = PreferenceControl.getUpdateDetectionTimestamp();
 		
-		NoteAdd noteAdd = new NoteAdd(isAfterTest, ts, year, month, date, timeslot, category, type, items, impact, descripiton, 0, 0);
+		NoteAdd noteAdd = new NoteAdd(isAfterTest, ts, year, month, date, timeslot, category, type, items, impact, action, feeling, thinking, finished, 0, 0, key);
 		boolean update = false;
 		if (ts == PreferenceControl.getUpdateDetectionTimestamp())
 			update = true;
@@ -147,6 +153,15 @@ public class TestDataParser2 {
                 connectionFailRate, failedReason, hardwareVersion);
 		
 		db.insertTestDetail(testDetail);
+
+	}
+	
+	public void startReflection(String action, String feeling, String thinking, int key) {
+		
+		long ts = System.currentTimeMillis();
+		Reflection reflection = new Reflection(ts, action, feeling, thinking, key);
+		
+		db.insertReflection(reflection);
 
 	}
 	

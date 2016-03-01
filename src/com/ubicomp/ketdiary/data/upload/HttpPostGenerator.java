@@ -21,6 +21,7 @@ import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.QuestionTest;
+import com.ubicomp.ketdiary.data.structure.Reflection;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TestResult;
 import com.ubicomp.ketdiary.system.PreferenceControl;
@@ -194,9 +195,14 @@ public class HttpPostGenerator {
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getType())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getItems())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getImpact())));
-		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getDescription())));
+		//nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getDescription())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getAction())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getFeeling())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getThinking())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getFinished())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getScore())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getTv().getWeek())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getKey())));
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 		} catch (UnsupportedEncodingException e) {}
@@ -433,6 +439,32 @@ public class HttpPostGenerator {
 		
 
 		httpPost.setEntity(builder.build());
+		return httpPost;
+	}
+	
+	/**
+	 * Generate POST of Reflection
+	 * 
+	 * @param data
+	 *            Reflection
+	 * @return HttpPost contains Reflection
+	 * @see ubicomp.soberdiary.data.structure.Reflection
+	 */
+	public static HttpPost genPost(Reflection data){
+		HttpPost httpPost = new HttpPost(ServerUrl.getReflectionUrl());
+		String uid = PreferenceControl.getUID();
+		String deviceId = PreferenceControl.getDeviceId();
+		
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("uid", uid));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getTv().getTimestamp())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getAction())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getFeeling())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getThinking())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getKey())));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+		} catch (UnsupportedEncodingException e) {}
 		return httpPost;
 	}
 	

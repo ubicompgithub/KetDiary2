@@ -102,10 +102,11 @@ public class NoteCategory4 {
 		play.put(802, "希望對性行為有幫助");
 		play.put(803, "與動物相處");
 		
-		mood.put(900, "開心");
-		mood.put(901, "難過");
-		mood.put(902, "生氣");
-		mood.put(903, "悲傷");
+		mood.put(900, "快樂");
+		mood.put(901, "冷靜");
+		mood.put(902, "興奮");
+		mood.put(903, "客觀");
+		mood.put(904, "放鬆");
 		
 		for(Map.Entry<Integer, String> entry : negative.entrySet()){
 		    myNewHashMap.put(entry.getValue(), entry.getKey());

@@ -363,7 +363,7 @@ public class SectionsPagerAdapter extends PagerAdapter {
     }
     
     public void updateRecentDay(){
-    	if(glCalendar[pageViewList.length-1] == null)
+    	if(pageViewList.length < 1 || glCalendar[pageViewList.length-1] == null )
     		return;
     	int num = glCalendar[pageViewList.length-1].getChildCount();
     	for(int i = 0; i<num ; i++){

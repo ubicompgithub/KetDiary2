@@ -34,6 +34,7 @@
     <color name="text_bg_gray">#FFf7f7f7</color>
     <color name="date_before_gray">#FFdcdada</color>
     <color name="show_icon_gray">#FFDCDCDC</color>
+    <color name="list_view_gray">#FFFFFFFF</color>
     
     <color name="background_color">#888888</color>
     <color name="text_color">#B3B3B4</color>

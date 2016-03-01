@@ -7,13 +7,16 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.speech.RecognizerIntent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -27,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -45,9 +49,13 @@ import android.widget.Toast;
 import com.ubicomp.ketdiary.App;
 import com.ubicomp.ketdiary.MainActivity;
 import com.ubicomp.ketdiary2.R;
+
+import CustomList.CustomList;
+
 import com.ubicomp.ketdiary.data.file.QuestionFile;
 import com.ubicomp.ketdiary.noUse.NoteCatagory3;
 import com.ubicomp.ketdiary.system.PreferenceControl;
+import com.ubicomp.ketdiary.system.check.NetworkCheck;
 import com.ubicomp.ketdiary.system.check.TimeBlock;
 import com.ubicomp.ketdiary.system.clicklog.ClickLog;
 import com.ubicomp.ketdiary.system.clicklog.ClickLogId;
@@ -64,6 +72,7 @@ import com.ubicomp.ketdiary.main.fragment.DaybookFragment;
  * @author Andy
  *
  */
+@SuppressLint("ResourceAsColor")
 public class AddNoteDialog2 implements ChooseItemCaller{
 	
 	private Activity activity;
@@ -327,21 +336,53 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 		
 		//當時的行為
 		LinearLayout description_thinking_layout = (LinearLayout) inflater.inflate(
-				R.layout.bar_description_thinking, null);
+				R.layout.bar_edit_thinking, null);
 		
-		TextView thinking_title = (TextView)description_thinking_layout.findViewById(R.id.description_thinking_title);
+		TextView thinking_title = (TextView)description_thinking_layout.findViewById(R.id.edit_thinking_title);
+		EditText thinking_content =  (EditText)description_thinking_layout.findViewById(R.id.edit_thinking_content);
 		thinking_title.setTypeface(wordTypefaceBold);
 		thinking_title.setText("當時我做了什麼：");
 		
 		speech_button = (ImageView) description_thinking_layout.findViewById(R.id.speech_to_text);
-		thinking_text = (EditText) description_thinking_layout.findViewById(R.id.description_thinking_content);
+		thinking_text = (EditText) description_thinking_layout.findViewById(R.id.edit_thinking_content);
 		
 		thinking_text.setText("");
+		
+		if(!NetworkCheck.networkCheck())
+		{
+			MainActivity.networkState = false;
+			speech_button.setImageResource(R.drawable.speech_icon_unable);
+		}
+		else
+		{
+			MainActivity.networkState = true;
+			speech_button.setImageResource(R.drawable.speech_icon);
+		}
 		
 		speech_button.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
+				if (!NetworkCheck.networkCheck()) {
+					MainActivity.networkState = false;
+					speech_button.setImageResource(R.drawable.speech_icon_unable);
+				}
+				else
+				{
+					MainActivity.networkState = true;
+					speech_button.setImageResource(R.drawable.speech_icon);
+				}
+					
+				
+				if(!MainActivity.networkState){
+					CustomToastSmall.generateToast("請先開啟網路");
+					return;
+				}
+				
+
+				
+				MainActivity.networkState = true;
+				speech_button.setImageResource(R.drawable.speech_icon);
 				
 				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
@@ -358,6 +399,19 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			}
 								
 		});
+		
+		
+		thinking_content.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+	        @Override
+	        public void onFocusChange(View v, boolean hasFocus) {
+	        
+	            if (!hasFocus) {
+	            	
+	            	InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+			        inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+	            }
+	        }
+	    });
 		
 		//Description
 		LinearLayout discription_layout = (LinearLayout) inflater.inflate(
@@ -376,7 +430,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			@Override
 			public void onClick(View v) {
 
-	        	//Log.d("GG", "01");
+	        	
 				listViewShowHide(listView2);
 				
 			}
@@ -413,6 +467,8 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			
 			
 		});
+		
+		
 		
 //		edtext.setOnFocusChangeListener(new OnFocusChangeListener() {
 //
@@ -503,7 +559,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			viewshow = !viewshow;
 		}
 		if(listview == listView2){
-			//Log.d("GG","02");
+			
 			if(!viewshow2)
 				listview.setVisibility(View.VISIBLE);
 			else
@@ -764,7 +820,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 							ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_CONFIRM);
 							
 							impact = impactSeekBar.getProgress();
-							testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
+							testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, thinking_text.getText().toString(),edtext.getText().toString(),null,0 ,0);
 							close();
 							clear();
 							//copingSetting();
@@ -859,6 +915,8 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 							
 							notePage2.initialize();
 							notePage2.setAllText( _year+"年"+_month+"月"+_day+"日",sp_content.getText().toString(), edtext.getText().toString(), ts);
+							notePage2.setAddNoteDetail(day, timeslot, type, items, impact, thinking_text.getText().toString(),edtext.getText().toString());
+							
 							notePage2.show();
 							
 							close();
@@ -897,7 +955,7 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			
 			if(state == STATE_NOTE){
 				impact = impactSeekBar.getProgress();
-				testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
+				//testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
 			
 				Log.d(TAG, items+" "+impact);
 
@@ -1251,7 +1309,25 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			String[] type1 = PreferenceControl.getTypeMood();
 			String[] after = clean(type1);
 			
-			ArrayAdapter adapter = new ArrayAdapter<String>(context, R.layout.my_listitem, after);
+			final Integer[] imageId = {
+		            R.drawable.mood_happy,
+		            R.drawable.mood_calm,
+		            R.drawable.mood_excited,
+		            R.drawable.mood_objective,
+		            R.drawable.mood_relax
+		    };
+			
+			final Integer[] imageIdClicked = {
+		            R.drawable.mood_happy_clicked,
+		            R.drawable.mood_calm_clicked,
+		            R.drawable.mood_excited_clicked,
+		            R.drawable.mood_objective_clicked,
+		            R.drawable.mood_relax_clicked
+		    };
+			
+			//ArrayAdapter adapter = new ArrayAdapter<String>(context, R.layout.my_listitem, after);
+			CustomList adapter = new CustomList(activity, after, imageId);
+			
 			listView2.setAdapter(adapter);
 			listView2.setOnItemClickListener(new OnItemClickListener(){
 
@@ -1259,9 +1335,12 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			   public void onItemClick(AdapterView<?> parent, View view, int position, long id){
 				   //ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_SELECT_ITEM);	
 				   
-				   TextView c = (TextView) view.findViewById(android.R.id.text1);
+				    TextView c = (TextView) view.findViewById(R.id.text2);
+				    ImageView m = (ImageView) view.findViewById(R.id.img);
+				    
 				    String playerChanged = c.getText().toString();
 				    String showText = "";
+				    
 				    int nowMood = noteCategory.myNewHashMap.get(playerChanged);
 				    
 				    int tm = 0;
@@ -1274,7 +1353,16 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 					if(tm >= 3 && !moodFlag[nowMood - 900])
 					   return;
 				    
-				   	
+				   	if(moodFlag[nowMood - 900]){   //取消反白
+				   		view.setBackgroundColor(0);
+				   		m.setImageResource(imageId[nowMood - 900]);
+				   	}
+				   	else{ 						//反白
+				   		view.setBackgroundColor(0xffdcdcdc);
+				   		m.setImageResource(imageIdClicked[nowMood - 900]);
+				   	}
+					
+					
 				   	moodFlag[nowMood - 900] = !moodFlag[nowMood - 900];
 				   	
 
@@ -1304,5 +1392,9 @@ public class AddNoteDialog2 implements ChooseItemCaller{
 			viewshow2 = false;
 			sv.smoothScrollTo(0 , (int)convertDpToPixel((float)200));
 		}
-	
+		
+		 public void hideKeyboard(View view) {
+		        InputMethodManager inputMethodManager = (InputMethodManager)context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+		        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		    }
 }

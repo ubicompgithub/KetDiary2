@@ -31,6 +31,7 @@ import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.QuestionTest;
+import com.ubicomp.ketdiary.data.structure.Reflection;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TestResult;
 import com.ubicomp.ketdiary.system.check.DefaultCheck;
@@ -74,7 +75,7 @@ public class DataUploader {
 		
 		if (DefaultCheck.check() || !NetworkCheck.networkCheck())
 			return;
-		Log.d("GG", "in upload");
+		
 		if (SynchronizedLock.sharedLock.tryLock()) {
 			SynchronizedLock.sharedLock.lock();
 			uploader = new DataUploadTask();
@@ -178,6 +179,15 @@ public class DataUploader {
 				for (int i = 0; i < appeals.length; ++i) {
 					if (connectToServer(appeals[i]) == ERROR)
 						Log.d(TAG, "FAIL TO UPLOAD - Appeal");
+				}
+			}
+			Log.d("GG", "??");
+			//Reflection
+			Reflection[] reflections = db.getNotUploadedReflection();
+			if (reflections != null) {
+				for (int i = 0; i < reflections.length; ++i) {
+					if (connectToServer(reflections[i]) == ERROR)
+						Log.d(TAG, "FAIL TO UPLOAD - Reflection");
 				}
 			}
 			
@@ -402,11 +412,30 @@ public class DataUploader {
 				DefaultHttpClient httpClient = HttpSecureClientGenerator
 						.getSecureHttpClient();
 				HttpPost httpPost = HttpPostGenerator.genPost(data);
-				Log.i("GG", "GGG");
 				if (upload(httpClient, httpPost)){
-					Log.i("GG", "GGGxxx");
 					db.setAppealUploaded(data.getTv().getTimestamp());
 					Log.d(TAG, "Upload Appeal Success.");
+				}
+				else
+					return ERROR;
+			} catch (Exception e) {
+				Log.d(TAG, "EXCEPTION:" + e.toString());
+				return ERROR;
+			}
+			return SUCCESS;
+		}
+		
+		private int connectToServer(Reflection data) {// Reflection
+			try {
+				
+				DefaultHttpClient httpClient = HttpSecureClientGenerator
+						.getSecureHttpClient();
+				HttpPost httpPost = HttpPostGenerator.genPost(data);
+				
+				if (upload(httpClient, httpPost)){
+					
+					db.setReflectionUploaded(data.getTv().getTimestamp());
+					Log.d(TAG, "Upload Reflection Success.");
 				}
 				else
 					return ERROR;

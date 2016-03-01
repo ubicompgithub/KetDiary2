@@ -987,11 +987,11 @@ public class PreferenceControl {
 		names[7] = "";
 		names[8] = "";
 		names[9] = "";*/
-		names[0] = "開心";
-		names[1] = "難過";
-		names[2] = "生氣";
-		names[3] = "悲傷";
-		names[4] = "";
+		names[0] = "快樂";
+		names[1] = "冷靜";
+		names[2] = "興奮";
+		names[3] = "客觀";
+		names[4] = "放鬆";
 		names[5] = "";
 		names[6] = "";
 		names[7] = "";

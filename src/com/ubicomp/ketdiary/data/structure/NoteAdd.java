@@ -12,12 +12,17 @@ public class NoteAdd {
 	private int type;
 	private int items;
 	private int impact;
-	private String description;
+	//private String description;
+	private String feeling;
+	private String action;
+	private String thinking;
+	private int finished;
 	private int weeklyScore;
 	private int score;
+	private int key;
 
 	public NoteAdd(int isAfterTest, long tv, int rYear, int rMonth, int rDay, int timeslot,
-			int category, int type, int items, int impact, String description, int weeklyScore, int score) {
+			int category, int type, int items, int impact, String action, String feeling, String thinking, int finished, int weeklyScore, int score, int key) {
 		this.isAfterTest = isAfterTest;
 		this.tv = TimeValue.generate(tv);
 		
@@ -30,9 +35,14 @@ public class NoteAdd {
 		this.type = type;
 		this.items = items;
 		this.impact = impact;
-		this.description=description;
-		this.weeklyScore=weeklyScore;
-		this.score=score;
+		//this.description=description;
+		this.action = action;
+		this.thinking = thinking;
+		this.feeling = feeling;
+		this.finished = finished;
+		this.weeklyScore = weeklyScore;
+		this.score = score;
+		this.key = key;
 	}
 	
 	@Override
@@ -52,7 +62,14 @@ public class NoteAdd {
 		sb.append(' ');
 		sb.append(impact);
 		sb.append(' ');
-		sb.append(description);
+		//sb.append(description);
+		sb.append(action);
+		sb.append(' ');
+		sb.append(feeling);
+		sb.append(' ');
+		sb.append(thinking);
+		sb.append(' ');
+		sb.append(finished);
 		sb.append(' ');
 		sb.append(score);
 		return sb.toString();
@@ -91,8 +108,24 @@ public class NoteAdd {
 		return impact;
 	}
 
-	public String getDescription() {
+	/*public String getDescription() {
 		return description;
+	}*/
+	
+	public String getAction() {
+		return action;
+	}
+	
+	public String getFeeling() {
+		return feeling;
+	}
+	
+	public String getThinking() {
+		return thinking;
+	}
+	
+	public int getFinished() {
+		return finished;
 	}
 	
 	public int getWeeklyScore() {
@@ -103,6 +136,9 @@ public class NoteAdd {
 		return score;
 	}
 
+	public int getKey() {
+		return key;
+	}
 	
 	
 }

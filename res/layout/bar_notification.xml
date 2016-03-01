@@ -33,21 +33,22 @@
         <RelativeLayout
     		android:layout_width="18dp"
     		android:layout_height="18dp"
+    		android:layout_gravity="center"
     		android:layout_marginLeft="20dp">
     		
             
 	        <ImageView
 		        
-		        android:layout_width="10dp"
-		        android:layout_height="10dp"
+		        android:layout_width="15dp"
+		        android:layout_height="15dp"
 		        android:layout_centerVertical="true"
 		        android:layout_centerHorizontal="true"
 		        android:src="@drawable/check_out" />
 	        
 	        <ImageView
 		        android:id="@+id/check_in"
-		        android:layout_width="6dp"
-		        android:layout_height="6dp"
+		        android:layout_width="10dp"
+		        android:layout_height="10dp"
 		        android:layout_centerVertical="true"
 		        android:layout_centerHorizontal="true"
 		        android:src="@drawable/check_in" />
@@ -59,10 +60,11 @@
 	        	android:layout_width="wrap_content"
 	            android:layout_height="20dp"
 	            android:layout_marginLeft="10dp"
+	            android:layout_gravity="center"
 	            android:text="提醒我要填寫想法與反思"
 	            android:textAppearance="?android:attr/textAppearanceMedium"
 	            android:textColor="@color/dark_gray"
-	            android:textSize="14sp"  />
+	            android:textSize="16sp"  />
 
 	    	</LinearLayout>
     	</RelativeLayout>

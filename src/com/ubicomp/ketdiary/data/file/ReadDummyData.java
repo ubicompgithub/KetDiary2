@@ -34,7 +34,7 @@ public class ReadDummyData extends AsyncTask<Void, Void, Void> {
 	
 	@Override
 	protected Void doInBackground(Void... params) {
-		insertNoteAdd();
+		//insertNoteAdd();
 		insertTestResult();
 		return null;
 	}
@@ -44,7 +44,7 @@ public class ReadDummyData extends AsyncTask<Void, Void, Void> {
 		drc.deleteAll();
 	}
 	
-	private void insertNoteAdd(){
+	/*private void insertNoteAdd(){
 		try{
 			File mainStorageDir = MainStorage.getMainStorageDirectory();
 			File textFile;
@@ -91,7 +91,7 @@ public class ReadDummyData extends AsyncTask<Void, Void, Void> {
 	    }catch(Exception e){
 	        e.printStackTrace();
 	    }
-	}
+	}*/
 	
 	private void insertTestResult(){
 		try{

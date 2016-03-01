@@ -922,19 +922,20 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		cameraInitHandler.sendEmptyMessage(0);
 	}
 	
-	
-	public void writeQuestionFile(int day, int timeslot, int type, int items, int impact, String description) {
-		if( questionFile!= null )
+	@Override
+	public int writeQuestionFile(int day, int timeslot, int type, int items, int impact, String action, String feeling, String thinking, int finished, int key) {
+		/*if( questionFile!= null )
 			questionFile.write(day, timeslot, type, items, impact, description);
 		
 		if(type > -1)
 			TestDataParser2.startAfterAddNote3(1, day, timeslot, type, items, impact, description);
-		
+		*/
 //		if( TDP!= null ){
 //			//TDP.startAddNote();
 //			//TDP.getQuestionResult2(textFile)
 //			TDP.startAddNote3(1, day, timeslot, type, items, impact, description);
 //		}
+		return -1;
 	}
 
 	//release resource
@@ -2139,5 +2140,6 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		public void onFragmentAction(int flag);
 
 	}
+
 
 }

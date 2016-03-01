@@ -80,7 +80,10 @@ public class DatabaseRestoreControl {
 		content.put("type", data.getType());
 		content.put("items", data.getItems());
 		content.put("impact", data.getImpact());
-		content.put("description", data.getDescription());
+		content.put("action", data.getAction());
+		content.put("feeling", data.getFeeling());
+		content.put("thinking", data.getThinking());
+		content.put("finished", data.getFinished());
 		content.put("weeklyScore", data.getWeeklyScore());
 		content.put("score", data.getScore());
 		content.put("upload", 1);
