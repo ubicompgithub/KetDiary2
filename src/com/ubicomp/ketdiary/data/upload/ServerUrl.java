@@ -184,7 +184,7 @@ public class ServerUrl {
 		boolean develop = PreferenceControl.isDeveloper();
 		if (develop)
 			//return R.raw.keys;
-			return R.raw.rehabkey;
+			return R.raw.server171;
 		else
 			return R.raw.alcohol_certificate;
 		

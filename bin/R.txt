@@ -1534,8 +1534,9 @@ int raw end_count_down 0x7f050008
 int raw keys 0x7f050009
 int raw mykeystore 0x7f05000a
 int raw rehabkey 0x7f05000b
-int raw short_beep 0x7f05000c
-int raw supply 0x7f05000d
+int raw server171 0x7f05000c
+int raw short_beep 0x7f05000d
+int raw supply 0x7f05000e
 int string Iknow 0x7f0800ab
 int string TAG_CAL_CELL_CHANGE 0x7f080169
 int string TAG_CAL_CELL_DAY 0x7f080163
