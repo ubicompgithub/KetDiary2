@@ -3,6 +3,7 @@ package com.ubicomp.ketdiary.main.fragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -137,7 +138,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	private LineChartTitle chartTitle;
 	private ChartCaller caller;
 	
-	public View lineChartBar, lineChartView, lineChartFilter, calendarBar, calendarView, filterView;
+	public View lineChartBar, lineChartView, lineChartFilter, calendarBar, calendarView, filterView, rankView;
 	
 	public ImageView addButton, randomButton;
 	
@@ -151,10 +152,11 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	private static NoteAdd[] noteAdds = null;
 	private DatabaseControl db;
 	private NoteCatagory3 dict;
-	private static final String[] dayOfWeek = {" ", "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+	private  String[] impactText = new String[5];
+	private static final String[] dayOfWeek = {" ", "(日)", "(一)", "(二)", "(三)", "(四)", "(五)", "(六)"};
 	private static final String[] timeslot = {"上午", "下午", "晚上"};
 	private static final String[] monthName = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"};
-	
+	private static final int diaryItemsHeight = 103;
 	private LineChartData[] dataset = null;
 	private static final int sustainMonth = PreferenceControl.getSustainMonth();
 	private Calendar startDay = PreferenceControl.getStartDate();
@@ -166,10 +168,12 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		R.drawable.type_icon4, R.drawable.type_icon5, R.drawable.type_icon6, R.drawable.type_icon7,
 		R.drawable.type_icon8};
 	
-	private final static int[] typeId = {0, R.drawable.book_type1,
-		R.drawable.book_type2, R.drawable.book_type3, R.drawable.book_type4, 
-		R.drawable.book_type5, 	R.drawable.book_type6, R.drawable.book_type7, 
-	 	R.drawable.book_type8};
+	private final static int[] typeId = {R.drawable.mood_happy_clicked,
+		R.drawable.mood_calm_clicked, R.drawable.mood_excited_clicked,
+		R.drawable.mood_objective_clicked,R.drawable.mood_relax_clicked};
+	private final static int[] typeIdNull = {R.drawable.mood_happy,
+			R.drawable.mood_calm, R.drawable.mood_excited, R.drawable.mood_objective,
+			R.drawable.mood_relax };
 	
 	//public static List<Integer> filterList = new ArrayList<Integer>();
 
@@ -190,7 +194,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	private int frontState;
 		
 	public static int addNoteStep = 0;
-	
+	private NoteCatagory3 noteCategory;
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -202,9 +206,15 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		caller = this;
 		daybookFragment = this;
 		
-		
+		noteCategory = new NoteCatagory3();
 		updateDiaryHandler = new UpdateDiaryHandler();
 		updateCalendarHandler = new UpdateCalendarHandler();
+		
+		impactText[0] = context.getResources().getString(R.string.impact_1);
+		impactText[1] = context.getResources().getString(R.string.impact_2);
+		impactText[2] = context.getResources().getString(R.string.impact_3);
+		impactText[3] = context.getResources().getString(R.string.impact_4);
+		impactText[4] = context.getResources().getString(R.string.impact_5);
 	}
 	
 	
@@ -333,7 +343,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				if(scrollY == last_scrollY){
 					return;
 				}
-				int index = scrollY/(int)convertDpToPixel(125);
+				int index = scrollY/(int)convertDpToPixel(diaryItemsHeight);
 				
 				int allNum = diaryList.getChildCount();
 				int j=0;
@@ -951,6 +961,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			diaryItem2 = new View[noteAdds.length];
 			for(int i=0; i < noteAdds.length; i++){
 				int type = noteAdds[i].getType();
+				String feelings = noteAdds[i].getFeeling();
+				String[] str_feelings = new String[3];
 				diary.add(type);
 //				if(type > 0 && type <=8){
 //					if(!filterButtonIsPressed[type] && !filterButtonIsPressed[0])
@@ -965,26 +977,29 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 //				}
 				int year = noteAdds[i].getRecordTv().getYear();
 				//LayoutInflater inflater = LayoutInflater.from(context);
-				diaryItem2[i] = inflater.inflate(R.layout.diary_item, null);
-				LinearLayout layout = (LinearLayout)diaryItem2[i].findViewById(R.id.diary_layout);
+				diaryItem2[i] = inflater.inflate(R.layout.diary_item_cbt, null);
+				LinearLayout layout = (LinearLayout)diaryItem2[i].findViewById(R.id.diary_layout_cbt);
 			
 				TextView date_num = (TextView) diaryItem2[i].findViewById(R.id.diary_date);
-				TextView week_num = (TextView) diaryItem2[i].findViewById(R.id.diary_week);
+				//TextView week_num = (TextView) diaryItem2[i].findViewById(R.id.diary_week);
 				TextView timeslot_num = (TextView) diaryItem2[i].findViewById(R.id.diary_timeslot);
 				ImageView type_img = (ImageView) diaryItem2[i].findViewById(R.id.diary_image_type);
-				TextView items_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_items);
-				//TextView description_txt = (TextView) diaryItem.findViewById(R.id.diary_description);
+				ImageView type_img2 = (ImageView) diaryItem2[i].findViewById(R.id.diary_image_type2);
+				ImageView type_img3 = (ImageView) diaryItem2[i].findViewById(R.id.diary_image_type3);
+				//TextView items_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_items);
+				TextView description_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_description);
 				TextView impact_word = (TextView) diaryItem2[i].findViewById(R.id.diary_impact_word);
 				TextView impact_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_impact);
+				TextView feeling_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_impact_feeling);
 				
 				diaryItem2[i].setTag(TAG_LIST_YEAR, year);
 				diaryItem2[i].setTag(TAG_LIST_MONTH, month);
 				diaryItem2[i].setTag(TAG_LIST_DAY, date);
 				
 				date_num.setTypeface(wordTypefaceBold);
-				week_num.setTypeface(wordTypefaceBold);
+				//week_num.setTypeface(wordTypefaceBold);
 				timeslot_num.setTypeface(wordTypefaceBold);
-				items_txt.setTypeface(wordTypefaceBold);
+				//items_txt.setTypeface(wordTypefaceBold);
 				impact_word.setTypeface(wordTypefaceBold);
 				impact_txt.setTypeface(wordTypefaceBold);
 				
@@ -1001,14 +1016,14 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 						
 				}
 				diaryItem2[i].setTag(TAG_changedot, result);	
-				if(result == 0)
+				/*if(result == 0)
 					layout.setBackgroundResource(R.drawable.diary_pass);
 				else if(result == 1){
 					layout.setBackgroundResource(R.drawable.diary_nopass);
 				}
 				else{
 					layout.setBackgroundResource(R.drawable.diary_notest);
-				}	
+				}	*/
 			
 			int dayOfweek = noteAdds[i].getRecordTv().getDayOfWeek();
 			int slot = noteAdds[i].getTimeSlot();
@@ -1016,27 +1031,52 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			int items = noteAdds[i].getItems();
 			String descripton = noteAdds[i].getAction();
 			int impact = noteAdds[i].getImpact();
-			
 
 			
 			//type_img.setOnLongClickListener(new TypeLongClickListener(date, dayOfweek, slot, type, items,	impact, descripton));
 			layout.setOnLongClickListener(new TypeLongClickListener(month, date, dayOfweek, slot, type, items, 
 					impact, descripton));
 			
-			if(type > 0 && type <=8)
-				type_img.setImageResource(typeId[type]);
+			//if(type > 0 && type <=8)
+			//	type_img.setImageResource(typeId[type])
+			StringTokenizer st = new StringTokenizer(feelings, ", ");
+			int cnt = 0;
+			while(st.hasMoreTokens()) {
+	            str_feelings[cnt++] = st.nextToken();
+	        }
+						
+			if(cnt > 2)
+			{
+				int nowMood = noteCategory.myNewHashMap.get(str_feelings[2]);
+				type_img3.setImageResource(typeIdNull[nowMood - 900]);
+			}else{
+				type_img3.setImageResource(android.R.color.transparent);
+			}
+			if(cnt > 1)
+			{
+				int nowMood = noteCategory.myNewHashMap.get(str_feelings[1]);
+				type_img2.setImageResource(typeIdNull[nowMood - 900]);
+			}else{
+				type_img2.setImageResource(android.R.color.transparent);
+			}
+
+			if(cnt > 0)
+			{
+				int nowMood = noteCategory.myNewHashMap.get(str_feelings[0]);
+				type_img.setImageResource(typeId[nowMood - 900]);
+				feeling_txt.setText(str_feelings[0] + "的");
+			}else{
+				type_img.setImageResource(android.R.color.transparent);
+			}
+				
 			
-			
-			date_num.setText((month+1)+"月"+ date + "號");
-			week_num.setText(dayOfWeek[ dayOfweek ]);
+			date_num.setText((month+1)+"月"+ date + "號" + dayOfWeek[ dayOfweek ]);
 			timeslot_num.setText(timeslot[ slot ] );
 
-			items_txt.setText( dict.dictionary.get(items) );
-			//description_txt.setText(descripton);
-			if(impact-3 <=0)
-				impact_txt.setText(String.valueOf(impact -3));
-			else
-				impact_txt.setText("+" + String.valueOf(impact -3));
+			//items_txt.setText( dict.dictionary.get(items) );
+			description_txt.setText(descripton);
+
+			impact_txt.setText(impactText[impact]);
 			
 			last_result = result;
 			last_day = date;
@@ -1099,6 +1139,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				diaryItem2 = new View[noteAdds.length];
 				for(int i=0; i < noteAdds.length; i++){
 					int type = noteAdds[i].getType();
+					String feelings = noteAdds[i].getFeeling();
+					String[] str_feelings = new String[3];
 					diary.add(type);
 //					if(type > 0 && type <=8){
 //						if(!filterButtonIsPressed[type] && !filterButtonIsPressed[0])
@@ -1112,22 +1154,25 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 					}
 					int year = noteAdds[i].getRecordTv().getYear();
 					//LayoutInflater inflater = LayoutInflater.from(context);
-					diaryItem2[i] = inflater.inflate(R.layout.diary_item, null);
-					LinearLayout layout = (LinearLayout)diaryItem2[i].findViewById(R.id.diary_layout);
+					diaryItem2[i] = inflater.inflate(R.layout.diary_item_cbt, null);
+					LinearLayout layout = (LinearLayout)diaryItem2[i].findViewById(R.id.diary_layout_cbt);
 				
 					TextView date_num = (TextView) diaryItem2[i].findViewById(R.id.diary_date);
-					TextView week_num = (TextView) diaryItem2[i].findViewById(R.id.diary_week);
+					//TextView week_num = (TextView) diaryItem2[i].findViewById(R.id.diary_week);
 					TextView timeslot_num = (TextView) diaryItem2[i].findViewById(R.id.diary_timeslot);
 					ImageView type_img = (ImageView) diaryItem2[i].findViewById(R.id.diary_image_type);
-					TextView items_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_items);
-					//TextView description_txt = (TextView) diaryItem.findViewById(R.id.diary_description);
+					ImageView type_img2 = (ImageView) diaryItem2[i].findViewById(R.id.diary_image_type2);
+					ImageView type_img3 = (ImageView) diaryItem2[i].findViewById(R.id.diary_image_type3);
+					//TextView items_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_items);
+					TextView description_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_description);
 					TextView impact_word = (TextView) diaryItem2[i].findViewById(R.id.diary_impact_word);
 					TextView impact_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_impact);
+					TextView feeling_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_impact_feeling);
 					
 					date_num.setTypeface(wordTypefaceBold);
-					week_num.setTypeface(wordTypefaceBold);
+					//week_num.setTypeface(wordTypefaceBold);
 					timeslot_num.setTypeface(wordTypefaceBold);
-					items_txt.setTypeface(wordTypefaceBold);
+					//items_txt.setTypeface(wordTypefaceBold);
 					impact_word.setTypeface(wordTypefaceBold);
 					impact_txt.setTypeface(wordTypefaceBold);
 					
@@ -1166,20 +1211,44 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				layout.setOnLongClickListener(new TypeLongClickListener(month, date, dayOfweek, slot, type, items, 
 						impact, descripton));
 				
-				if(type > 0 && type <=8)
-					type_img.setImageResource(typeId[type]);
+				//if(type > 0 && type <=8)
+				//	type_img.setImageResource(typeId[type]);
+				StringTokenizer st = new StringTokenizer(feelings, ", ");
+				int cnt = 0;
+				while(st.hasMoreTokens()) {
+		            str_feelings[cnt++] = st.nextToken();
+		        }
+							
+				if(cnt > 2)
+				{
+					int nowMood = noteCategory.myNewHashMap.get(str_feelings[2]);
+					type_img3.setImageResource(typeIdNull[nowMood - 900]);
+				}else{
+					type_img3.setImageResource(android.R.color.transparent);
+				}
+				if(cnt > 1)
+				{
+					int nowMood = noteCategory.myNewHashMap.get(str_feelings[1]);
+					type_img2.setImageResource(typeIdNull[nowMood - 900]);
+				}else{
+					type_img2.setImageResource(android.R.color.transparent);
+				}
+
+				if(cnt > 0)
+				{
+					int nowMood = noteCategory.myNewHashMap.get(str_feelings[0]);
+					type_img.setImageResource(typeId[nowMood - 900]);
+					feeling_txt.setText(str_feelings[0] + "的");
+				}else{
+					type_img.setImageResource(android.R.color.transparent);
+				}
 				
-				
-				date_num.setText(""+ date + "號");
-				week_num.setText(dayOfWeek[ dayOfweek ]);
+				date_num.setText(""+ date + "號" + dayOfWeek[ dayOfweek ]);
 				timeslot_num.setText(timeslot[ slot ] );
 
-				items_txt.setText( dict.dictionary.get(items) );
-				//description_txt.setText(descripton);
-				if(impact-3 <=0)
-					impact_txt.setText(String.valueOf(impact -3));
-				else
-					impact_txt.setText("+" + String.valueOf(impact -3));
+				//items_txt.setText( dict.dictionary.get(items) );
+				description_txt.setText(descripton);
+				impact_txt.setText(impactText[impact]);
 				
 				last_result = result;
 				last_day = date;
@@ -1224,6 +1293,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			if(noteAdds.length!=0){
 				for(int i=0; i < noteAdds.length; i++){
 					int type = noteAdds[i].getType();
+					String feelings = noteAdds[i].getFeeling();
+					String[] str_feelings = new String[3];
 					diary.add(type);
 					if(type > 0 && type <=8){
 						if(!filterButtonIsPressed[type] && !filterButtonIsPressed[0])
@@ -1233,22 +1304,25 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 					int month = noteAdds[i].getRecordTv().getMonth();
 					int year = noteAdds[i].getRecordTv().getYear();
 					//LayoutInflater inflater = LayoutInflater.from(context);
-					diaryItem = inflater.inflate(R.layout.diary_item, null);
-					LinearLayout layout = (LinearLayout)diaryItem.findViewById(R.id.diary_layout);
+					diaryItem = inflater.inflate(R.layout.diary_item_cbt, null);
+					LinearLayout layout = (LinearLayout)diaryItem.findViewById(R.id.diary_layout_cbt);
 				
 					TextView date_num = (TextView) diaryItem.findViewById(R.id.diary_date);
 					TextView week_num = (TextView) diaryItem.findViewById(R.id.diary_week);
 					TextView timeslot_num = (TextView) diaryItem.findViewById(R.id.diary_timeslot);
 					ImageView type_img = (ImageView) diaryItem.findViewById(R.id.diary_image_type);
-					TextView items_txt = (TextView) diaryItem.findViewById(R.id.diary_items);
-					//TextView description_txt = (TextView) diaryItem.findViewById(R.id.diary_description);
+					ImageView type_img2 = (ImageView) diaryItem.findViewById(R.id.diary_image_type2);
+					ImageView type_img3 = (ImageView) diaryItem.findViewById(R.id.diary_image_type3);
+					//TextView items_txt = (TextView) diaryItem.findViewById(R.id.diary_items);
+					TextView description_txt = (TextView) diaryItem.findViewById(R.id.diary_description);
 					TextView impact_word = (TextView) diaryItem.findViewById(R.id.diary_impact_word);
 					TextView impact_txt = (TextView) diaryItem.findViewById(R.id.diary_impact);
+					TextView feeling_txt = (TextView) diaryItem.findViewById(R.id.diary_impact_feeling);
 					
 					date_num.setTypeface(wordTypefaceBold);
 					week_num.setTypeface(wordTypefaceBold);
 					timeslot_num.setTypeface(wordTypefaceBold);
-					items_txt.setTypeface(wordTypefaceBold);
+					//items_txt.setTypeface(wordTypefaceBold);
 					impact_word.setTypeface(wordTypefaceBold);
 					impact_txt.setTypeface(wordTypefaceBold);
 					
@@ -1287,12 +1361,39 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				layout.setOnLongClickListener(new TypeLongClickListener(month, date, dayOfweek, slot, type, items, 
 						impact, descripton));
 				
-				if(type > 0 && type <=8)
-					type_img.setImageResource(typeId[type]);
+				//if(type > 0 && type <=8)
+				//	type_img.setImageResource(typeId[type]);
+				StringTokenizer st = new StringTokenizer(feelings, ", ");
+				int cnt = 0;
+				while(st.hasMoreTokens()) {
+		            str_feelings[cnt++] = st.nextToken();
+		        }
+							
+				if(cnt > 2)
+				{
+					int nowMood = noteCategory.myNewHashMap.get(str_feelings[2]);
+					type_img3.setImageResource(typeIdNull[nowMood - 900]);
+				}else{
+					type_img3.setImageResource(android.R.color.transparent);
+				}
+				if(cnt > 1)
+				{
+					int nowMood = noteCategory.myNewHashMap.get(str_feelings[1]);
+					type_img2.setImageResource(typeIdNull[nowMood - 900]);
+				}else{
+					type_img2.setImageResource(android.R.color.transparent);
+				}
+
+				if(cnt > 0)
+				{
+					int nowMood = noteCategory.myNewHashMap.get(str_feelings[0]);
+					type_img.setImageResource(typeId[nowMood - 900]);
+					feeling_txt.setText(str_feelings[0] + "的");
+				}else{
+					type_img.setImageResource(android.R.color.transparent);
+				}
 				
-				
-				date_num.setText(date + "號");
-				week_num.setText(dayOfWeek[ dayOfweek ]);
+				date_num.setText(date + "號" + dayOfWeek[ dayOfweek ]);
 				timeslot_num.setText(timeslot[ slot ] );
 				/*
 				if(date!= last_day){
@@ -1313,12 +1414,9 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 						timeslot_num.setText("");
 					}
 				}*/
-				items_txt.setText( dict.dictionary.get(items) );
-				//description_txt.setText(descripton);
-				if(impact-3 <=0)
-					impact_txt.setText(String.valueOf(impact -3));
-				else
-					impact_txt.setText("+" + String.valueOf(impact -3));
+				//items_txt.setText( dict.dictionary.get(items) );
+				description_txt.setText(descripton);
+				impact_txt.setText(impactText[impact]);
 				
 				last_result = result;
 				last_day = date;
@@ -1899,7 +1997,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			int rDay = noteAdds[i].getRecordTv().getDay();
 			
 			if(rYear == year && rMonth == month && rDay == day){
-				sv.smoothScrollTo(0 , (int)convertDpToPixel(125)*(i-2));				
+				sv.smoothScrollTo(0 , (int)convertDpToPixel(diaryItemsHeight)*(i-2));				
 			}		
 		}
 	}
@@ -1917,7 +2015,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			int m = (Integer)item.getTag(TAG_LIST_MONTH);
 			int d = (Integer)item.getTag(TAG_LIST_DAY);
 			if(y == year && m == month && d == day){
-				sv.smoothScrollTo(0 , (int)convertDpToPixel(125)*(j-3));	
+				sv.smoothScrollTo(0 , (int)convertDpToPixel(diaryItemsHeight)*(j-3));	
 			}	
 		}				
 		

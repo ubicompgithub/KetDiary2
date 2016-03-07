@@ -1,11 +1,12 @@
 package com.ubicomp.ketdiary.test.bluetoothle;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
 public interface BluetoothListener {
-	
+
 	public Activity activity = null;
 	
     void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -23,7 +24,7 @@ public interface BluetoothListener {
     void bleDisconnected();
 
     /* BLE write state success */
-    void bleWriteStateSuccess();
+    void bleWriteCharacteristic1Success();
 
     /* BLE write state fail */
     void bleWriteStateFail();
@@ -32,43 +33,17 @@ public interface BluetoothListener {
     void bleNoPlug();
 
     /* Test plug is detected with its ID */
-    void blePlugInserted(byte[] plugId);
+    void blePlugInserted(int cassetteId);
 
-    /* Electrode state:
-    state: 0xFC=not yet conduct, 0xFD=1st is conducted, 2ed is conducted,
-    adcReading: 2 bytes
-     */
-    void bleElectrodeAdcReading(byte state, byte[] adcReading);
+    /* Update battery level */
+    void bleUpdateBattLevel(int level);
 
-    /* Color sensor readings */
-    void bleColorReadings(byte[] colorReadings);
-    
-    // Add by Larry
-    
-    /* Take picture successfully*/
-    void bleTakePictureSuccess(Bitmap bitmap);
-    
-    /* Take picture failed*/
-    void bleTakePictureFail(float dropRate);
+    /* Update saliva voltage */
+    void bleUpdateSalivaVolt(int volt);
 
-    /* Update process rate*/
-    void updateProcessRate(String rate);
+    /* Image is retrieved successfully */
+    void bleGetImageSuccess(Bitmap bitmap);
 
-    /* Clear process rate*/
-    void clearProcesssRate();
-    
-    /* Retransmit*/
-    void PictureRetransmit(int count);
-
-    /* Show image preview*/
-    void imgDetect(Bitmap bitmap);
-
-    /* Display current saliva Id*/
-    void displayCurrentId(String id, int hardwareState, int power_notenough);
-    
-    void displayHardwareVersion(String version);
-    
-    void writeDebug(String msg);
-    
-    void displayPower(int power);
+    /* Failed to retrieve image */
+    void bleGetImageFailure(float dropoutRate);
 }

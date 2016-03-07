@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="沒影響"
+                    android:text="@string/impact_1"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1"/>
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="普通"
+                    android:text="@string/impact_2"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1" />
@@ -95,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="一點點"
+                    android:text="@string/impact_3"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1" />
@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="大"
+                    android:text="@string/impact_4"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1" />
@@ -117,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
                     android:gravity="center"
-                    android:text="非常大"
+                    android:text="@string/impact_5"
                     android:textColor="@color/dark_gray"
                     android:textSize="@dimen/normal_text_size"
                     android:layout_weight="1" />

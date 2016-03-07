@@ -438,4 +438,11 @@
 	
 	<string name="device_reject_not_digit">請確認輸入字元皆為數字</string>
 	<string name="device_reject_range_error">編號範圍(1~999)</string>
+	
+	<string name="impact_1">很小</string>
+	<string name="impact_2">有點小</string>
+	<string name="impact_3">中等</string>
+	<string name="impact_4">有點大</string>
+	<string name="impact_5">非常大</string>
+
 </resources>

@@ -204,8 +204,10 @@ public class SettingActivity extends Activity {
 		mainLayout.addView(deviceIDView);
 
 		String ori_deviceid = PreferenceControl.getDeviceId();
-		int intID = Integer.valueOf(ori_deviceid.substring(ori_deviceid.length()-3));
-		String deviceid = Integer.toString(intID);
+		/*GG*/
+		/*int intID = Integer.valueOf(ori_deviceid.substring(ori_deviceid.length()-3));
+		String deviceid = Integer.toString(intID);*/
+		String deviceid = ori_deviceid;
 		
 		deviceIDViews = new RelativeLayout[1];
 		
@@ -531,7 +533,8 @@ public class SettingActivity extends Activity {
 					for(int i = 0; i < 3; i++)
 						DeviceID += lastnum[i];
 				
-					PreferenceControl.setDeviceId(DeviceID);
+					//PreferenceControl.setDeviceId(DeviceID);
+					PreferenceControl.setDeviceId("myble");
 				}
 				else if(isNum)
 					CustomToastSmall.generateToast(R.string.device_reject_range_error);
