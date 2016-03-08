@@ -875,7 +875,33 @@ public class DatabaseControl {
 		}
 	}
 	
-	
+	/**
+	 * Know the NoteAdd reflect or not
+	 * 
+	 * @param ts
+	 *            Timestamp of the uploaded EmotionManagement
+	 * @see ubicomp.soberdiary.data.structure.EmotionManagement
+	 */
+	public boolean getNoteAddReflection(int relation_key) {
+		synchronized (sqlLock) {
+			NoteAdd[] data = null;
+
+			db = dbHelper.getReadableDatabase();
+			String sql;
+			Cursor cursor;
+
+			sql = "SELECT * FROM Reflection WHERE relationKey = " + relation_key;
+			cursor = db.rawQuery(sql, null);
+			int count = cursor.getCount();
+			if (count == 0) {
+				cursor.close();
+				db.close();
+				return false;
+			}
+
+			return true;
+		}
+	}
 	
 	/**
 	 * This method is used for getting all prime brac Detection

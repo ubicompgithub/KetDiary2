@@ -1,6 +1,7 @@
 package com.ubicomp.ketdiary.data.structure;
 
 import java.util.Calendar;
+import java.util.Comparator;
 
 
 public class NoteAdd {
@@ -140,5 +141,20 @@ public class NoteAdd {
 		return key;
 	}
 	
+	public static Comparator<NoteAdd> NoteAddTypeComparator = new Comparator<NoteAdd>() {
+
+		public int compare(NoteAdd Note1, NoteAdd Note2) {
+		
+			int type1 = Note1.getItems();
+			int type2 = Note2.getItems();
+			
+			//ascending order
+			return type1 - type2;
+			
+			//descending order
+			//return fruitName2.compareTo(fruitName1);
+			
+		}
+	};
 	
 }

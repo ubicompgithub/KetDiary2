@@ -2,6 +2,7 @@ package com.ubicomp.ketdiary.main.fragment;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 
@@ -34,6 +35,7 @@ import android.view.WindowManager;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
@@ -47,6 +49,7 @@ import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.file.QuestionFile;
 import com.ubicomp.ketdiary.data.file.TestDataParser2;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
+import com.ubicomp.ketdiary.data.structure.RankingCount;
 import com.ubicomp.ketdiary.data.structure.TestResult;
 import com.ubicomp.ketdiary.daybook.LineChartData;
 import com.ubicomp.ketdiary.daybook.SectionsPagerAdapter;
@@ -73,7 +76,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	
 	public Activity activity = null;
 	private DaybookFragment daybookFragment;
-	private View view;
+	private View view, view2;
 	
 	private LoadingHandler loadHandler;
 	
@@ -89,7 +92,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	private ViewPager mViewPager;
 	public static final int TAG_PAGE_YEAR = R.string.TAG_PAGE_YEAR;
 	public static final int TAG_PAGE_MONTH = R.string.TAG_PAGE_MONTH;
-	private static LinearLayout diaryList;
+	private static LinearLayout diaryList, rankList;
 	private LinearLayout boxesLayout, drawerContent, caltoggleLayout, charttoggleLayout;
 	private RelativeLayout upperBarContent;
 	private TextView titleText, backToTodayText, linechart_bar_month;
@@ -230,22 +233,29 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		
 		diaryList = (LinearLayout) view.findViewById(R.id.item);
 		
+		
 		sv = (ScrollView)view.findViewById(R.id.diary_view);
 		
 		//LayoutInflater inflater = LayoutInflater.from(context);
-		calendarView = (View) inflater.inflate(R.layout.calendar_main, null);
+		//GGcalendarView = (View) inflater.inflate(R.layout.calendar_main, null);
+		rankView = (View) inflater.inflate(R.layout.rank_main, null);
 		calendarBar = (View) inflater.inflate(R.layout.calendar_upperbar, null);
 		
-		drawerContent.addView(calendarView);
+		rankList = (LinearLayout) rankView.findViewById(R.id.rank);
+		
+		//GGdrawerContent.addView(calendarView);
+		drawerContent.addView(rankView);
 		upperBarContent.addView(calendarBar);
 		
 		loadHandler = new LoadingHandler();
+		
+		setRankList();
 		//MainActivity.getMainActivity().setClickable(false);
 		
 		//calendarBar.setEnabled(false);
 
 		// Set up the ViewPager with the sections adapter.
-		pageViewList = new View[sustainMonth];
+		/*pageViewList = new View[sustainMonth];
 		Calendar tempCalendar = Calendar.getInstance();
 		tempCalendar.set(startYear, startMonth - 1, 1);
 		for (int i = 0; i < sustainMonth; i++) {
@@ -258,7 +268,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		mSectionsPagerAdapter = new SectionsPagerAdapter(pageViewList);
 
 		mViewPager = (ViewPager) view.findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);	
+		mViewPager.setAdapter(mSectionsPagerAdapter);*/	
 		
 		
 		
@@ -323,7 +333,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				
 		drawer.toggle();
 		
-		mViewPager.setCurrentItem(THIS_MONTH + 1 - startMonth);
+		//mViewPager.setCurrentItem(THIS_MONTH + 1 - startMonth);
 		titleText.setText( (THIS_MONTH + 1)  + "月");
 		linechart_bar_month.setText( (THIS_MONTH + 1)  + "月");
 		//titleText.setTypeface(wordTypefaceBold);
@@ -457,7 +467,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 					
 					setFilterSize();
 					setFilterType(3);
-					drawerContent.addView(calendarView);
+					//GGdrawerContent.addView(calendarView);
+					drawerContent.addView(rankView);
 					
 				}
 				else {
@@ -468,8 +479,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 					
 					drawerContent.removeAllViews();
 					
-					drawerContent.addView(calendarView);
-					
+					//GGdrawerContent.addView(calendarView);
+					drawerContent.addView(rankView);
 				}
 				if  (!drawer.isOpened())
 					drawer.toggle();
@@ -480,7 +491,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		});
 				
 			
-		mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+		/*mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
@@ -508,7 +519,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				//updateDiaryHandler.sendEmptyMessage(startMonth + currentPageIdx-1);
 			}
 			
-		});
+		});*/
 
 		backToTodayText.setOnClickListener(new View.OnClickListener() { 
             @Override
@@ -568,7 +579,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
                     newSelectedDayTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                 }
 
-                mViewPager.setCurrentItem(sustainMonth - 1);
+                //mViewPager.setCurrentItem(sustainMonth - 1);
             }
         });
 
@@ -1493,7 +1504,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			
 			case R.id.cal_toggle_layout: //calendar
 			case R.id.toggle:  
-				drawerContent.addView(calendarView);
+				//GGdrawerContent.addView(calendarView);
+				drawerContent.addView(rankView);
 				break;
 		}	
 	}
@@ -1681,8 +1693,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 						isFilterOpen = true;
 						setFilterSize();
 						setFilterType(3);
-						drawerContent.addView(calendarView);
-						
+						//GGdrawerContent.addView(calendarView);
+						drawerContent.addView(rankView);
 						
 						/*if  (!drawer.isOpened()) {
 							drawer.toggle();
@@ -1696,7 +1708,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 						
 						drawerContent.removeAllViews();
 						
-						drawerContent.addView(calendarView);
+						//GGdrawerContent.addView(calendarView);
+						drawerContent.addView(rankView);
 						isFilterOpen = false;
 						}
 	    			}
@@ -1961,7 +1974,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		}
 		
 		private void updateCalendarView(int pageIdx){
-			mViewPager.removeAllViews();
+			//mViewPager.removeAllViews();
 			
 			LayoutInflater inflater = LayoutInflater.from(context);
 			pageViewList = new View[sustainMonth];
@@ -1976,13 +1989,13 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			}
 
 			mSectionsPagerAdapter = new SectionsPagerAdapter(pageViewList);
-			mViewPager.setAdapter(mSectionsPagerAdapter);
+			//mViewPager.setAdapter(mSectionsPagerAdapter);
 			
-			if (pageIdx == -1)
+			/*if (pageIdx == -1)
 				// mViewPager.setCurrentItem(Calendar.getInstance().get(Calendar.MONTH) + 1 - startMonth);
 				mViewPager.setCurrentItem(sustainMonth - 1);
 			else
-				mViewPager.setCurrentItem(pageIdx);
+				mViewPager.setCurrentItem(pageIdx);*/
 		}
 	}
 	public static void scrolltoItem(int year, int month, int day){ // old version
@@ -2077,6 +2090,66 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		sv.fullScroll(View.FOCUS_DOWN);
 		
 		return nowKey;
+	}
+	
+	private void setRankList()
+	{
+		rankList.removeAllViews();
+		
+		noteAdds = db.getAllNoteAdd();
+		if(noteAdds == null){
+			return;
+		}
+		
+		LayoutInflater inflater = LayoutInflater.from(context);
+		int index = -1, typeNum = 0;
+		Arrays.sort(noteAdds, NoteAdd.NoteAddTypeComparator);
+		
+		int l = noteAdds.length;
+		for(int i = 0; i < l; i++)
+		{
+			if(i == 0 || noteAdds[i].getItems() != noteAdds[i-1].getItems())
+				typeNum++;
+		}
+		RankingCount[] rankingList = new RankingCount[typeNum];
+
+		
+		for(int i = 0; i < l; i++)
+		{
+			if(i == 0 || noteAdds[i].getItems() != noteAdds[i-1].getItems())
+			{
+				index++;
+				rankingList[index] = new RankingCount(noteAdds[i].getItems(), noteAdds[i].getType());
+			}
+			
+			if(db.getNoteAddReflection(noteAdds[i].getKey()))
+				rankingList[index].AddTrue();
+			else
+				rankingList[index].AddFalse();
+		}
+		Log.d("GG", "Num:"+ typeNum + "  Len:" + l);
+		Arrays.sort(rankingList, RankingCount.RankingCountTypeComparator);
+		
+		View[] rankItem = new View[5];
+		for(int i = 0; i < 5; i++)
+		{
+			if(i >= typeNum)
+				break;
+			
+			rankItem[i] = inflater.inflate(R.layout.rank_item, null);
+			
+			TextView descript = (TextView) rankItem[i].findViewById(R.id.rank_text);
+			ImageView type_image = (ImageView) rankItem[i].findViewById(R.id.rank_image_type1);
+			ProgressBar progress = (ProgressBar)rankItem[i].findViewById(R.id.rank_progressbar);
+			
+			descript.setText(noteCategory.dictionary.get(rankingList[i].getId()));
+			type_image.setImageResource(iconId[rankingList[i].getId2()]);
+			Log.d("GG", rankingList[i].getNumerator()+"/"+rankingList[i].getDenominator());
+			progress.setMax(rankingList[i].getDenominator());
+			progress.setProgress(rankingList[i].getNumerator());
+			rankList.addView(rankItem[i]);
+		}
+
 	}
 
 }
