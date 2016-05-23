@@ -65,6 +65,15 @@ public class ServerUrl {
 			return SERVER_URL + URL;
 	}
 	
+	public static String getUpdateThinkingUrl(){
+		final String URL = "test/UpdateThinking.php";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
+	}
+	
 	public static String getQuestionTestUrl(){
 		final String URL = "test/QuestionTest.php";
 		boolean develop = PreferenceControl.isDeveloper();
@@ -167,6 +176,34 @@ public class ServerUrl {
 	}
 	
 	/**
+	 * URL for inserting table Score
+	 * 
+	 * @return url
+	 */
+	public static String getAddScoreUrl(){
+		final String URL = "test/AddScore.php";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
+	}
+	
+	
+	/**
+	 * URL for inserting table IdentityScore
+	 * 
+	 * @return url
+	 */
+	public static String getIdentityScoreUrl(){
+		final String URL = "test/IdentityScore.php";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
+	}
+	/**
 	 * URL for uploading clicklog
 	 * 
 	 * @return url
@@ -188,6 +225,47 @@ public class ServerUrl {
 		else
 			return R.raw.alcohol_certificate;
 		
+	}
+	
+	/**
+	 * URL for update SVM Model
+	 * 
+	 * @return url
+	 */
+	public static String SERVER_URL_SVM_MODEL() {
+		final String URL = "SVM/model.out";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
+	}
+	
+	public static String SERVER_URL_SCALE_PARAM() {
+		final String URL = "SVM/scale_param.out";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
+	}
+	
+	public static String SERVER_URL_VERSION() {
+		final String URL = "test/Version.php";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
+	}
+	
+	public static String SERVER_URL_TRIGGER() {
+		final String URL = "test/Trigger.php";
+		boolean develop = PreferenceControl.isDeveloper();
+		if (develop)
+			return SERVER_URL_DEVELOP + URL;
+		else
+			return SERVER_URL + URL;
 	}
 	
 	

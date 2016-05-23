@@ -13,6 +13,7 @@ import com.ubicomp.ketdiary.SelectActivity;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
 import com.ubicomp.ketdiary.data.structure.TimeValue;
+import com.ubicomp.ketdiary.noUse.NoteCatagory3;
 
 /**
  * Class for controlling Android Preference
@@ -258,14 +259,14 @@ public class PreferenceControl {
 	public static int getPoint() {
 		DatabaseControl db = new DatabaseControl();
 		//int resultScore = db.getLatestTestResult().getScore();
-		int resultScore = db.getLatestTestResultID().getScore();
-		int noteScore = db.getLatestNoteAdd().getScore();
-		int questionScore = db.getLatestQuestionTest().getScore();
-		int copingScore = db.getLatestCopingSkill().getScore();
+		//int resultScore = db.getLatestTestResultID().getScore();
+		//int noteScore = db.getLatestNoteAdd().getScore();
+		//int questionScore = db.getLatestQuestionTest().getScore();
+		//int copingScore = db.getLatestCopingSkill().getScore();
 		
-		Log.i(TAG, "result: "+resultScore + "note: "+noteScore + "question: "+questionScore +"coping: " +copingScore);
+		//Log.i(TAG, "result: "+resultScore + "note: "+noteScore + "question: "+questionScore +"coping: " +copingScore);
 
-		int total_point = resultScore + noteScore + questionScore + copingScore;
+		int total_point = db.getLastestAddScore().getAccumulation();//= resultScore + noteScore + questionScore + copingScore;
 		return total_point;	
 		//return sp.getInt("Point", 0);
 	}
@@ -283,7 +284,7 @@ public class PreferenceControl {
 	}
 	
 	public static int getPosition() {
-		return sp.getInt("Postion", 10);
+		return sp.getInt("Postion", 50);
 	}
 	
 	public static void setPosition(int addPos) {
@@ -292,8 +293,8 @@ public class PreferenceControl {
 		if(pos<0){
 			pos = 0;
 		}
-		else if(pos > 20){
-			pos = 20;
+		else if(pos > 100){
+			pos = 100;
 		}
 		SharedPreferences.Editor edit = sp.edit();
 		edit.putInt("Postion", pos);
@@ -358,7 +359,7 @@ public class PreferenceControl {
 	}
 	
 	public static int getVoltag1() {
-		return sp.getInt("Voltage1", 110);
+		return sp.getInt("Voltage1", 200);
 	}
 	
 	public static void setVoltage1(int voltage1) {
@@ -368,7 +369,7 @@ public class PreferenceControl {
 	}
 	
 	public static int getVoltag2() {
-		return sp.getInt("Voltage2", 110);
+		return sp.getInt("Voltage2", 240);
 	}
 	
 	public static void setVoltage2(int voltage2) {
@@ -724,7 +725,7 @@ public class PreferenceControl {
 	}
 	
 	private static int noteNum = SelectActivity.NOTE_UPPER_BOUND;
-	private static NoteCategory4 noteCateogry = new NoteCategory4();
+	private static NoteCatagory3 noteCateogry = new NoteCatagory3();
 	/** Get the names of the */
 	public static String[] getType1() {
 		String[] names = new String[noteNum];
@@ -765,10 +766,10 @@ public class PreferenceControl {
 		names[3] = sp.getString("type2_name3", noteCateogry.notgood.get(203));
 		names[4] = sp.getString("type2_name4", noteCateogry.notgood.get(204));
 		names[5] = sp.getString("type2_name5", noteCateogry.notgood.get(205));
-		names[6] = sp.getString("type2_name6", "");
-		names[7] = sp.getString("type2_name7", "");
-		names[8] = sp.getString("type2_name8", "");
-		names[9] = sp.getString("type2_name9", "");
+		names[6] = sp.getString("type2_name6", noteCateogry.notgood.get(206));
+		names[7] = sp.getString("type2_name7", noteCateogry.notgood.get(207));
+		names[8] = sp.getString("type2_name8", noteCateogry.notgood.get(208));
+		names[9] = sp.getString("type2_name9", noteCateogry.notgood.get(209));
 		return names;
 	}
 
@@ -796,10 +797,10 @@ public class PreferenceControl {
 		names[3] = sp.getString("type3_name3", noteCateogry.positive.get(303));
 		names[4] = sp.getString("type3_name4", noteCateogry.positive.get(304));
 		names[5] = sp.getString("type3_name5", noteCateogry.positive.get(305));
-		names[6] = sp.getString("type3_name6", "");
-		names[7] = sp.getString("type3_name7", "");
-		names[8] = sp.getString("type3_name8", "");
-		names[9] = sp.getString("type3_name9", "");
+		names[6] = sp.getString("type3_name6", noteCateogry.positive.get(306));
+		names[7] = sp.getString("type3_name7", noteCateogry.positive.get(307));
+		names[8] = sp.getString("type3_name8", noteCateogry.positive.get(308));
+		names[9] = sp.getString("type3_name9", noteCateogry.positive.get(309));
 		return names;
 	}
 
@@ -825,12 +826,12 @@ public class PreferenceControl {
 		names[1] = sp.getString("type4_name1", noteCateogry.selftest.get(401));
 		names[2] = sp.getString("type4_name2", noteCateogry.selftest.get(402));
 		names[3] = sp.getString("type4_name3", noteCateogry.selftest.get(403));
-		names[4] = sp.getString("type4_name4", "");
-		names[5] = sp.getString("type4_name5", "");
-		names[6] = sp.getString("type4_name6", "");
-		names[7] = sp.getString("type4_name7", "");
-		names[8] = sp.getString("type4_name8", "");
-		names[9] = sp.getString("type4_name9", "");
+		names[4] = sp.getString("type4_name4", noteCateogry.selftest.get(404));
+		names[5] = sp.getString("type4_name5", noteCateogry.selftest.get(405));
+		names[6] = sp.getString("type4_name6", noteCateogry.selftest.get(406));
+		names[7] = sp.getString("type4_name7", noteCateogry.selftest.get(407));
+		names[8] = sp.getString("type4_name8", noteCateogry.selftest.get(408));
+		names[9] = sp.getString("type4_name9", noteCateogry.selftest.get(409));
 		return names;
 	}
 
@@ -892,7 +893,7 @@ public class PreferenceControl {
 		names[6] = sp.getString("type6_name6", noteCateogry.conflict.get(606));
 		names[7] = sp.getString("type6_name7", noteCateogry.conflict.get(607));
 		names[8] = sp.getString("type6_name8", noteCateogry.conflict.get(608));
-		names[9] = sp.getString("type6_name9", "");
+		names[9] = sp.getString("type6_name9", noteCateogry.conflict.get(609));
 		return names;
 	}
 
@@ -919,11 +920,11 @@ public class PreferenceControl {
 		names[2] = sp.getString("type7_name2", noteCateogry.social.get(702));
 		names[3] = sp.getString("type7_name3", noteCateogry.social.get(703));
 		names[4] = sp.getString("type7_name4", noteCateogry.social.get(704));
-		names[5] = sp.getString("type7_name5", "");
-		names[6] = sp.getString("type7_name6", "");
-		names[7] = sp.getString("type7_name7", "");
-		names[8] = sp.getString("type7_name8", "");
-		names[9] = sp.getString("type7_name9", "");
+		names[5] = sp.getString("type7_name5", noteCateogry.social.get(705));
+		names[6] = sp.getString("type7_name6", noteCateogry.social.get(706));
+		names[7] = sp.getString("type7_name7", noteCateogry.social.get(707));
+		names[8] = sp.getString("type7_name8", noteCateogry.social.get(708));
+		names[9] = sp.getString("type7_name9", noteCateogry.social.get(709));
 		return names;
 	}
 
@@ -950,12 +951,12 @@ public class PreferenceControl {
 		names[1] = sp.getString("type8_name1", noteCateogry.play.get(801));
 		names[2] = sp.getString("type8_name2", noteCateogry.play.get(802));
 		names[3] = sp.getString("type8_name3", noteCateogry.play.get(803));
-		names[4] = sp.getString("type8_name4", "");
-		names[5] = sp.getString("type8_name5", "");
-		names[6] = sp.getString("type8_name6", "");
-		names[7] = sp.getString("type8_name7", "");
-		names[8] = sp.getString("type8_name8", "");
-		names[9] = sp.getString("type8_name9", "");
+		names[4] = sp.getString("type8_name4", noteCateogry.play.get(804));
+		names[5] = sp.getString("type8_name5", noteCateogry.play.get(805));
+		names[6] = sp.getString("type8_name6", noteCateogry.play.get(806));
+		names[7] = sp.getString("type8_name7", noteCateogry.play.get(807));
+		names[8] = sp.getString("type8_name8", noteCateogry.play.get(808));
+		names[9] = sp.getString("type8_name9", noteCateogry.play.get(809));
 		return names;
 	}
 
@@ -987,12 +988,37 @@ public class PreferenceControl {
 		names[7] = "";
 		names[8] = "";
 		names[9] = "";*/
-		names[0] = "快樂";
-		names[1] = "冷靜";
-		names[2] = "興奮";
-		names[3] = "客觀";
-		names[4] = "放鬆";
+		names[0] = "生氣";
+		names[1] = "難過";
+		names[2] = "緊張";
+		names[3] = "厭惡";
+		names[4] = "開心";
+		names[5] = "驚恐";
+		names[6] = "無聊";
+		names[7] = "";
+		names[8] = "";
+		names[9] = "";
+		return names;
+	}
+	
+	public static String[] getTypeMoodReflection() {
+		String[] names = new String[noteNum];
+		/*names[0] = noteCateogry.play.get(900);
+		names[1] = noteCateogry.play.get(901);
+		names[2] = noteCateogry.play.get(902);
+		names[3] = "";
+		names[4] = "";
 		names[5] = "";
+		names[6] = "";
+		names[7] = "";
+		names[8] = "";
+		names[9] = "";*/
+		names[0] = "冷靜";
+		names[1] = "堅定";
+		names[2] = "放鬆";
+		names[3] = "開心";
+		names[4] = "活力十足";
+		names[5] = "感覺被愛";
 		names[6] = "";
 		names[7] = "";
 		names[8] = "";
@@ -1349,6 +1375,67 @@ public class PreferenceControl {
 		edit.putLong("appealStartTime", ts);
 		edit.commit();
 	}
+	
+	public static void setSvmVersion(int v) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putInt("svmVersion", v);
+		edit.commit();
+	}
+	
+	public static int getSvmVersion() {
+		return sp.getInt("svmVersion", 0);
+	}
+	
+	public static void setTriggerVersion(int v) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putInt("triggerVersion", v);
+		edit.commit();
+	}
+	
+	public static int getTriggerVersion() {
+		return sp.getInt("triggerVersion", 0);
+	}
+	
+	public static long getLastestNoteAddTimestamp() {
+		return sp.getLong("lastestNoteAddTimestamp", 0);
+	}
+	
+	public static void setLastestNoteAddTimestamp(long v) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putLong("lastestNoteAddTimestamp", v);
+		edit.commit();
+	}
+	
+	public static long getLastestThinkingTimestamp() {
+		return sp.getLong("lastestThinkingTimestamp", 0);
+	}
+	
+	public static void setLastestThinkingTimestamp(long v) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putLong("lastestThinkingTimestamp", v);
+		edit.commit();
+	}
+	
+	public static long getLastestReflectionTimestamp() {
+		return sp.getLong("lastestReflectionTimestamp", 0);
+	}
+	
+	public static void setLastestReflectionTimestamp(long v) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putLong("lastestReflectionTimestamp", v);
+		edit.commit();
+	}
+	
+	public static long getLastestIdentifyTimestamp() {
+		return sp.getLong("lastestIdentifyTimestamp", 0);
+	}
+	
+	public static void setLastestIdentifyTimestamp(long v) {
+		SharedPreferences.Editor edit = sp.edit();
+		edit.putLong("lastestIdentifyTimestamp", v);
+		edit.commit();
+	}
+	
 	// public static String[] getSponsors() {
 	// 	String[] sponsor = new String[5];
 	// 	sponsor[0] = sp.getString("sponsor0", "");

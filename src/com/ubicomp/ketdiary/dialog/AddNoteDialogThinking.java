@@ -1,6 +1,7 @@
 package com.ubicomp.ketdiary.dialog;
 
 import java.io.File;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Random;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +20,7 @@ import android.graphics.Typeface;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Html;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -42,12 +46,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.speech.RecognizerIntent;
 
+import com.ubicomp.ketdiary.AlarmReceiver;
 import com.ubicomp.ketdiary.App;
 import com.ubicomp.ketdiary.MainActivity;
 import com.ubicomp.ketdiary2.R;
+import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.file.QuestionFile;
+import com.ubicomp.ketdiary.data.file.TestDataParser2;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
+import com.ubicomp.ketdiary.dialog.AddNoteDialog2.CancelOnClickListener;
 import com.ubicomp.ketdiary.noUse.NoteCatagory3;
+import com.ubicomp.ketdiary.system.Config;
 import com.ubicomp.ketdiary.system.PreferenceControl;
 import com.ubicomp.ketdiary.system.check.NetworkCheck;
 import com.ubicomp.ketdiary.system.check.TimeBlock;
@@ -65,6 +75,7 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 	private AddNoteDialogThinking addNoteDialog = this;
 	private static final String TAG = "ADD_PAGE";
 	private ReflectionFirstPage reflectionPage1;
+	private QuestionIdentityDialog questionBox = null;
 	
 	private TestQuestionCaller2 testQuestionCaller;
 	private Context context;
@@ -76,7 +87,7 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 						//description_date_layout, description_event_layout, description_mood_layout, description_thinking_layout;
 	
 	private ImageView speech_button;
-	private EditText thinking_text;
+	public static EditText thinking_text;
 	private TextView date_text, mood_text, event_text, reaction_text;
 	
 	private RelativeLayout mainLayout;
@@ -92,6 +103,10 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 	private SeekBar impactSeekBar;
 	private TextView text_self, text_other, text_item, text_impact, text_description,
 	     tv_knowdlege, tv_title, note_title, sp_content, date_txt, timeslot_txt, title_txt, typetext;
+	
+	private static final int[] Coping_list = {R.array.coping_list0,R.array.coping_list1,
+			R.array.coping_list2,R.array.coping_list3,R.array.coping_list4,R.array.coping_list5,
+			R.array.coping_list6,R.array.coping_list7,R.array.coping_list8};
 	
 	private TextView edtext;
 	private ListView listView;
@@ -125,6 +140,7 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 	private int items, items2;
 	private int impact;
 	private int moodNum;
+	private int relationKey;
 	private boolean[] moodFlag = new boolean[20];
 	private String description;
 	private boolean viewshow = false, viewshow2 = false;
@@ -139,7 +155,7 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 	
 	private static final String[] Timeslot_str = {"上午", "下午", "晚上"};
 	private static final String[] Date_str = {"今天", "昨天", "前天"};
-	protected static final int RESULT_SPEECH = 0;
+	protected static final int RESULT_SPEECH = 1;
 	
 	private static Typeface wordTypefaceBold = Typefaces.getWordTypefaceBold();
 	private static Typeface wordTypeface = Typefaces.getWordTypeface();
@@ -147,8 +163,19 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 	private LinearLayout description_date_layout, description_event_layout, description_mood_layout,
 						description_thinking_layout, description_reaction_layout;
 	
+	private AddNoteDialog2 addNoteDialogPre;
+	private boolean isUpdate;
+	private TestDataParser2 TDP;
+	
+	private TextView date_title, event_title, mood_title, thinking_title, reaction_title;
+	
 	private String actionNoteAdd, feelingNoteAdd;
-	public AddNoteDialogThinking(TestQuestionCaller2 testQuestionCaller, RelativeLayout mainLayout, Activity activity){
+	
+	private boolean notification_yes, testing = false;
+	
+	private DatabaseControl db;
+	
+	public AddNoteDialogThinking(TestQuestionCaller2 testQuestionCaller, RelativeLayout mainLayout, Activity activity, AddNoteDialog2 addNoteDialogPre, boolean isUpdate, int relationKey){
 		
 		this.activity = activity;
 		this.testQuestionCaller = testQuestionCaller;
@@ -156,10 +183,16 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		this.inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.mainLayout = mainLayout;
+		this.addNoteDialogPre = addNoteDialogPre;
+		this.isUpdate = isUpdate;
+		this.relationKey = relationKey;
 		resource = context.getResources();
 		
 		coping_msg = resource.getStringArray(R.array.coping_list);
-		
+		knowing_msg = context.getResources().getStringArray(R.array.knowing_list);
+		Random rand = new Random();
+		if( knowing_index < 0 )
+			knowing_index = rand.nextInt(knowing_msg.length);
 	    
 		//view = inflater.inflate(R.layout.fragment_note, container, false);
 		endOnClickListener = new EndOnClickListener();
@@ -168,7 +201,7 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		goCopingToResultOnClickListener = new GoCopingToResultOnClickListener();
 				
 		noteCategory = new NoteCatagory3();
-	    
+		db = new DatabaseControl();
 	
 	}
 	
@@ -253,15 +286,15 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		description_mood_layout = (LinearLayout) inflater.inflate(
 				R.layout.bar_description_mood, null);
 		description_thinking_layout = (LinearLayout) inflater.inflate(
-				R.layout.bar_edit_thinking, null);
+				R.layout.bar_edit_thinking2, null);
 		description_reaction_layout = (LinearLayout) inflater.inflate(
 				R.layout.bar_description_reaction, null);
 		
-		TextView date_title, event_title, mood_title, thinking_title, reaction_title;
+		
 		date_title = (TextView) description_date_layout.findViewById(R.id.description_date_title);
 		event_title = (TextView) description_event_layout.findViewById(R.id.description_event_title);
 		mood_title = (TextView) description_mood_layout.findViewById(R.id.description_mood_title);
-		thinking_title = (TextView) description_thinking_layout.findViewById(R.id.edit_thinking_title);
+		thinking_title = (TextView) description_thinking_layout.findViewById(R.id.edit_thinking_title2);
 		reaction_title = (TextView) description_reaction_layout.findViewById(R.id.description_reaction_title);
 		
 		date_text = (TextView) description_date_layout.findViewById(R.id.description_date_content);
@@ -269,9 +302,9 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		mood_text = (TextView) description_mood_layout.findViewById(R.id.description_mood_content);
 		reaction_text = (TextView) description_reaction_layout.findViewById(R.id.description_reaction_content);
 		
-		thinking_title.setText("當時在想什麼 :");
+		
 		date_title.setText("發生日期 :");
-		event_title.setText("發生事件 :");
+		event_title.setText("發生情境 :");
 		mood_title.setText("當時情緒 :");
 		reaction_title.setText("當時反應 :");
 		
@@ -281,8 +314,8 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		thinking_title.setTypeface(wordTypefaceBold);
 		reaction_title.setTypeface(wordTypefaceBold);
 		
-		speech_button = (ImageView) description_thinking_layout.findViewById(R.id.speech_to_text);
-		thinking_text = (EditText) description_thinking_layout.findViewById(R.id.edit_thinking_content);
+		speech_button = (ImageView) description_thinking_layout.findViewById(R.id.speech_to_text2);
+		thinking_text = (EditText) description_thinking_layout.findViewById(R.id.edit_thinking_content2);
 		
 		thinking_text.setText("");
 		
@@ -432,7 +465,13 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		
 		//Bottom View
 		//View bottom = BarButtonGenerator.createTwoButtonView(R.string.cancel, R.string.ok, new CancelOnClickListener(), endOnClickListener);
-		View bottom = BarButtonGenerator.createThreeButtonView(R.string.pre_step, R.string.start_reflection,R.string.done, 
+		
+		View bottom;
+		if(isUpdate)
+			bottom = BarButtonGenerator.createTwoButtonView(R.string.cancel,R.string.done, 
+					new CancelOnClickListener(), new UpdateOnClickListener());
+		else
+			bottom = BarButtonGenerator.createThreeButtonView(R.string.pre_step, R.string.start_reflection,R.string.done, 
 				new CancelOnClickListener(), nextOnClickListener, endOnClickListener);
 		
 		//main_layout.addView(center_layout);
@@ -441,9 +480,9 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		//main_layout.addView(impact_layout);
 		//main_layout.addView(discription_layout);
 		main_layout.addView(description_date_layout);
-		main_layout.addView(description_event_layout);
-		main_layout.addView(description_reaction_layout);
-		main_layout.addView(description_mood_layout);
+		//main_layout.addView(description_event_layout);
+		//main_layout.addView(description_reaction_layout);
+		//main_layout.addView(description_mood_layout);
 		main_layout.addView(description_thinking_layout);
 		
 //		center_layout.setOnClickListener(new OnClickListener(){
@@ -510,31 +549,37 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 	}
 	
 	public void copingSetting(){
-		//boxLayout = (RelativeLayout) inflater.inflate(R.layout.activity_qtip, null);
-		//mainLayout.addView(boxLayout);
+		boolean testFail = PreferenceControl.isTestFail();
+		boolean runService = PreferenceControl.getResultServiceRun();
+		
+		
+		ClickLog.Log(ClickLogId.TEST_COPE_ENTER);
 		state = STATE_COPE;
 		PreferenceControl.setAfterTestState(STATE_COPE);
 		
 		title_layout.removeAllViews();
 		main_layout.removeAllViews();
 		bottom_layout.removeAllViews();
+		
 		bottom_layout.setVisibility(View.VISIBLE);
 		
 		//Title View
 		LinearLayout layout = (LinearLayout) inflater.inflate(
-				R.layout.bar_addnote, null);
+				R.layout.bar_addnote3, null);
 		
 		note_title = (TextView) layout
 				.findViewById(R.id.note_title);
-		//Spinner sp_date = (Spinner)layout.findViewById(R.id.note_tx_date);
-	    //Spinner sp_timeslot = (Spinner)layout.findViewById(R.id.note_sp_timeslot);
 	    
 	    note_title.setTypeface(wordTypefaceBold);
-	    note_title.setTextColor(resource.getColor(R.color.text_gray2));
-	    note_title.setText(R.string.countdown);
+	    note_title.setTextColor(context.getResources().getColor(R.color.text_gray2));
 	    
-	    sp_date.setVisibility(View.INVISIBLE);
-	    sp_timeslot.setVisibility(View.INVISIBLE);
+	    if(!testFail && !runService){
+	    	note_title.setText(R.string.test_done);
+	    }
+	    else{
+	    	note_title.setText(R.string.countdown);
+	    }
+	      
 		title_layout.addView(layout);
 		
 		
@@ -547,14 +592,70 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		
 		tv_title.setText(R.string.coping_page);
 		
+		coping_msg = context.getResources().getStringArray(Coping_list[type]);
 		Random rand = new Random();
 		int idx = rand.nextInt(coping_msg.length);
-		tv_knowdlege.setText(coping_msg[idx]);
+		tv_knowdlege.setText(Html.fromHtml(coping_msg[idx]));
 		main_layout.addView(center_layout);
 		
-		View bottom = BarButtonGenerator.createOneButtonView( R.string.Iknow, endOnClickListener );
+		
+		View bottom;
+		if(!testFail && !runService){
+			bottom = BarButtonGenerator.createOneButtonView( R.string.go_result, goResultOnClickListener );
+		}
+		else{
+			bottom = BarButtonGenerator.createOneButtonView( R.string.Iknow, endOnClickListener );
+		}
 		bottom_layout.addView(bottom);
 		
+	}
+	
+	
+	public void knowingSetting(){
+		ClickLog.Log(ClickLogId.TEST_KOWING_ENTER);
+		state = STATE_KNOW;
+		PreferenceControl.setAfterTestState(STATE_KNOW);
+		//MainActivity.getMainActivity().enableTabAndClick(true);
+		
+		title_layout.removeAllViews();
+		main_layout.removeAllViews();
+		bottom_layout.removeAllViews();
+		
+		LinearLayout layout = (LinearLayout) inflater.inflate(
+				R.layout.bar_addnote3, null);
+		
+		note_title = (TextView) layout
+				.findViewById(R.id.note_title);
+
+	    
+	    note_title.setTypeface(wordTypefaceBold);
+	    note_title.setTextColor(context.getResources().getColor(R.color.text_gray2));
+	    note_title.setText(R.string.countdown);
+	    
+
+		title_layout.addView(layout);
+		
+		//View title = BarButtonGenerator.createWaitingTitle();
+		//title_layout.addView(title);
+		
+		View bottom = BarButtonGenerator.createTwoButtonView(R.string.last, R.string.next_one, new CancelOnClickListener(), endOnClickListener);
+		bottom_layout.addView(bottom);
+		//main_layout.removeView(center_layout);
+		center_layout = (LinearLayout) inflater.inflate(R.layout.knowledge, null);
+		tv_knowdlege = (TextView)center_layout.findViewById(R.id.qtip_tv_tips);
+		//tv_knowdlege.setText(knowing_msg[knowing_index]); 
+		tv_knowdlege.setText(Html.fromHtml(knowing_msg[knowing_index]));
+		
+		tv_title = (TextView)center_layout.findViewById(R.id.text_knowing_title);
+		tv_title.setText(R.string.knowledge);
+		
+		main_layout.addView(center_layout);
+		
+		main_layout.getLayoutParams().height = center_layout.getLayoutParams().height;
+		
+		questionBox = new QuestionIdentityDialog((RelativeLayout) mainLayout);
+		questionBox.initialize();
+		questionBox.show(1);
 	}
 	
 	
@@ -599,7 +700,6 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		main_layout.addView(center_layout);
 		
 		View bottom = BarButtonGenerator.createOneButtonView( R.string.go_result, goResultOnClickListener );
-		
 		bottom_layout.addView(bottom);
 		
 	}
@@ -607,7 +707,8 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 	
 	
 	public void setResult(){
-		bottom_layout.removeAllViews();
+		if(bottom_layout != null)
+			bottom_layout.removeAllViews();
 		//Toast.makeText(context, "倒數結束", Toast.LENGTH_SHORT).show();
 		
 		if(state == STATE_NOTE){
@@ -656,11 +757,12 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 			mainLayout.removeView(boxLayout);
 	}
 	
+	
 	/** close the dialog */
 	public void close() {
 		ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_LEAVE);
 		testQuestionCaller.resetView();
-		MainActivity.getMainActivity().enableTabAndClick(true);
+		//MainActivity.getMainActivity().enableTabAndClick(true);
 		if (boxLayout != null)
 			boxLayout.setVisibility(View.INVISIBLE);
 	}
@@ -739,65 +841,103 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 	//把所選取的結果送出 
 	class EndOnClickListener implements View.OnClickListener{
 		public void onClick(View v){
+			
+			/*if(state == STATE_COPE){
+				ClickLog.Log(ClickLogId.TEST_COPING_CONFIRM);				
+				knowingSetting();
+				return;
+			}
+			else if(state == STATE_KNOW){
+				ClickLog.Log(ClickLogId.TEST_KOWING_NEXT);
+				knowing_index++;
+				if(knowing_index>=knowing_msg.length)
+					knowing_index-=knowing_msg.length;
+				tv_knowdlege.setText(Html.fromHtml(knowing_msg[knowing_index]));
+				//tv_knowdlege.setText(DBTip.inst.getTip());
+				return;
+			}*/
+			
+			
+			//Note state
+			if(thinking_text.getText().toString().length() == 0)
+			{
+				CustomToastSmall.generateToast("請先填寫完畢");
+				return;
+			}
+			
 			testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, 
 					actionNoteAdd, feelingNoteAdd,thinking_text.getText().toString(),1 ,0);
-			close();
-			clear();
+
+			//close();
+			//clear();
 			
-			//Log.d("GG","01");
-			/*reflectionPage1 = new ReflectionFirstPage(testQuestionCaller, mainLayout, activity);
-			//Log.d("GG","02");
-			reflectionPage1.initialize();
-			//Log.d("GG","03");
-			reflectionPage1.setAllText(date_text.getText().toString(),event_text.getText().toString(), 
-								reaction_text.getText().toString(), thinking_text.getText().toString());
-			//Log.d("GG","04");
-			reflectionPage1.show();
+			boolean testFail = PreferenceControl.isTestFail();
 			
-			close();
-			clear();*/
-			/*if(!done){
-				//Toast.makeText(context, "確定要送出結果嗎?" ,Toast.LENGTH_SHORT).show();
-				CustomToastSmall.generateToast("確定要送出結果嗎?");
-				done = true;
+			if(testing)
+			{
+				addNoteDialogPre.copingSetting();
+				close();
+				clear();
 			}
-			else{
-				Log.d(TAG, items+" "+impact);
-				if(state == STATE_NOTE){
-					if(type <= 0 || items < 100){
-						//CustomToastSmall.generateToast(R.string.note_check);
-						//Toast.makeText(context, R.string.note_check ,Toast.LENGTH_SHORT).show();
-						CustomToastSmall.generateToast(R.string.note_check);
-					}
-					else{
-						if(listView.getVisibility() == View.VISIBLE){
-							//Toast.makeText(context, "請選擇項目再送出", Toast.LENGTH_SHORT).show();
-							CustomToastSmall.generateToast("請選擇項目再送出");
-							listView.setVisibility(View.GONE);
-						}
-						else{
-							ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_CONFIRM);
-							
-							impact = impactSeekBar.getProgress();
-							testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
-							close();
-							clear();
-							//copingSetting();
-							//testQuestionCaller.resetView();
-							
-						}
-					}
-					
-				}
-				
-				else if(state == STATE_COPE){
-					//knowingSetting();
-					//
-					//testQuestionCaller.resetView();
-					close();
-					clear();
-				}
-			}*/
+			
+			else 
+			{
+				if(addNoteDialogPre != null)
+					addNoteDialogPre.closeall();
+				close();
+				clear();
+			}
+			
+			//現在時間
+			Calendar cal = Calendar.getInstance();
+			long ts = cal.getTimeInMillis();
+			
+			//最後一次填事件
+			long pre_ts = PreferenceControl.getLastestNoteAddTimestamp();
+			Date d = new Date(pre_ts);
+			Calendar pre_cal = Calendar.getInstance();
+			pre_cal.setTime(d);
+			
+			boolean sameDay = cal.get(Calendar.YEAR) == pre_cal.get(Calendar.YEAR) &&
+	                  cal.get(Calendar.DAY_OF_YEAR) == pre_cal.get(Calendar.DAY_OF_YEAR);
+			
+			//最後一次填想法
+			long pre_ts2 = PreferenceControl.getLastestThinkingTimestamp();
+			Date d2 = new Date(pre_ts2);
+			Calendar pre_cal2 = Calendar.getInstance();
+			pre_cal2.setTime(d2);
+			
+			boolean sameDay2 = cal.get(Calendar.YEAR) == pre_cal2.get(Calendar.YEAR) &&
+	                  cal.get(Calendar.DAY_OF_YEAR) == pre_cal2.get(Calendar.DAY_OF_YEAR);
+			
+			if(!sameDay && !sameDay2)
+			{
+				CustomToast.generateToast(R.string.add_note_with_thinking, 2);
+				AddScore preScore = db.getLastestAddScore();
+				AddScore nowScore = new AddScore(System.currentTimeMillis(), 2, preScore.getAccumulation()+2, "填寫與想法");
+				db.insertAddScore(nowScore);
+			}
+			
+			if(!sameDay && sameDay2)
+			{
+				CustomToast.generateToast(R.string.add_note_with_thinking, 1);
+				AddScore preScore = db.getLastestAddScore();
+				AddScore nowScore = new AddScore(System.currentTimeMillis(), 1, preScore.getAccumulation()+1, "填寫事件");
+				db.insertAddScore(nowScore);
+			}
+			
+			if(sameDay && !sameDay2)
+			{
+				CustomToast.generateToast(R.string.add_note_with_thinking, 1);
+				AddScore preScore = db.getLastestAddScore();
+				AddScore nowScore = new AddScore(System.currentTimeMillis(), 1, preScore.getAccumulation()+1, "填寫想法");
+				db.insertAddScore(nowScore);
+			}
+			
+			PreferenceControl.setLastestNoteAddTimestamp(ts);
+			PreferenceControl.setLastestThinkingTimestamp(ts);
+			
+			return;
 	    }
 	}
 	
@@ -807,32 +947,105 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 			
 			ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_CANCEL);
 			
-			//testQuestionCaller.writeQuestionFile(day, timeslot, -1, -1, -1, edtext.getText().toString());
+			ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_CANCEL);
+			if(state == STATE_NOTE){
+				close();
+				clear();
+				//testQuestionCaller.resetView();
+				//copingSetting();
+			}
+			else{
+				ClickLog.Log(ClickLogId.TEST_KOWING_LAST);
+				knowing_index--;
+				if(knowing_index<0)
+					knowing_index+=knowing_msg.length;
+				tv_knowdlege.setText(Html.fromHtml(knowing_msg[knowing_index]));
+				//tv_knowdlege.setText(DBTip.inst.getTip());
+			}
+
+		}
+	}
+	
+	//補填想法並送出
+	class UpdateOnClickListener implements View.OnClickListener{
+		public void onClick(View v){
+				
+			if(thinking_text.getText().toString().length() == 0)
+			{
+				CustomToastSmall.generateToast("請先填寫完畢");
+				return;
+			}
+			
+			TDP = new TestDataParser2(0); 
+			if( TDP!= null ){
+				TDP.startUpdateThinking(thinking_text.getText().toString(), relationKey);
+			}
+			
+			testQuestionCaller.updateList();	
+			if(addNoteDialogPre != null)
+				addNoteDialogPre.closeall();
+			
+			
+			//取消提醒
+			AlarmManager alarm = (AlarmManager) context
+					.getSystemService(Context.ALARM_SERVICE);
+
+			Intent service_intent = new Intent();
+			service_intent.setClass(context, AlarmReceiver.class);
+			service_intent.setAction(Config.ACTION_THINKING_NOTIFICATION);
+			
+
+			PendingIntent pending = PendingIntent.getBroadcast(context,
+					NotifyThinkingDialog.requestCodeRegularNotificationBase + relationKey, service_intent,
+					PendingIntent.FLAG_UPDATE_CURRENT);
+			
+			alarm.cancel(pending);
+			
+			
 			close();
 			clear();
-			//testQuestionCaller.resetView();
 			
-				//copingSetting();
-
 		}
 	}
 	
 	//到下一步
 		class NextOnClickListener implements View.OnClickListener{
 			public void onClick(View v){
+				
+				if(thinking_text.getText().toString().length() == 0)
+				{
+					CustomToastSmall.generateToast("請先填寫完畢");
+					return;
+				}
+				
 				int nowKey = testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, 
 						actionNoteAdd, feelingNoteAdd,thinking_text.getText().toString(),1 ,0);
 				
-				reflectionPage1 = new ReflectionFirstPage(testQuestionCaller, mainLayout, activity, nowKey);
+				reflectionPage1 = new ReflectionFirstPage(testQuestionCaller, mainLayout, activity, nowKey, addNoteDialogPre);
+				
+				
 				reflectionPage1.initialize();
 				reflectionPage1.setAllText(date_text.getText().toString(),event_text.getText().toString(), 
 									reaction_text.getText().toString(), thinking_text.getText().toString());
+				
+				reflectionPage1.setIsTesting(testing, type);
 				reflectionPage1.show();
+				
+				
+				
+				//testQuestionCaller.blockView();
+				
+				if(addNoteDialogPre != null && !testing)
+					addNoteDialogPre.closeall();
+				
 				
 				close();
 				clear();
 							
-				
+				CustomToast.generateToast(R.string.add_note_with_thinking, 2);
+				AddScore preScore = db.getLastestAddScore();
+				AddScore nowScore = new AddScore(System.currentTimeMillis(), 2, preScore.getAccumulation()+2, "填寫事件與想法");
+				db.insertAddScore(nowScore);
 		    }
 		}
 	
@@ -852,7 +1065,7 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 				impact = impactSeekBar.getProgress();
 				//testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
 			
-				Log.d(TAG, items+" "+impact);
+				//Log.d(TAG, items+" "+impact);
 
 				copingSettingToResult();
 			}
@@ -1272,6 +1485,8 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		_event_text.setText(s_event);
 		_mood_text.setText(s_mood);
 		_reaction_text.setText(s_reaction);
+		
+		thinking_title.setText("當"+s_event+"時，我在想什麼\n而讓我"+s_mood);
 	}
 	
 	public void setAddNoteDetail(int _day, int _slot, int _type, int _item, int _impact, String _action, String _feeling)
@@ -1284,5 +1499,11 @@ public class AddNoteDialogThinking implements ChooseItemCaller{
 		
 		actionNoteAdd = _action;
 		feelingNoteAdd = _feeling;
+	}
+	
+	public void setIsTesting(boolean is, int _type)
+	{
+		testing = is;
+		type = _type;
 	}
 }

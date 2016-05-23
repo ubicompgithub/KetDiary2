@@ -10,17 +10,22 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.ubicomp.ketdiary.App;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.Appeal;
 import com.ubicomp.ketdiary.data.structure.Cassette;
 import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
+import com.ubicomp.ketdiary.data.structure.History;
+import com.ubicomp.ketdiary.data.structure.IdentityScore;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.QuestionTest;
 import com.ubicomp.ketdiary.data.structure.Rank;
 import com.ubicomp.ketdiary.data.structure.Reflection;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TestResult;
+import com.ubicomp.ketdiary.data.structure.ThinkingEvent;
 import com.ubicomp.ketdiary.data.structure.TimeValue;
+import com.ubicomp.ketdiary.data.structure.TriggerItem;
 import com.ubicomp.ketdiary.system.PreferenceControl;
 import com.ubicomp.ketdiary.system.check.StartDateCheck;
 import com.ubicomp.ketdiary.system.check.WeekNumCheck;
@@ -122,6 +127,17 @@ public class DatabaseControl {
 			db.close();
 			return testResult;
 		}
+	}
+	
+	public int isPrimeTestResult(long ts) {
+		TestResult tResult = getLatestTestResult();
+		
+		TimeValue now = TimeValue.generate(ts);		
+		TimeValue pre = tResult.getTv();
+
+		if(now.isSameDay(pre))
+			return 0;
+		return 1;
 	}
 	
 	public TestResult getLatestTestResultID() {
@@ -794,6 +810,7 @@ public class DatabaseControl {
 			content.put("weeklyScore", prev_data.getWeeklyScore() + addScore);
 			content.put("score", prev_data.getScore() + addScore);
 			content.put("relationKey", data.getKey());
+			content.put("acceptance", 0);
 			db.insert("NoteAdd", null, content);
 			db.close();
 			return addScore;
@@ -817,6 +834,104 @@ public class DatabaseControl {
 			Cursor cursor;
 
 			sql = "SELECT * FROM NoteAdd WHERE upload = 0";
+			cursor = db.rawQuery(sql, null);
+			int count = cursor.getCount();
+			if (count == 0) {
+				cursor.close();
+				db.close();
+				return null;
+			}
+
+			data = new NoteAdd[count];
+
+			for (int i = 0; i < count; ++i) {
+				cursor.moveToPosition(i);
+				int isAfterTest = cursor.getInt(1);
+				long ts = cursor.getLong(5);
+				int year = cursor.getInt(7);
+				int month = cursor.getInt(8);
+				int day = cursor.getInt(9);
+				int timeslot=cursor.getInt(10);
+				int category = cursor.getInt(11);
+				int type = cursor.getInt(12);
+				int items = cursor.getInt(13);
+				int impact = cursor.getInt(14);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				int key = cursor.getInt(21);
+				data[i] = new NoteAdd(isAfterTest, ts, year, month, day, timeslot, category, type, items, impact, action, feeling, thinking, finished, weeklyScore, score, key);
+			}
+
+			cursor.close();
+			db.close();
+
+			return data;
+		}
+	}
+	
+	public NoteAdd[] getNoteAddType(int _type) {
+		synchronized (sqlLock) {
+			NoteAdd[] data = null;
+
+			db = dbHelper.getReadableDatabase();
+			String sql;
+			Cursor cursor;
+
+			sql = "SELECT * FROM NoteAdd WHERE items = "+_type;
+			cursor = db.rawQuery(sql, null);
+			int count = cursor.getCount();
+			if (count == 0) {
+				cursor.close();
+				db.close();
+				return null;
+			}
+
+			data = new NoteAdd[count];
+
+			for (int i = 0; i < count; ++i) {
+				cursor.moveToPosition(i);
+				int isAfterTest = cursor.getInt(1);
+				long ts = cursor.getLong(5);
+				int year = cursor.getInt(7);
+				int month = cursor.getInt(8);
+				int day = cursor.getInt(9);
+				int timeslot=cursor.getInt(10);
+				int category = cursor.getInt(11);
+				int type = cursor.getInt(12);
+				int items = cursor.getInt(13);
+				int impact = cursor.getInt(14);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				int key = cursor.getInt(21);
+				data[i] = new NoteAdd(isAfterTest, ts, year, month, day, timeslot, category, type, items, impact, action, feeling, thinking, finished, weeklyScore, score, key);
+			}
+
+			cursor.close();
+			db.close();
+
+			return data;
+		}
+	}
+	
+	public NoteAdd[] getNotUploadedNoteAdd2() {
+		synchronized (sqlLock) {
+			NoteAdd[] data = null;
+
+			db = dbHelper.getReadableDatabase();
+			String sql;
+			Cursor cursor;
+
+			sql = "SELECT * FROM NoteAdd WHERE upload = 2";
 			cursor = db.rawQuery(sql, null);
 			int count = cursor.getCount();
 			if (count == 0) {
@@ -903,6 +1018,34 @@ public class DatabaseControl {
 		}
 	}
 	
+	public Reflection getNoteAddLastestReflection(int relation_key) {
+		synchronized (sqlLock) {
+
+			db = dbHelper.getReadableDatabase();
+			String sql;
+			Cursor cursor;
+
+			sql = "SELECT * FROM Reflection WHERE relationKey = " + relation_key + " ORDER BY ts DESC";
+			cursor = db.rawQuery(sql, null);
+			int count = cursor.getCount();
+			if (count == 0) {
+				cursor.close();
+				db.close();
+				return null;
+			}
+			cursor.moveToPosition(0);
+			long ts = cursor.getLong(1);
+			String action = cursor.getString(2);
+			String feeling = cursor.getString(3);
+			String thinking = cursor.getString(4);
+			int key = cursor.getInt(5);
+			Reflection data = new Reflection(ts, action, feeling, thinking, key);
+			
+			return data;
+
+		}
+	}
+	
 	/**
 	 * This method is used for getting all prime brac Detection
 	 * 
@@ -914,6 +1057,49 @@ public class DatabaseControl {
 		synchronized (sqlLock) {
 			db = dbHelper.getReadableDatabase();
 			String sql = "SELECT * FROM NoteAdd WHERE impact >= 0 AND items > 0 ORDER BY recordYear, recordMonth, recordDay, timeslot ASC"; // TODO: Just get useful data
+			Cursor cursor = db.rawQuery(sql, null);
+			int count = cursor.getCount();
+			if (count == 0) {
+				cursor.close();
+				db.close();
+				return null;
+			}
+
+			NoteAdd[] noteAdd = new NoteAdd[count];
+			for (int i = 0; i < count; ++i) {
+				cursor.moveToPosition(i);
+				int isAfterTest = cursor.getInt(1);
+				long ts = cursor.getLong(5);
+				int year = cursor.getInt(7);
+				int month = cursor.getInt(8);
+				int day = cursor.getInt(9);
+				int timeslot = cursor.getInt(10);
+				int category = cursor.getInt(11);
+				int type = cursor.getInt(12);
+				int items = cursor.getInt(13);
+				int impact = cursor.getInt(14);
+				//String reason = cursor.getString(15);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				int key = cursor.getInt(21); 
+				noteAdd[i] = new NoteAdd(isAfterTest, ts, year, month, day, 
+						timeslot, category, type, items, impact, action, feeling, thinking, finished, weeklyScore, score, key);
+			}
+
+			cursor.close();
+			db.close();
+			return noteAdd;
+		}
+	}
+	
+	public NoteAdd[] getAllFinishedNoteAdd() {
+		synchronized (sqlLock) {
+			db = dbHelper.getReadableDatabase();
+			String sql = "SELECT * FROM NoteAdd WHERE impact >= 0 AND items > 0 AND finished == 1 ORDER BY recordYear, recordMonth, recordDay, timeslot ASC"; // TODO: Just get useful data
 			Cursor cursor = db.rawQuery(sql, null);
 			int count = cursor.getCount();
 			if (count == 0) {
@@ -2236,6 +2422,7 @@ public class DatabaseControl {
 				content.put("feeling", data.getFeeling());
 				content.put("thinking", data.getThinking());
 				content.put("relationKey", data.getKey());
+				content.put("acceptance", 0);
 				db.insert("Reflection", null, content);
 				db.close();
 			}
@@ -2282,7 +2469,7 @@ public class DatabaseControl {
 		}
 		
 		/**
-		 * Label the Appeal uploaded
+		 * Label the Reflection uploaded
 		 * 
 		 * @param ts
 		 *            Timestamp of the uploaded Appeal
@@ -2297,5 +2484,386 @@ public class DatabaseControl {
 				db.close();
 			}
 		}
+		
+		/**
+		 * update a AddNote(Thinking)
+		 * 
+		 * @param data
+		 *            update AddNote
+		 * 
+		 */
+		public void updateThinking(String thinking, int key) {
+			
+			synchronized (sqlLock) {
 
+				db = dbHelper.getReadableDatabase();
+				String sql;
+				Cursor cursor;
+				sql = "SELECT * FROM NoteAdd WHERE relationKey = " + key;
+				cursor = db.rawQuery(sql, null);
+				if (!cursor.moveToFirst()) {
+					cursor.close();
+					db.close();
+					return;
+				}
+				int isAfterTest = cursor.getInt(1);
+				int year = cursor.getInt(2);
+				int month = cursor.getInt(3);
+				int day = cursor.getInt(4);
+				long ts = cursor.getLong(5);
+				int week = cursor.getInt(6);
+				int recordyear = cursor.getInt(7);
+				int recordmonth = cursor.getInt(8);
+				int recordday = cursor.getInt(9);
+				int timeslot = cursor.getInt(10);
+				int category = cursor.getInt(11);
+				int type = cursor.getInt(12);
+				int items = cursor.getInt(13);
+				int impact = cursor.getInt(14);
+				String action = cursor.getString(15);
+				String feeling = cursor.getString(16);
+				//String thinking = cursor.getString(17);
+				int finished = cursor.getInt(18);
+				int weeklyScore = cursor.getInt(19);
+				int score = cursor.getInt(20);
+				//int key = cursor.getInt(21);
+				int isupload = cursor.getInt(22);
+				
+				
+				
+				db = dbHelper.getWritableDatabase();
+				ContentValues content = new ContentValues();
+				
+				content.put("isAfterTest", isAfterTest);
+				content.put("year", year);
+				content.put("month", month);
+				content.put("day", day);
+				content.put("ts", ts);
+				content.put("week", week);
+				content.put("timeslot", timeslot);
+				content.put("recordYear", recordyear);
+				content.put("recordMonth", recordmonth);
+				content.put("recordDay", recordday);
+				content.put("category", category);
+				content.put("type", type);
+				content.put("items", items);
+				content.put("impact", impact);
+				content.put("action", action);
+				content.put("feeling", feeling);
+				content.put("thinking", thinking);
+				content.put("finished", 1);
+				content.put("weeklyScore", weeklyScore);
+				content.put("score", score);
+				content.put("relationKey", key);
+				
+				if(isupload == 1)
+					isupload = 2;
+				content.put("upload", isupload);
+				
+				String where = "relationKey = " + key;
+				if(db.update("NoteAdd", content, where, null) > 0)
+					Log.d("GG", "update success");
+				
+				db.close();
+			}
+		}
+		
+		/**
+		 * Insert a AddScore
+		 * 
+		 * @param data
+		 *            inserted AddScore
+		 * @see ubicomp.soberdiary.data.structure.AddScore
+		 */
+		public void insertAddScore(AddScore data) {
+			Log.i("GG", "inserScoreSQL");
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				ContentValues content = new ContentValues();
+				
+				content.put("ts", data.getTv().getTimestamp());
+				content.put("addScore", data.getAddScore());
+				content.put("accumulation", data.getAccumulation());
+				content.put("reason", data.getReason());
+				db.insert("Score", null, content);
+				db.close();
+			}
+		}
+		
+		/**
+		 * Get Lastest AddScore
+		 * 
+		 * @param data
+		 *            inserted AddScore
+		 * @see ubicomp.soberdiary.data.structure.AddScore
+		 */
+		public AddScore getLastestAddScore() {
+			synchronized (sqlLock) {
+				db = dbHelper.getReadableDatabase();
+				String sql;
+				Cursor cursor;
+				sql = "SELECT * FROM Score ORDER BY ts DESC";
+				cursor = db.rawQuery(sql, null);
+				if (!cursor.moveToFirst()) {
+					cursor.close();
+					db.close();
+					return new AddScore(0, 0, 0, null);
+				}
+				int addScore = cursor.getInt(1);
+				int accumulation = cursor.getInt(2);
+				long ts = cursor.getLong(3);
+				String reason = cursor.getString(4);
+				
+				cursor.close();
+				db.close();
+				
+				return new AddScore(ts, addScore, accumulation, reason);
+			}
+		}
+		
+		public AddScore[] getNotUploadedAddScore() {
+			Log.i("GG", "getNotUploadScoreSQL");
+			synchronized (sqlLock) {
+				AddScore[] data = null;
+				db = dbHelper.getReadableDatabase();
+				String sql;
+				Cursor cursor;
+				sql = "SELECT * FROM Score WHERE upload = 0";
+				cursor = db.rawQuery(sql, null);
+				int count = cursor.getCount();
+				if (count == 0) {
+					cursor.close();
+					db.close();
+					return null;
+				}
+
+				data = new AddScore[count];
+
+				for (int i = 0; i < count; ++i) {
+					cursor.moveToPosition(i);
+					int addScore = cursor.getInt(1);
+					int accumulation = cursor.getInt(2);
+					long ts = cursor.getLong(3);
+					String reason = cursor.getString(4);
+					data[i] = new AddScore(ts, addScore, accumulation, reason);
+				}
+				cursor.close();
+				db.close();
+				return data;
+			}
+		}
+		
+		/**
+		 * Label the AddScore uploaded
+		 * 
+		 * @param ts
+		 *            Timestamp of the uploaded Appeal
+		 * @see ubicomp.soberdiary.data.structure.Appeal
+		 */
+		public void setAddScoreUploaded(long ts) {
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				String sql = "UPDATE Score SET upload = 1 WHERE ts = "
+						+ ts;
+				db.execSQL(sql);
+				db.close();
+			}
+		}
+		
+		public ThinkingEvent[] getAllThinking() {
+			synchronized (sqlLock) {
+				db = dbHelper.getReadableDatabase();
+				String sql = "SELECT * FROM NoteAdd WHERE impact >= 0 AND items > 0 ORDER BY recordYear, recordMonth, recordDay, timeslot ASC"; // TODO: Just get useful data
+				Cursor cursor = db.rawQuery(sql, null);
+				int count = cursor.getCount();
+				
+				String sql2 = "SELECT * FROM Reflection WHERE upload = 0";
+				Cursor cursor2 = db.rawQuery(sql2, null);
+				int count2 = cursor2.getCount();
+
+				ThinkingEvent[] thinkingEvent = new ThinkingEvent[count + count2];
+				
+				for (int i = 0; i < count; ++i) {
+					cursor.moveToPosition(i);
+					String action = cursor.getString(15);
+					String feeling = cursor.getString(16);
+					String thinking = cursor.getString(17);
+					int key = cursor.getInt(21);
+					thinkingEvent[i] = new ThinkingEvent(action, feeling, thinking, key, 0);
+				}
+				
+				for (int i = 0; i < count2; ++i) {
+					cursor2.moveToPosition(i);
+					String action = cursor2.getString(2);
+					String feeling = cursor2.getString(3);
+					String thinking = cursor2.getString(4);
+					int key = cursor2.getInt(5);
+					thinkingEvent[count + i] = new ThinkingEvent(action, feeling, thinking, key, 1);
+				}
+
+				cursor.close();
+				db.close();
+				return thinkingEvent;
+			}
+		}
+		
+		/**
+		 * Insert a IdentityScore
+		 * 
+		 * @param data
+		 *            inserted IdentityScore
+		 * @see ubicomp.soberdiary.data.structure.IdentityScore
+		 */
+		public void insertIdentityScore(IdentityScore data) {
+			Log.i("GG", "inserScoreSQL");
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				ContentValues content = new ContentValues();
+				
+				content.put("ts", data.getTv().getTimestamp());
+				content.put("score", data.getScore());
+				content.put("relationKey", data.getKey());
+				content.put("isReflection", data.getIsReflection());
+				db.insert("Identity", null, content);
+				db.close();
+			}
+		}
+		
+		public IdentityScore[] getNotUploadedIdentityScore() {
+			Log.i("GG", "getNotUploadScoreSQL");
+			synchronized (sqlLock) {
+				IdentityScore[] data = null;
+				db = dbHelper.getReadableDatabase();
+				String sql;
+				Cursor cursor;
+				sql = "SELECT * FROM Identity WHERE upload = 0";
+				cursor = db.rawQuery(sql, null);
+				int count = cursor.getCount();
+				if (count == 0) {
+					cursor.close();
+					db.close();
+					return null;
+				}
+
+				data = new IdentityScore[count];
+
+				for (int i = 0; i < count; ++i) {
+					cursor.moveToPosition(i);
+					long ts = cursor.getLong(1);
+					int score = cursor.getInt(2);
+					int key = cursor.getInt(3);
+					int isReflection = cursor.getInt(4);
+					data[i] = new IdentityScore(ts, score, key, isReflection);
+				}
+				cursor.close();
+				db.close();
+				return data;
+			}
+		}
+		public void setIdentityScoreUploaded(long ts) {
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				String sql = "UPDATE Identity SET upload = 1 WHERE ts = "
+						+ ts;
+				db.execSQL(sql);
+				db.close();
+			}
+		}
+		
+		/**
+		 * Insert a History
+		 * 
+		 * @param data
+		 *            inserted IdentityScore
+		 * @see ubicomp.soberdiary.data.structure.IdentityScore
+		 */
+		public void insertHistory(History data) {
+
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				ContentValues content = new ContentValues();
+				
+				content.put("ts", data.getTv().getTimestamp());
+				content.put("item", data.getItem());
+				content.put("type", data.getType());
+				content.put("content", data.getContent());
+				db.insert("Identity", null, content);
+				db.close();
+			}
+		}
+		
+		/**
+		 * Insert a TriggerItem
+		 * 
+		 * @param data
+		 *            inserted TriggerItem
+		 * @see ubicomp.soberdiary.data.structure.TriggerItem
+		 */
+		public void insertTriggerItem(TriggerItem data) {
+
+			synchronized (sqlLock) {
+				db = dbHelper.getWritableDatabase();
+				ContentValues content = new ContentValues();
+				
+				content.put("item", data.getItem());
+				content.put("description", data.getContent());
+				content.put("show", 0);
+				db.insert("Risk", null, content);
+				db.close();
+			}
+		}
+		
+		/**
+		 * Insert a TriggerItem
+		 * 
+		 * @param data
+		 *            inserted TriggerItem
+		 * @see ubicomp.soberdiary.data.structure.TriggerItem
+		 */
+		public boolean findTriggerItem(int data) {
+
+			synchronized (sqlLock) {
+				db = dbHelper.getReadableDatabase();
+				String sql;
+				Cursor cursor;
+				sql = "SELECT * FROM Risk WHERE item = " + data;
+				cursor = db.rawQuery(sql, null);
+				int count = cursor.getCount();
+				Log.d("GG", "in findTriggerItem count = "+count);
+				if (count == 0) {
+					return false;
+				}
+				return true;
+			}
+		}
+		
+		public TriggerItem[] getAllTriggerItem() {
+			synchronized (sqlLock) {
+				//Log.d("GG", "in getAllTriggerItem");
+				TriggerItem[] data = null;
+				db = dbHelper.getReadableDatabase();
+				String sql = "SELECT * FROM Risk";
+				Cursor cursor = db.rawQuery(sql, null);
+				int count = cursor.getCount();
+				if (count == 0) {
+					//Log.d("GG", "in getAllTriggerItem count = 0");
+					cursor.close();
+					db.close();
+					return null;
+				}
+				
+				data = new TriggerItem[count];
+				for (int i = 0; i < count; ++i) {
+					cursor.moveToPosition(i);
+					int item = cursor.getInt(1);
+					String content = cursor.getString(2);
+					int show = cursor.getInt(3);
+					//Log.d("GG", "in getAllTriggerItem new triggeritem : "+ item+","+content + ","+ show);
+					data[i] = new TriggerItem(item, content, show > 0);
+				}
+				cursor.close();
+				db.close();
+				return data;
+			}
+		}
 }

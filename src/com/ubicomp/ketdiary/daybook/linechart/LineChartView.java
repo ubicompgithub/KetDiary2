@@ -368,8 +368,14 @@ public class LineChartView extends View {
             final float yPos = y*range + offsetY;
             
             if (y == 1 || y == 4 || y == 7) {
-            	canvas.drawLine(0, yPos, getWidth(), yPos, paint);        	
-            	canvas.drawText(String.valueOf((-1*y)+4), getPaddingLeft(), yPos, line_paint);
+            	canvas.drawLine(0, yPos, getWidth(), yPos, paint);        
+            	//canvas.drawText(String.valueOf((-1*y)+4), getPaddingLeft(), yPos, line_paint);
+            	if(y == 1)
+            		canvas.drawText("大", getPaddingLeft(), yPos, line_paint);
+            	if(y == 4)
+            		canvas.drawText("中", getPaddingLeft(), yPos, line_paint);
+            	if(y == 7)
+            		canvas.drawText("小", getPaddingLeft(), yPos, line_paint);
             }
         }
     }

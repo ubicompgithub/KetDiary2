@@ -11,6 +11,7 @@ import com.ubicomp.ketdiary.HelpActivity;
 import com.ubicomp.ketdiary.MainActivity;
 import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.ResultService3;
+import com.ubicomp.ketdiary.SvmService;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.file.ColorRawFileHandler;
 import com.ubicomp.ketdiary.data.file.ImageFileHandler;
@@ -20,6 +21,7 @@ import com.ubicomp.ketdiary.data.file.TestDataParser2;
 import com.ubicomp.ketdiary.data.file.VoltageFileHandler;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TimeValue;
+import com.ubicomp.ketdiary.dialog.AddNoteDialog2;
 import com.ubicomp.ketdiary.dialog.NoteDialog4;
 import com.ubicomp.ketdiary.dialog.TestQuestionCaller2;
 import com.ubicomp.ketdiary.system.PreferenceControl;
@@ -28,6 +30,7 @@ import com.ubicomp.ketdiary.system.clicklog.ClickLog;
 import com.ubicomp.ketdiary.system.clicklog.ClickLogId;
 import com.ubicomp.ketdiary.test.bluetoothle.BluetoothLE;
 import com.ubicomp.ketdiary.test.bluetoothle.BluetoothListener;
+import com.ubicomp.ketdiary.test.bluetoothle.ImageDetection;
 import com.ubicomp.ketdiary.test.camera.CameraCaller;
 import com.ubicomp.ketdiary.test.camera.CameraInitHandler;
 import com.ubicomp.ketdiary.test.camera.CameraRecorder;
@@ -43,8 +46,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Typeface;
@@ -53,6 +58,7 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -116,7 +122,8 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	private final boolean[] DONE_PROGRESS = { false, false, false };
 	
 	public TestDataParser2 TDP;
-	public NoteDialog4 msgBox = null;
+	//GG
+	public AddNoteDialog2 msgBox = null;
 	
 	/** Camare variables */
 	//private Camera mCamera = null;
@@ -173,6 +180,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	private boolean is_connect = false;
 	private boolean first_voltage = false;
 	private boolean second_voltage= false;
+	private boolean requestCassette = false;
 
 	private boolean test_done = false;
 
@@ -243,6 +251,10 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	//Apeal
 	public static TimeValue appealTimeValue;
 	private boolean showAppeal;
+	
+	//ImageDetection
+	//private ImageDetection.MyBinder myBinder;
+	int ttt = 0;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -336,23 +348,28 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		img_btn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//CertainState.onClick();
-				if(ble != null)
+				CertainState.onClick();
+				
+				/*if(ble != null)
 				{
+					Log.d("GG","send request");
+					ble.bleRequestCassetteInfo();
 					byte [] command = new byte[] {BluetoothLE.BLE_REQUEST_IMAGE_INFO};
 	                ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_IMAGE_GET_HEADER;
 	                ble.bleWriteCharacteristic1(command);
 				}
-				Log.d("GG","click");
-				ble = new BluetoothLE(testFragment , "myble");
-                ble.bleConnect();
-                
+				else{
+					Log.d("GG","click");
+					ble = new BluetoothLE(testFragment , "myble2");
+					ble.bleConnect();
+				}*/
+				
                 
 			}
 		});
 		
-		msgBox = new NoteDialog4(testFragment, main_layout);
-		
+		msgBox = new AddNoteDialog2(testFragment, main_layout, MainActivity.getMainActivity());
+		msgBox.setIsTesting(true, -1);
 
 		img_help.setOnClickListener(new View.OnClickListener(){
 			@Override
@@ -492,7 +509,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 				return;
 			}
 			
-			ble_pluginserted =false;
+			ble_pluginserted = false;
 			MainActivity.getMainActivity().enableTabAndClick(false);
 			reset();
 						
@@ -500,6 +517,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 				setState(new DoneState());
 			}
 			else {
+				requestCassette = false;
 				setState(new ConnState());
 			}
 			
@@ -561,8 +579,11 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			
 			stopDueToInit();
 			MainActivity.getMainActivity().enableTabAndClick(true);
-			//if(ble != null)
-				//ble.bleDisconnect();
+			if(ble != null)
+			{
+				ble.bleUnlockDevice();
+				ble.bleSelfDisconnection();
+			}
 		}
 		@Override
 		public void onClick(){ 
@@ -604,6 +625,8 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			 *  1. timeout 2. connect but no saliva(or wrong ID) 3.connect with right salivaId (continue)
 			 */
 			
+			
+			
 			Log.d("GG", "start end");
 		    
 		}
@@ -621,7 +644,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		public void onStart(){
 			
 			state = FIVESECOND_STATE;
-			
+			ble.bleRequestDeviceInfo();
 			Log.d("Main", "Enter FiveSecond");
 			label_btn.setText("9");
 			label_btn.setTypeface(digitTypefaceBold);
@@ -630,7 +653,12 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			img_btn.setEnabled(false);
 			
 			/*GG*/
-			/*if(ble != null)*/
+			if(ble != null)
+			{
+				byte[] command = new byte[]{BluetoothLE.BLE_REQUEST_SALIVA_VOLTAGE};
+            	ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_FETCH_INFO;
+            	ble.bleWriteCharacteristic1(command);
+			}
 				/*device code version*/
 				/*ble.bleWriteState((byte)0x0A);*/
 				
@@ -839,9 +867,11 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			Log.d("GG", "before start test");
 			state = DONE_STATE;
 			
+			//GG
 			if(ble != null){
 				active_disconnect = true;
-				ble.bleDisconnect();
+				ble.bleUnlockDevice();
+				ble.bleSelfDisconnection();
 			}
 			//DBControl.inst.startTesting();
 			stop();
@@ -893,6 +923,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	Runnable runnable=new Runnable(){
 		   @Override
 		   public void run() {
+			   PreferenceControl.setAfterTestState(msgBox.STATE_NOTE);
 			   msgBox.initialize();
 			   msgBox.show();
 		   } 
@@ -941,10 +972,10 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		// initialize bt task
 		if(ble == null) {
 			/*GG*/
-			ble = new BluetoothLE( testFragment , PreferenceControl.getDeviceId()); // default "ket_000";
+			ble = new BluetoothLE( testFragment , PreferenceControl.getDeviceId(), 0); // default "ket_000";
 			//ble = new BluetoothLE( activity , PreferenceControl.getDeviceId());
 			
-			Log.d("GG", "after connect");
+			Log.d("GG", "after connect" + PreferenceControl.getDeviceId());
 			Log.d(TAG, PreferenceControl.getDeviceId());
 			//PreferenceControl.getDeviceId()
 		}
@@ -957,17 +988,22 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		// initialize camera task
 		cameraInitHandler = new CameraInitHandler(this, cameraRecorder);
 		cameraInitHandler.sendEmptyMessage(0);
+		
+		//*GG*???
+		/*byte[] command = new byte[]{BluetoothLE.BLE_REQUEST_CASSETTE_ID};
+        ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_FETCH_INFO;
+        ble.bleWriteCharacteristic1(command);*/
 		Log.d("GG", "end connect");
 	}
 	
 	@Override
 	public int writeQuestionFile(int day, int timeslot, int type, int items, int impact, String action, String feeling, String thinking, int finished, int key) {
-		/*if( questionFile!= null )
-			questionFile.write(day, timeslot, type, items, impact, description);
+		//if( questionFile!= null )
+		//	questionFile.write(day, timeslot, type, items, impact, description);
 		
 		if(type > -1)
-			TestDataParser2.startAfterAddNote3(1, day, timeslot, type, items, impact, description);
-		*/
+			TestDataParser2.startAfterAddNote3(1, day, timeslot, type, items, impact, action, feeling, thinking, finished, key);
+		
 //		if( TDP!= null ){
 //			//TDP.startAddNote();
 //			//TDP.getQuestionResult2(textFile)
@@ -990,7 +1026,9 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		if(ble!=null){
 			//is_connect = false;
 			active_disconnect = true;
-			ble.bleDisconnect();
+			ble.bleUnlockDevice();
+			ble.bleSelfDisconnection();
+			Log.d("GG", "here5");
 			ble = null;
 		}
 	
@@ -1066,10 +1104,12 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			//is_connect = false;
 			
 			/*GG*/
-			/*ble.bleWriteState((byte)0x01);*/
+			//ble.bleWriteState((byte)0x01);*/
 			
-			//ble.bleDisconnect();
-			//ble = null;
+			ble.bleUnlockDevice();
+			ble.bleSelfDisconnection();
+			Log.d("GG", "here6");
+			ble = null;
 		}
 	
 		if (colorRawFileHandler != null) {
@@ -1132,11 +1172,14 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 				voltageFileHandler.close();
 				voltageFileHandler = null;
 			}
+			//GG
 			if(ble!=null){
 				//is_connect = false;
 				//ble.bleWriteState((byte)0x01);
 				active_disconnect = true;
-				ble.bleDisconnect();
+				ble.bleUnlockDevice();
+				ble.bleSelfDisconnection();
+				Log.d("GG", "here1");
 				ble = null;
 			}
 			//blehandler.postDelayed(this, 1000);
@@ -1170,10 +1213,13 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			/*GG*/
 			/*ble.bleWriteState((byte)0x01);*/
 			
-			
-			//ble.bleDisconnect(); // 原本註解
-			//is_connect = false;
-			//ble = null; 
+			//ble.bleUnlockDevice();
+			//ble.bleSelfDisconnection(); // 原本註解
+			//ble.bleHardTermination();
+			clearDevice();
+			is_connect = false;
+			//Log.d("GG", "here2");
+			ble = null; 
 		}
 
 		if (cameraInitHandler != null)
@@ -1274,7 +1320,17 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		checkDebug(is_debug);
 		
 		boolean resultServiceRun = PreferenceControl.getResultServiceRun();
-		msgBox = new NoteDialog4(testFragment, main_layout);
+		if(msgBox != null)
+		{
+			Log.d("GG","box is not null");
+			//msgBox.show();
+		}
+		else
+		{
+			Log.d("GG","box is null");
+		}
+		int state = PreferenceControl.getAfterTestState();
+		
 		//reset();
 		long curTime = System.currentTimeMillis();
 		long testTime = PreferenceControl.getLatestTestCompleteTime();
@@ -1290,23 +1346,32 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			img_btn.setOnClickListener(null);
 			img_btn.setEnabled(false);
 			
-			msgBox.initialize();
-			msgBox.show();			
-			if(note_state == msgBox.STATE_KNOW)
+			/*msgBox.initialize();
+			msgBox.show();	*/
+			
+			if(state == NoteDialog4.STATE_COPE){
+				msgBox.copingSetting();
+			}
+			
+			if(state == NoteDialog4.STATE_KNOW){
+				msgBox.knowingSetting();
+			}
+			//GG
+			/*if(note_state == msgBox.STATE_KNOW)
 				msgBox.knowingSetting();
 			else if(note_state == msgBox.STATE_COPE)
-				msgBox.copingSetting();
+				msgBox.copingSetting();*/
 		}
 		else if(PreferenceControl.getCheckResult() && countTime <=0){//還沒察看結果且時間到了
 			img_btn.setOnClickListener(null);
 			img_btn.setEnabled(false);
-			msgBox.initialize();
-			msgBox.show();
-			
-			if(note_state == msgBox.STATE_KNOW)
+			//msgBox.initialize();
+			//msgBox.show();
+			//GG
+			/*if(note_state == msgBox.STATE_KNOW)
 				msgBox.knowingSetting();
 			else if(note_state == msgBox.STATE_COPE)
-				msgBox.copingSetting();
+				msgBox.copingSetting();*/
 			
 
 			msgBox.setResult();
@@ -1730,6 +1795,25 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
     public void bleConnected() {
     	is_connect = true;
         Log.d("GG", "BLE connected");
+        
+        /*GG*/
+        /*byte[] command = new byte[]{BluetoothLE.BLE_REQUEST_CASSETTE_ID};
+        ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_FETCH_INFO;
+        ble.bleWriteCharacteristic1(command);*/
+        
+        Handler handler = new Handler(); 
+        handler.postDelayed(new Runnable() {
+             @Override 
+             public void run() { 
+            	 if(ble != null && !requestCassette)
+            	 {
+            		 ble.bleRequestCassetteInfo();
+            		 requestCassette = true;
+            	 }
+             } 
+        }, 2000); 
+        //ble.bleRequestCassetteInfo();
+        //blePlugInserted(1);
         //Toast.makeText(this, "BLE connected", Toast.LENGTH_SHORT).show();
     }
 
@@ -1747,7 +1831,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
         //TODO: 加上重連
         if(state != IDLE_STATE && state!= FAIL_STATE && state!= DONE_STATE && !goThroughState){
         	//CustomToastSmall.generateToast("");
-        	if(!active_disconnect){
+        	if(!active_disconnect && ble != null){
         		ble.bleConnect();
         	}
         	else{
@@ -1783,8 +1867,9 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
         }
     }
 
-    @Override
-    public void bleNoPlug() {
+    /*@Override
+    GG*/
+    /*public void bleNoPlug() {
         Log.i(TAG, "No test plug");
     	
         if(state >= CAMERA_STATE)
@@ -1805,7 +1890,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
         }
         
         
-    }
+    }*/
 
     /*GG*/
     /*@Override
@@ -2016,6 +2101,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 			
 			img_btn.setOnClickListener(null);
 			img_btn.setEnabled(false);
+			PreferenceControl.setAfterTestState(msgBox.STATE_NOTE);
 			msgBox.initialize();
 			msgBox.show();	
 		}		
@@ -2206,7 +2292,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 
 	@Override
 	public void bleWriteCharacteristic1Success() {
-		Log.d("GG", "call back : write success");
+		//Log.d("GG", "call back : write success");
 		// TODO Auto-generated method stub
 		Log.i(TAG, "BLE ACTION_DATA_WRITE_SUCCESS");
         if(debug){
@@ -2217,7 +2303,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	}
 	@Override
 	public void blePlugInserted(int cassetteId) {
-		Log.d("GG", "call back : cassetteId");
+		Log.d("GG", "call back : cassetteId = "+ cassetteId);
 		// TODO Auto-generated method stub
 		ble_pluginserted = true;
 		
@@ -2235,6 +2321,10 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
         
         String S_cassetteId = "CT_"+ cassetteId ;
         
+        this.cassetteId = S_cassetteId;
+        
+        //Log.d("GG", "call back : "+ this.cassetteId);
+        
         if(state != FAIL_STATE && state!= IDLE_STATE && state != DONE_STATE){
 	        boolean check = db.checkCassette(S_cassetteId);        
 	        //Log.i(TAG, "cassetteId: " + cassetteId + " " + check);
@@ -2249,7 +2339,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	}
 	@Override
 	public void bleUpdateBattLevel(int level) {
-		Log.d("GG", "call back : battery");
+		//Log.d("GG", "call back : battery");
 		// TODO Auto-generated method stub
 		devicePower = level;
 	}
@@ -2257,7 +2347,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 	public void bleUpdateSalivaVolt(int volt) {
 		Log.d("GG", "call back : voltage");
 		// TODO Auto-generated method stub
-		voltage = (int)volt;
+		voltage = volt;
 		
 		if( voltage > FIRST_VOLTAGE_THRESHOLD )
 			voltage_count++;
@@ -2265,7 +2355,7 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		String str = String.valueOf(voltage);
 		//String str2 = String.format("%02x", header & 0xff);
 		
-		String str3= System.currentTimeMillis()+" "+state+/*" "+str2+" "+*/str;
+		String str3= System.currentTimeMillis()+" "/*+state*/+" volt:"+/*" "+str2+" "+*/str;
 		Log.i(TAG2, str3);
 		
 		showDebug(">"+str3 + " State: "+ state);
@@ -2299,6 +2389,108 @@ public class TestFragment2 extends Fragment implements BluetoothListener, Camera
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public Context getContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void bleNoPlugDetected() {
+		// TODO Auto-generated method stub
+		Log.i(TAG, "No test plug");
+		Log.d("GG", "callback No test plug");
+    	
+        if(state >= CAMERA_STATE)
+        {
+        	setState(new FailState("檢測過程中請勿拔出口水匣", "測試失敗"));
+        	if(ble != null)
+        	{
+        		//ble.bleHardTermination();
+        		clearDevice();
+        		Log.d("GG", "here3");
+        		ble = null;
+        	}
+        }
+        else if(state != IDLE_STATE && !goThroughState && state != FAIL_STATE){
+        	if(debug){
+        		//Toast.makeText(activity, "No test plug", Toast.LENGTH_SHORT).show();
+        		CustomToastSmall.generateToast("No test plug");
+        	}
+        	failedState = state;
+        	setState(new FailState("請將口水匣插入直到紅燈亮起"));
+    
+        	if(toast_first){
+        		CustomToastCassette.generateToast();
+        		toast_first = false;
+        	}
+        	if(ble != null)
+        	{
+        		//ble.bleHardTermination();
+        	    clearDevice();
+        		Log.d("GG", "here4");
+        		ble = null;
+        	}
+        }
+	}
+	@Override
+	public void notifyDeviceVersion(int version) {
+		
+		
+	}
+	@Override
+	public void bleNotifyDetectionResult(double score) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/*private ServiceConnection SvmConnection = new ServiceConnection() {  
+		  
 
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			// TODO Auto-generated method stub
+			myBinder = (ImageDetection.MyBinder) service;  
+            myBinder.startDetect();  
+			
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			// TODO Auto-generated method stub
+			
+		}  
+    };*/
+
+	@Override
+	public void updateRankList() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void blockView() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void updateList() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void bleReturnDeviceVersion(int version) {
+		hardwareVersion = String.valueOf(version);
+		
+		Log.i(TAG, "Display Hardware Version " + version);
+		Log.d("GG", "Display Hardware Version " + version);
+		showDebug("Display Hardware Version " + version);
+		
+	}
+	
+	public void clearDevice()
+	{
+		ble.bleUnlockDevice();
+		ble.bleCancelCassetteInfo();
+		ble.bleSelfDisconnection();
+	}
 
 }

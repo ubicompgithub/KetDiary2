@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_shadow" >
+
+    <LinearLayout
+        android:layout_width="272dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:background="@drawable/quesion_bg2"
+        android:orientation="vertical"
+        android:splitMotionEvents="true"
+        android:translationX="5dp"
+        android:translationY="-5dp" >
+
+       
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:padding="20dp" >
+
+            <TextView
+                android:id="@+id/question_q"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/question_Q"
+                android:textColor="@color/red"
+                android:textSize="@dimen/large_text_size" />
+            
+            <ImageView
+                android:id="@+id/question_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/type_icon4"
+                android:visibility="gone" />
+            
+            <TextView
+                android:id="@+id/question_question_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="你多同意這個看法?"
+                android:textColor="@color/text_gray3"
+                android:textSize="@dimen/large_text_size"
+                android:layout_marginLeft="10dp" />
+
+        </LinearLayout>
+		<ScrollView
+            android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+        	android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom = "20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp" >
+          
+          
+        	
+          	<LinearLayout
+            	android:layout_width="match_parent"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal"
+            	android:layout_marginTop="10dp" >
+         
+           
+                <TextView
+               	 	android:layout_width="wrap_content"
+                	android:layout_height="wrap_content"
+                	android:text="情境："
+                	android:textColor="@color/text_gray3"
+                	android:textSize="@dimen/large_text_size"
+                	android:layout_marginLeft="10dp" />
+            
+            	<TextView
+            	    android:id="@+id/question_event"
+            	    android:layout_width="wrap_content"
+            	    android:layout_height="wrap_content"
+            	    android:layout_marginLeft="10dp"
+            	    android:text="全部的人都叫我考公職"
+            	    android:textColor="@color/text_gray3"
+            	    android:textSize="@dimen/large_text_size" />
+            
+        	</LinearLayout>
+        	<LinearLayout
+            	android:layout_width="match_parent"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal"
+            	android:layout_marginTop="10dp">
+
+             
+                
+                <TextView
+               	 	android:layout_width="wrap_content"
+                	android:layout_height="wrap_content"
+                	android:text="情緒："
+                	android:textColor="@color/text_gray3"
+                	android:textSize="@dimen/large_text_size"
+                	android:layout_marginLeft="10dp" />
+            
+            	<TextView
+            	    android:id="@+id/question_feeling"
+            	    android:layout_width="wrap_content"
+            	    android:layout_height="wrap_content"
+            	    android:layout_marginLeft="10dp"
+            	    android:text="客觀的"
+            	    android:textColor="@color/text_gray3"
+            	    android:textSize="@dimen/large_text_size" />
+            
+        	</LinearLayout>
+        	<LinearLayout
+            	android:layout_width="match_parent"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal"
+            	android:layout_marginTop="10dp"
+            	android:layout_weight="1" >
+
+           
+                
+                <TextView
+               	 	android:layout_width="wrap_content"
+                	android:layout_height="wrap_content"
+                	android:text="想法："
+                	android:textColor="@color/text_gray3"
+                	android:textSize="@dimen/large_text_size"
+                	android:layout_marginLeft="10dp" />
+            
+            	<TextView
+            	    android:id="@+id/question_thinking"
+            	    android:layout_width="wrap_content"
+            	    android:layout_height="wrap_content"
+            	    android:layout_marginLeft="10dp"
+            	    android:text="我已經停止用藥了，我要冷靜應對才行。"
+            	    android:textColor="@color/text_gray3"
+            	    android:textSize="@dimen/large_text_size" />
+            
+        	</LinearLayout>
+        	<LinearLayout
+            	android:layout_width="match_parent"
+            	android:layout_height="wrap_content"
+            	android:orientation="horizontal"
+            	android:layout_marginTop="10dp" >
+
+        	    <RelativeLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="-30dp" 
+         android:gravity="center"
+         android:layout_marginLeft="20dp"
+         android:layout_marginRight="20dp">  
+        	    
+               <ImageView
+       		  android:id="@+id/msg_craving_bar_bg"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" 
+              android:contentDescription="@string/msg_box_help2"
+              android:src="@drawable/impact_bar"
+              android:layout_centerInParent="true" />
+
+                <SeekBar
+                    android:id="@+id/question_seek_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerInParent="true"
+                    android:max="4"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="10dp"
+                    android:progress="0"
+                    android:progressDrawable="@color/transparent"
+                    android:thumb="@drawable/impact_thumb" />
+                
+           <ImageView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:src="@drawable/impact_dot2"
+              android:layout_below="@+id/msg_craving_bar_bg"
+              android:layout_marginTop="15dp"
+              android:layout_marginRight="12dp"
+              android:layout_marginLeft="12dp" />     
+                
+                    
+		<LinearLayout
+		    android:layout_width="match_parent"
+         	android:layout_height="wrap_content"
+         	android:orientation="horizontal"
+         	android:layout_below="@+id/msg_craving_bar_bg"
+         	android:layout_marginTop="25dp">
+         	
+         		<TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center|left"
+                    android:text=" 非常 \n不同意"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="@dimen/sn_text_size"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center|left"
+                    android:text="不同意"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="@dimen/sn_text_size"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center"
+                    android:text="普通"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="@dimen/sn_text_size"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center|right"
+                    android:text="同意"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="@dimen/sn_text_size"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:gravity="center|right"
+                    android:text="非常\n同意"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="@dimen/sn_text_size"
+                    android:layout_weight="1" />
+
+			</LinearLayout>
+                
+            </RelativeLayout>
+            
+        	</LinearLayout>
+            
+            
+            
+            
+            
+        </LinearLayout>
+		</ScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:gravity="bottom"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/question_identity_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="取消"
+                android:textColor="@drawable/text_color"
+                android:textSize="@dimen/large_text_size" />
+
+            <TextView
+                android:id="@+id/question_identity_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="送出"
+                android:textColor="@drawable/text_color"
+                android:textSize="@dimen/large_text_size" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

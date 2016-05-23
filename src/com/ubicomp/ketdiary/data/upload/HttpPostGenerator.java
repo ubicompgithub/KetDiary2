@@ -16,9 +16,11 @@ import org.apache.http.protocol.HTTP;
 
 import com.ubicomp.ketdiary.App;
 import com.ubicomp.ketdiary.data.file.MainStorage;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.Appeal;
 import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
+import com.ubicomp.ketdiary.data.structure.IdentityScore;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.QuestionTest;
 import com.ubicomp.ketdiary.data.structure.Reflection;
@@ -43,7 +45,7 @@ public class HttpPostGenerator {
 	//public HttpPostGenerator inst = new HttpPostGenerator();
 	//private HttpPostGenerator(){}
 		
-	private static final int PicNum = 8;
+	private static final int PicNum = 6;
 	/**
 	 * Generate POST of Patient
 	 * @param p
@@ -118,7 +120,7 @@ public class HttpPostGenerator {
 		File testFile, detectionFile;
 		
 		int fileNum = new File(mainStorageDir.getPath() + File.separator + _ts
-				+ File.separator).listFiles().length;
+				+ File.separator).listFiles().length - 1;
 		
 		Log.d("FileNum: ", _ts + " Num: "+ fileNum);
 		
@@ -202,6 +204,21 @@ public class HttpPostGenerator {
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getFinished())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getScore())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getTv().getWeek())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getKey())));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+		} catch (UnsupportedEncodingException e) {}
+		return httpPost;
+	}
+	
+	public static HttpPost genPostAddNoteThinking(NoteAdd data){
+		HttpPost httpPost = new HttpPost(ServerUrl.getUpdateThinkingUrl());
+		String uid = PreferenceControl.getUID();
+		String deviceId = PreferenceControl.getDeviceId();
+		
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("uid", uid));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getThinking())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getKey())));
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
@@ -353,6 +370,8 @@ public class HttpPostGenerator {
 		return httpPost;
 	}
 	
+	
+	
 	/**
 	 * Generate POST of ClickLog
 	 * 
@@ -462,6 +481,56 @@ public class HttpPostGenerator {
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getFeeling())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getThinking())));
 		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getKey())));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+		} catch (UnsupportedEncodingException e) {}
+		return httpPost;
+	}
+	
+	/**
+	 * Generate POST of AddScore
+	 * 
+	 * @param data
+	 *            Reflection
+	 * @return HttpPost contains Reflection
+	 * @see ubicomp.soberdiary.data.structure.Reflection
+	 */
+	public static HttpPost genPost(AddScore data){
+		HttpPost httpPost = new HttpPost(ServerUrl.getAddScoreUrl());
+		String uid = PreferenceControl.getUID();
+		String deviceId = PreferenceControl.getDeviceId();
+		
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("uid", uid));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getTv().getTimestamp())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getAddScore())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getAccumulation())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getReason())));
+		try {
+			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+		} catch (UnsupportedEncodingException e) {}
+		return httpPost;
+	}
+	
+	/**
+	 * Generate POST of IdentityScore
+	 * 
+	 * @param data
+	 *            Reflection
+	 * @return HttpPost contains Reflection
+	 * @see ubicomp.soberdiary.data.structure.Reflection
+	 */
+	public static HttpPost genPost(IdentityScore data){
+		HttpPost httpPost = new HttpPost(ServerUrl.getIdentityScoreUrl());
+		String uid = PreferenceControl.getUID();
+		String deviceId = PreferenceControl.getDeviceId();
+		
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("uid", uid));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getTv().getTimestamp())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getScore())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getKey())));
+		nvps.add(new BasicNameValuePair("data[]", String.valueOf(data.getIsReflection())));
 		try {
 			httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
 		} catch (UnsupportedEncodingException e) {}

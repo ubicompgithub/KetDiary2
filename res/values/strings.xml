@@ -84,6 +84,7 @@
     <string name="msg_box_toast_cancel">確定放棄填寫？</string>
     <string name="msg_box_toast_send">確定完成自我了解？</string>
     <string name="notification_msg_1">該檢測了！</string>
+    <string name="notification_msg_2">該填想法囉！</string>
     <string name="next_step">下一步</string>
     <string name="pre_step">上一步</string>
     <string name="end_record">完成紀錄</string>
@@ -443,6 +444,11 @@
 	<string name="impact_2">有點小</string>
 	<string name="impact_3">中等</string>
 	<string name="impact_4">有點大</string>
-	<string name="impact_5">非常大</string>
+	<string name="impact_5">很大</string>
+	
+	<string name="add_note_no_thinking">之後記得填寫想法喔</string>
+	<string name="add_note_with_thinking">已記錄情境</string>
+	<string name="add_note_reflection">新的想法，新的生活</string>
+	<string name="add_note_identity">改變從瞭解自己開始</string>
 
 </resources>

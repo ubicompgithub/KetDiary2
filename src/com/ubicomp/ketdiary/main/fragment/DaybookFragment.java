@@ -4,7 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Random;
 import java.util.StringTokenizer;
+
+import org.w3c.dom.Text;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -50,6 +54,7 @@ import com.ubicomp.ketdiary.data.file.QuestionFile;
 import com.ubicomp.ketdiary.data.file.TestDataParser2;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.RankingCount;
+import com.ubicomp.ketdiary.data.structure.Reflection;
 import com.ubicomp.ketdiary.data.structure.TestResult;
 import com.ubicomp.ketdiary.daybook.LineChartData;
 import com.ubicomp.ketdiary.daybook.SectionsPagerAdapter;
@@ -62,6 +67,7 @@ import com.ubicomp.ketdiary.dialog.CheckResultDialog;
 import com.ubicomp.ketdiary.dialog.MyDialog;
 import com.ubicomp.ketdiary.dialog.QuestionCaller;
 import com.ubicomp.ketdiary.dialog.QuestionDialog2;
+import com.ubicomp.ketdiary.dialog.ReflectionFirstPage;
 import com.ubicomp.ketdiary.dialog.TestQuestionCaller2;
 import com.ubicomp.ketdiary.noUse.NoteCatagory3;
 import com.ubicomp.ketdiary.system.PreferenceControl;
@@ -171,17 +177,47 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		R.drawable.type_icon4, R.drawable.type_icon5, R.drawable.type_icon6, R.drawable.type_icon7,
 		R.drawable.type_icon8};
 	
-	private final static int[] typeId = {R.drawable.mood_happy_clicked,
-		R.drawable.mood_calm_clicked, R.drawable.mood_excited_clicked,
-		R.drawable.mood_objective_clicked,R.drawable.mood_relax_clicked};
-	private final static int[] typeIdNull = {R.drawable.mood_happy,
-			R.drawable.mood_calm, R.drawable.mood_excited, R.drawable.mood_objective,
-			R.drawable.mood_relax };
+	private final static int[] typeId = {
+			R.drawable.mood_angry_clicked,
+            R.drawable.mood_sad_clicked,
+            R.drawable.mood_nervous_clicked,
+            R.drawable.mood_hate_clicked,
+            R.drawable.mood_happy_clicked,
+            R.drawable.mood_afraid_clicked,
+            R.drawable.mood_calm_clicked,
+            R.drawable.mood_relax_clicked,
+            R.drawable.mood_excited_clicked,
+            R.drawable.mood_objective_clicked,
+            R.drawable.mood_happy_clicked,
+            R.drawable.mood_boring_clicked,
+            R.drawable.mood_energy_clicked,
+            R.drawable.mood_loved_clicked,
+            R.drawable.mood_objective_clicked
+    };
+	
+	private final static int[] typeIdNull = { 
+			R.drawable.mood_angry,
+            R.drawable.mood_sad,
+            R.drawable.mood_nervous,
+            R.drawable.mood_hate,
+            R.drawable.mood_happy,
+            R.drawable.mood_afraid,
+            R.drawable.mood_calm,
+            R.drawable.mood_relax,
+            R.drawable.mood_excited,
+            R.drawable.mood_objective,
+            R.drawable.mood_happy,
+            R.drawable.mood_boring,
+            R.drawable.mood_energy,
+            R.drawable.mood_loved,
+            R.drawable.mood_objective
+    };
 	
 	//public static List<Integer> filterList = new ArrayList<Integer>();
 
 	private ImageView filterAll, filter1, filter2, filter3, filter4, filter5, filter6, filter7, filter8;
 	public ImageView lineChartFilterButton, calendarFilterButton, rotateLineChart;
+	private LinearLayout sortImpact, sortReflection, sortResult, sortTime;
 	
 	public static boolean[] filterButtonIsPressed = {true, false, false, false, false, false, false, false, false};
 	//private ImageView[] filterButtonArray = {filterAll, filter1, filter2, filter3, filter4, filter5, filter6, filter7, filter8};
@@ -198,6 +234,15 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		
 	public static int addNoteStep = 0;
 	private NoteCatagory3 noteCategory;
+	
+	private int sortType = 0;
+	private static final int SORT_IMPACT = 1;
+	private static final int SORT_REFLECTION = 2;
+	private static final int SORT_RESULT = 3;
+	private static final int SORT_TIME = 4;
+	
+	private int nowFilter = 0; //0 is linechar, 1 is calendar
+	private ImageView showDetailDialog;
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -268,12 +313,12 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		mSectionsPagerAdapter = new SectionsPagerAdapter(pageViewList);
 
 		mViewPager = (ViewPager) view.findViewById(R.id.pager);
-		mViewPager.setAdapter(mSectionsPagerAdapter);*/	
+		mViewPager.setAdapter(mSectionsPagerAdapter);*/
 		
 		
 		
-		backToTodayText = (TextView) view.findViewById(R.id.back_to_today);
-		backToTodayText.setText(Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)));
+		//backToTodayText = (TextView) view.findViewById(R.id.back_to_today);
+		//backToTodayText.setText(Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)));
 		
 		caltoggleLayout = (LinearLayout) view.findViewById(R.id.cal_toggle_layout);
 		titleText = (TextView) view.findViewById(R.id.month_text);
@@ -286,7 +331,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		
 		lineChartBar = (View) inflater.inflate(R.layout.linechart_upperbar, null, false);
 		lineChartView = (View) inflater.inflate(R.layout.linechart_main, null, false);
-		lineChartFilter = (View) inflater.inflate(R.layout.linechart_filter, null, false);
+		//lineChartFilter = (View) inflater.inflate(R.layout.linechart_filter, null, false);
+		lineChartFilter = (View) inflater.inflate(R.layout.sort_filter, null, false);
 		
 		rotateLineChart = (ImageView) lineChartBar.findViewById(R.id.rotate_button);
 	    calendarIcon = (ImageView) lineChartBar.findViewById(R.id.back_to_calendar);
@@ -299,7 +345,73 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	    randomButton = (ImageView) view.findViewById(R.id.random_question);
 	    animation = (AnimationDrawable) randomButton.getDrawable();
 	    
-		filterAll = (ImageView) lineChartFilter.findViewById(R.id.filter_all);
+	    sortImpact = (LinearLayout) lineChartFilter.findViewById(R.id.sort_impact);
+	    sortReflection = (LinearLayout) lineChartFilter.findViewById(R.id.sort_reflection);
+	    sortResult = (LinearLayout) lineChartFilter.findViewById(R.id.sort_result);
+	    sortTime = (LinearLayout) lineChartFilter.findViewById(R.id.sort_time);
+	    
+	    showDetailDialog = (ImageView) lineChartBar.findViewById(R.id.show_detail_dialog);
+	    
+	    sortImpact.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sortType = SORT_IMPACT;
+				lineChartFilterButton.setImageResource(R.drawable.filter_impact_true);
+				calendarFilterButton.setImageResource(R.drawable.filter_impact_true);
+				showDiary(0);
+				addDairy();
+				if(nowFilter == 1)
+					calendarFilterButton.performClick();
+				else
+					lineChartFilterButton.performClick();
+			}
+		});
+	    
+	    sortReflection.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sortType = SORT_REFLECTION;
+				lineChartFilterButton.setImageResource(R.drawable.filter_reflection_true);
+				calendarFilterButton.setImageResource(R.drawable.filter_reflection_true);
+				showDiary(0);
+				addDairy();
+				if(nowFilter == 1)
+					calendarFilterButton.performClick();
+				else
+					lineChartFilterButton.performClick();
+			}
+		});
+	    sortResult.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sortType = SORT_RESULT;
+				lineChartFilterButton.setImageResource(R.drawable.filter_result_true);
+				calendarFilterButton.setImageResource(R.drawable.filter_result_true);
+				showDiary(0);
+				addDairy();
+				if(nowFilter == 1)
+					calendarFilterButton.performClick();
+				else
+					lineChartFilterButton.performClick();
+			}
+		});
+	    sortTime.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sortType = SORT_TIME;
+				lineChartFilterButton.setImageResource(R.drawable.filter_time_true);
+				calendarFilterButton.setImageResource(R.drawable.filter_time_true);
+				showDiary(0);
+				addDairy();
+				if(nowFilter == 1)
+					calendarFilterButton.performClick();
+				else
+					lineChartFilterButton.performClick();
+			}
+		});
+	    
+	    showDetailDialog.setOnClickListener(new FilterLongClickListener());
+		/*filterAll = (ImageView) lineChartFilter.findViewById(R.id.filter_all);
 	    filter1 = (ImageView) lineChartFilter.findViewById(R.id.filter_1);
 	    filter2 = (ImageView) lineChartFilter.findViewById(R.id.filter_2);
 	    filter3 = (ImageView) lineChartFilter.findViewById(R.id.filter_3);
@@ -328,7 +440,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		filter5.setOnLongClickListener(new FilterLongClickListener());
 		filter6.setOnLongClickListener(new FilterLongClickListener());
 		filter7.setOnLongClickListener(new FilterLongClickListener());
-		filter8.setOnLongClickListener(new FilterLongClickListener());
+		filter8.setOnLongClickListener(new FilterLongClickListener());*/
 	    //updateDiaryHandler.sendEmptyMessage(0);//showDiary();
 				
 		drawer.toggle();
@@ -466,7 +578,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 					drawerContent.addView(lineChartFilter);
 					
 					setFilterSize();
-					setFilterType(3);
+					//GGsetFilterType(3);
 					//GGdrawerContent.addView(calendarView);
 					drawerContent.addView(rankView);
 					
@@ -521,7 +633,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			
 		});*/
 
-		backToTodayText.setOnClickListener(new View.OnClickListener() { 
+		/*backToTodayText.setOnClickListener(new View.OnClickListener() { 
             @Override
             public void onClick(View v) {
             	
@@ -581,7 +693,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 
                 //mViewPager.setCurrentItem(sustainMonth - 1);
             }
-        });
+        });*/
 
 
 		lineChartFilterButton = (ImageView) lineChartBar.findViewById(R.id.line_chart_filter);
@@ -690,8 +802,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		
 		lineChartFilterButton = (ImageView) lineChartBar.findViewById(R.id.line_chart_filter);
 		calendarFilterButton = (ImageView) calendarBar.findViewById(R.id.calendar_filter);
-		lineChartFilterButton.setOnClickListener(new FilterButtonListener());
-		calendarFilterButton.setOnClickListener(new FilterButtonListener());
+		lineChartFilterButton.setOnClickListener(new FilterButtonListenerSort());
+		calendarFilterButton.setOnClickListener(new FilterButtonListenerSort());
 		MainActivity.getMainActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		
@@ -745,14 +857,15 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	}
 	
 	private void updateFilterButton(){
-		if(!filterButtonIsPressed[0]){
+		
+		/*if(!filterButtonIsPressed[0]){
 			lineChartFilterButton.setImageResource(R.drawable.filter1_color);
 			calendarFilterButton.setImageResource(R.drawable.filter1_color);
 		}
 		else{
 			lineChartFilterButton.setImageResource(R.drawable.button_filter);
 			calendarFilterButton.setImageResource(R.drawable.button_filter);
-		}
+		}*/
 	}
 	
 
@@ -762,17 +875,17 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		case 0:
 			ClickLog.Log(ClickLogId.DAYBOOK_CHART_TYPE0);
 			chartTitle.setBackgroundResource(R.drawable.tab1_pressed);
-			setFilterType(chart_type);
+			//setFilterType(chart_type);
 			break;
 		case 1:
 			ClickLog.Log(ClickLogId.DAYBOOK_CHART_TYPE1);
 			chartTitle.setBackgroundResource(R.drawable.tab2_pressed);
-			setFilterType(chart_type);
+			//setFilterType(chart_type);
 			break;
 		case 2:
 			ClickLog.Log(ClickLogId.DAYBOOK_CHART_TYPE2);
 			chartTitle.setBackgroundResource(R.drawable.tab3_pressed);
-			setFilterType(chart_type);
+			//setFilterType(chart_type);
 			break;		
 		}
 	}
@@ -931,7 +1044,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		@Override
 		protected Void doInBackground(Integer... month) {
 						
-			showDiary(month[0]);	
+			showDiary(month[0]);
 			return null;
 		}
 		
@@ -946,6 +1059,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		protected void onPostExecute(Void result) {		
 			addDairy();
 			updateDiaryView();
+
 			sv.fullScroll(View.FOCUS_DOWN);
 		}
 	}
@@ -956,7 +1070,52 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		if(noteAdds == null){
 			return;
 		}
+		for(int i = 0; i < noteAdds.length; i++)
+		{
+			int t = 0;
+			if(db.getNoteAddReflection(noteAdds[i].getKey()))
+				t = 1;
+			noteAdds[i].setReflection(t);
+		}
 		
+		
+		if(sortType == SORT_IMPACT)
+		{
+			Arrays.sort(noteAdds, NoteAdd.ImpactComparator);			
+		}
+		
+		if(sortType == SORT_REFLECTION)
+		{
+			Arrays.sort(noteAdds, NoteAdd.ReflectionComparator);			
+		}
+		
+		if(sortType == SORT_RESULT)
+		{
+			
+			for(int i = 0; i < noteAdds.length; i++)
+			{
+				int date = noteAdds[i].getRecordTv().getDay();
+				int month = noteAdds[i].getRecordTv().getMonth();
+				int year = noteAdds[i].getRecordTv().getYear();
+				int last_day = 0;
+				int last_result = -1;
+				int result = last_result;
+				if(date != last_day){
+					TestResult testResult = 
+							db.getDayTestResult( year, month, date );
+        	
+					if(testResult.getTv().getTimestamp() != 0){
+						result = testResult.getResult();
+					}
+					else
+						result = -1;
+						
+				}
+				noteAdds[i].setReflection(result);
+			}
+			Arrays.sort(noteAdds, NoteAdd.ReflectionComparator);			
+		}
+			
 		//Log.d(TAG, String.valueOf(noteAdds.length));
 		
 		LayoutInflater inflater = LayoutInflater.from(context);
@@ -1002,6 +1161,8 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				TextView impact_word = (TextView) diaryItem2[i].findViewById(R.id.diary_impact_word);
 				TextView impact_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_impact);
 				TextView feeling_txt = (TextView) diaryItem2[i].findViewById(R.id.diary_impact_feeling);
+				ImageView check_thinking =  (ImageView) diaryItem2[i].findViewById(R.id.diary_check_thinking);
+				ImageView check_reflection =  (ImageView) diaryItem2[i].findViewById(R.id.diary_check_reflection);
 				
 				diaryItem2[i].setTag(TAG_LIST_YEAR, year);
 				diaryItem2[i].setTag(TAG_LIST_MONTH, month);
@@ -1013,6 +1174,17 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				//items_txt.setTypeface(wordTypefaceBold);
 				impact_word.setTypeface(wordTypefaceBold);
 				impact_txt.setTypeface(wordTypefaceBold);
+				
+				if(noteAdds[i].getFinished() == 1)
+				{
+					check_thinking.setImageResource(R.drawable.check_thinking);
+				}
+					
+				if(noteAdds[i].getReflection() == 1)
+				{
+					check_reflection.setImageResource(R.drawable.check_reflection);
+				}
+				
 				
 				int result = last_result;
 				if(date != last_day){
@@ -1040,13 +1212,15 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			int slot = noteAdds[i].getTimeSlot();
 			type = noteAdds[i].getType();
 			int items = noteAdds[i].getItems();
-			String descripton = noteAdds[i].getAction();
+			String description = noteAdds[i].getAction();
+			String description2 = noteAdds[i].getThinking();
+			String description3 = noteAdds[i].getFeeling();
 			int impact = noteAdds[i].getImpact();
-
-			
+			int key = noteAdds[i].getKey();
+			int finished = noteAdds[i].getFinished();
 			//type_img.setOnLongClickListener(new TypeLongClickListener(date, dayOfweek, slot, type, items,	impact, descripton));
 			layout.setOnLongClickListener(new TypeLongClickListener(month, date, dayOfweek, slot, type, items, 
-					impact, descripton));
+					impact, description,description2,description3,key,finished));
 			
 			//if(type > 0 && type <=8)
 			//	type_img.setImageResource(typeId[type])
@@ -1085,7 +1259,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			timeslot_num.setText(timeslot[ slot ] );
 
 			//items_txt.setText( dict.dictionary.get(items) );
-			description_txt.setText(descripton);
+			description_txt.setText(description);
 
 			impact_txt.setText(impactText[impact]);
 			
@@ -1100,6 +1274,9 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		}			
 	}
 	private void addDairy(){
+		Log.d("GG", "xxxxx");
+		if(rankList != null)
+			setRankList();
 		diaryList.removeAllViews();
 		if(diaryItem2!=null){
 			for(int i=0; i<diaryItem2.length; i++){
@@ -1213,14 +1390,16 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				int slot = noteAdds[i].getTimeSlot();
 				type = noteAdds[i].getType();
 				int items = noteAdds[i].getItems();
-				String descripton = noteAdds[i].getAction();
+				String description = noteAdds[i].getAction();
+				String description2 = noteAdds[i].getThinking();
+				String description3 = noteAdds[i].getFeeling();
 				int impact = noteAdds[i].getImpact();
-				
-	
+				int key = noteAdds[i].getKey();
+				int finished = noteAdds[i].getFinished();
 				
 				//type_img.setOnLongClickListener(new TypeLongClickListener(date, dayOfweek, slot, type, items,	impact, descripton));
 				layout.setOnLongClickListener(new TypeLongClickListener(month, date, dayOfweek, slot, type, items, 
-						impact, descripton));
+						impact, description,description2,description3,key,finished));
 				
 				//if(type > 0 && type <=8)
 				//	type_img.setImageResource(typeId[type]);
@@ -1258,7 +1437,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				timeslot_num.setText(timeslot[ slot ] );
 
 				//items_txt.setText( dict.dictionary.get(items) );
-				description_txt.setText(descripton);
+				description_txt.setText(description);
 				impact_txt.setText(impactText[impact]);
 				
 				last_result = result;
@@ -1363,14 +1542,16 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				int slot = noteAdds[i].getTimeSlot();
 				type = noteAdds[i].getType();
 				int items = noteAdds[i].getItems();
-				String descripton = noteAdds[i].getAction();
+				String description = noteAdds[i].getAction();
+				String description2 = noteAdds[i].getThinking();
+				String description3 = noteAdds[i].getFeeling();
 				int impact = noteAdds[i].getImpact();
-				
-	
+				int key = noteAdds[i].getKey();
+				int finished = noteAdds[i].getFinished();
 				
 				//type_img.setOnLongClickListener(new TypeLongClickListener(date, dayOfweek, slot, type, items,	impact, descripton));
 				layout.setOnLongClickListener(new TypeLongClickListener(month, date, dayOfweek, slot, type, items, 
-						impact, descripton));
+						impact, description,description2,description3,key,finished));
 				
 				//if(type > 0 && type <=8)
 				//	type_img.setImageResource(typeId[type]);
@@ -1426,7 +1607,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 					}
 				}*/
 				//items_txt.setText( dict.dictionary.get(items) );
-				description_txt.setText(descripton);
+				description_txt.setText(description);
 				impact_txt.setText(impactText[impact]);
 				
 				last_result = result;
@@ -1451,15 +1632,52 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 	
 	private void updateDiaryView(){
 		//diaryList.getChildAt(1).setVisibility(View.GONE);
-		int allNum = diaryList.getChildCount();
-		for(int i=0; i<allNum; i++){
+		
+		
+		/*if(sortType == SORT_IMPACT)
+		{
+			int allNum = diaryList.getChildCount();
+			View[] views = new View[allNum];
+			
+			for(int i=0; i<allNum; i++){
+				views[i] = diaryList.getChildAt(i);
+			}
+			
+			Arrays.sort(views, new Comparator<View> () {
+
+				public int compare(View v1, View v2) {
+				
+					int value1 = 0, value2 = 0 ;
+					//value1 = Integer.valueOf(((TextView)v1.findViewById(R.id.value_impact)).toString());
+					//value2 = Integer.valueOf(((TextView)v2.findViewById(R.id.value_impact)).toString());
+					TextView tv = (TextView)v1.findViewById(R.id.value_impact);
+					String ts = tv.toString();
+					Log.d("GG","string:"+ts);
+					//ascending order
+					return value1 - value2;
+					
+				}
+			});
+			
+			diaryList.removeAllViews();
+			
+			for(int i=0; i<allNum; i++){
+				diaryList.addView(views[i]);
+			}
+			
+		}*/
+		
+		
+		
+		//filter no use
+		/*for(int i=0; i<allNum; i++){
 			if(filterButtonIsPressed[diary.get(i)] || filterButtonIsPressed[0]){
 				diaryList.getChildAt(i).setVisibility(View.VISIBLE);
 			}
 			else{
 				diaryList.getChildAt(i).setVisibility(View.GONE);
 			}
-		}
+		}*/
 	}
 	
 	
@@ -1535,10 +1753,10 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		}
     }
     
-    private class FilterLongClickListener implements View.OnLongClickListener{
+    private class FilterLongClickListener implements View.OnClickListener{
 
 		@Override
-		public boolean onLongClick(View v) {
+		public void onClick(View v) {
 			
 			ClickLog.Log(ClickLogId.DAYBOOK_FILTER_LONGCLICK);  
 			
@@ -1557,7 +1775,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			
 			dialog.show();*/
 			
-			return false;
+			return ;
 		}
     	
     }
@@ -1571,10 +1789,15 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		int type;
 		int items;
 		int impact;
-		String descripton;
+		int key;
+		int finished;
+		//String descripton;
+		String action, thinking, feeling;
 		String[] typeText = context.getResources().getStringArray(R.array.trigger_list);
 		   	
-    	public TypeLongClickListener(int month, int date, int dayOfweek, int slot, int type, int items, int impact, String descripton){
+    	public TypeLongClickListener(int month, int date, int dayOfweek, int slot, int type, int items, int impact, 
+    								String action, String thinking, String feeling, int key, int finished){
+
     		this.month = month;
     		this.date = date;
     		this.dayOfweek = dayOfweek;
@@ -1582,7 +1805,11 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
     		this.type = type;
     		this.items = items;
     		this.impact = impact;
-    		this.descripton = descripton;		
+    		this.action = action;
+    		this.thinking = thinking;
+    		this.feeling = feeling;
+    		this.key = key;
+    		this.finished = finished;
     	}
 
 		@Override
@@ -1601,16 +1828,113 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			ImageView type_icon = (ImageView) dialog.findViewById(R.id.type_icon);
 	    	type_icon.setImageResource(iconId[type]);
 	    	TextView detail_time = (TextView) dialog.findViewById(R.id.detail_time);
-			detail_time.setText((month+1)+"月"+date+"號\n"+dayOfWeek[dayOfweek]+"\n"+timeslot[slot]);
+			detail_time.setText((month+1)+"月"+date+"號\n"
+								+dayOfWeek[dayOfweek]+timeslot[slot]+"\n"
+								+ "影響程度 " + impactText[impact]);
 			TextView detail_type = (TextView) dialog.findViewById(R.id.detail_type_content);
 			detail_type.setText(typeText[type-1]);
 			TextView detail_item = (TextView) dialog.findViewById(R.id.detail_item_content);
 			detail_item.setText(dict.dictionary.get(items));
-			TextView detail_impact = (TextView) dialog.findViewById(R.id.detail_impact_content);
-			detail_impact.setText(""+(impact-3));
-			TextView detail_description = (TextView) dialog.findViewById(R.id.detail_description_content);
-			detail_description.setText(descripton);
 			
+			
+			TextView detail_title1 = (TextView) dialog.findViewById(R.id.detail_text_1);
+			TextView detail_content1 = (TextView) dialog.findViewById(R.id.detail_text_1_content);
+			TextView detail_title2 = (TextView) dialog.findViewById(R.id.detail_text_2);
+			TextView detail_content2 = (TextView) dialog.findViewById(R.id.detail_text_2_content);
+			TextView detail_title3 = (TextView) dialog.findViewById(R.id.detail_text_3);
+			TextView detail_content3 = (TextView) dialog.findViewById(R.id.detail_text_3_content);
+			TextView detail_title4 = (TextView) dialog.findViewById(R.id.detail_text_4);
+			TextView detail_content4 = (TextView) dialog.findViewById(R.id.detail_text_4_content);
+			
+			detail_title1.setText("行為");
+			detail_content1.setText(action);
+			
+			if(!db.getNoteAddReflection(key))
+			{		
+				detail_title2.setText("情緒");
+				detail_content2.setText(feeling);
+				
+				detail_title3.setText("想法");
+				
+				if(finished == 0)
+				{
+					detail_title4.setText("反思");
+					detail_content4.setText("未反思");
+					//detail_content4.setBackgroundResource(R.color.dark_gray);
+					
+					detail_content3.setText("點此填寫");
+					detail_content3.setBackgroundResource(R.color.dark_gray);
+					
+					detail_content3.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							//JIZZ
+							AddNoteDialogThinking notePggethinking = new AddNoteDialogThinking(daybookFragment, fragment_layout,activity, null,true,key);
+							notePggethinking.initialize();
+							notePggethinking.setAllText( month+"月"+date+"日",noteCategory.dictionary.get(items),  feeling, action);
+							notePggethinking.setAddNoteDetail(dayOfweek, slot, type, items, impact, action, feeling);
+							
+							notePggethinking.show();
+							
+							isNotePageShow = true;
+							addButton.setVisibility(View.INVISIBLE);
+							fragment_layout.setEnabled(false);
+							dialog.cancel();
+						}
+					});
+				}
+				
+				else{
+					
+					detail_content3.setText(thinking);
+				detail_title4.setText("反思");
+				detail_content4.setText("點此填寫");
+				detail_content4.setBackgroundResource(R.color.dark_gray);
+				
+				detail_content4.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						
+						ReflectionFirstPage reflectionPage1 = new ReflectionFirstPage(daybookFragment, fragment_layout,activity, key, null);
+						reflectionPage1.initialize();
+						reflectionPage1.setAllText(month+"月"+date+"日",noteCategory.dictionary.get(items), 
+											action, thinking);
+						reflectionPage1.show();
+						
+						isNotePageShow = true;
+						addButton.setVisibility(View.INVISIBLE);
+						fragment_layout.setEnabled(false);
+						dialog.cancel();
+					}
+				});
+				}
+			}
+				
+			
+			else
+			{
+				Reflection data = db.getNoteAddLastestReflection(key);
+				
+				detail_title2.setText("預期行為");
+				detail_content2.setText(data.getAction());
+				
+				detail_title3.setText("預期想法");
+				detail_content3.setText(data.getThinking());
+				
+				detail_title4.setText("");
+				detail_content4.setText("");
+			}
+			
+			/*TextView detail_impact = (TextView) dialog.findViewById(R.id.detail_impact_content);
+			detail_impact.setText(""+(impact-3));*/
+			/*TextView detail_action = (TextView) dialog.findViewById(R.id.detail_action_content);
+			detail_action.setText(action);
+			TextView detail_expected_action = (TextView) dialog.findViewById(R.id.detail_expected_action_content);
+			detail_expected_action.setText(expected_action);
+			TextView detail_expected_thinking = (TextView) dialog.findViewById(R.id.detail_expected_thinking_content);
+			detail_expected_thinking.setText(expected_thinking);*/
 			
 			dialog.show();
 			return false;
@@ -1618,6 +1942,106 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
     	
     }
     
+    private class FilterButtonListenerSort implements View.OnClickListener {
+    	@Override
+    	public void onClick(View v) {
+    		ClickLog.Log(ClickLogId.DAYBOOK_FILTER_BUTTON);
+    		if  (!drawer.isOpened()) {
+    			if (v.getId() == R.id.line_chart_filter)
+    				nowFilter = 0;
+    			else
+    				nowFilter = 1;
+    			LayoutParams lp = new LayoutParams(drawer.getLayoutParams());
+				//Log.i("OMG", "H: "+lp.height);
+				lp.height = filterHeight;
+				lp.addRule(RelativeLayout.BELOW, calendarBar.getId());
+				drawer.setLayoutParams(lp);
+				
+				drawerContent.removeAllViews();
+				
+				drawerContent.addView(lineChartFilter);
+				isFilterOpen = true;
+				isContentAdd = false;
+				setFilterSize();
+				//setFilterType(3);
+				
+				drawer.toggle();
+    		}
+    		else{
+    			if(!isContentAdd){
+    				drawer.toggle();
+    			}
+    			else{
+    				isContentAdd = true;
+	    			if (v.getId() == R.id.line_chart_filter) {
+	    				if (isFilterOpen == false) {				
+	    				LayoutParams lp = new LayoutParams(drawer.getLayoutParams());
+						//Log.i("OMG", "H: "+lp.height);
+						lp.height = drawerHeightWithFilter;
+						lp.addRule(RelativeLayout.BELOW, lineChartBar.getId());
+						drawer.setLayoutParams(lp);
+						
+						drawerContent.removeAllViews();
+						
+						drawerContent.addView(lineChartFilter);
+						isFilterOpen = true;
+						setFilterSize();
+						Log.i("OMG", "CASE: "+ chart_type);
+						//setFilterType(chart_type);
+						drawerContent.addView(lineChartView);
+						
+					}
+					else {
+						LayoutParams lp = new LayoutParams(drawer.getLayoutParams());
+						lp.height = drawerHeight;
+						lp.addRule(RelativeLayout.BELOW, lineChartBar.getId());
+						drawer.setLayoutParams(lp);
+						
+						drawerContent.removeAllViews();
+						
+						drawerContent.addView(lineChartView);
+						isFilterOpen = false;
+					}
+	    			
+	    		} else {
+	    			if (isFilterOpen == false) {				
+						LayoutParams lp = new LayoutParams(drawer.getLayoutParams());
+						//Log.i("OMG", "H: "+lp.height);
+						lp.height = drawerHeightWithFilter;
+						lp.addRule(RelativeLayout.BELOW, calendarBar.getId());
+						drawer.setLayoutParams(lp);
+						
+						drawerContent.removeAllViews();
+						
+						drawerContent.addView(lineChartFilter);
+						isFilterOpen = true;
+						setFilterSize();
+						//setFilterType(3);
+						//GGdrawerContent.addView(calendarView);
+						drawerContent.addView(rankView);
+						
+						/*if  (!drawer.isOpened()) {
+							drawer.toggle();
+						}*/
+					}
+					else {
+						LayoutParams lp = new LayoutParams(drawer.getLayoutParams());
+						lp.height = drawerHeight;
+						lp.addRule(RelativeLayout.BELOW, calendarBar.getId());
+						drawer.setLayoutParams(lp);
+						
+						drawerContent.removeAllViews();
+						
+						//GGdrawerContent.addView(calendarView);
+						drawerContent.addView(rankView);
+						isFilterOpen = false;
+						}
+	    			}
+    			}
+    		}
+    		
+    	}    	
+    }
     
 	private class FilterButtonListener implements View.OnClickListener {
     	
@@ -2058,7 +2482,7 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 		}
 	}
 
-	void addNoteThinkingStep()
+	/*void addNoteThinkingStep()
 	{
 		notePage2 = new AddNoteDialogThinking(daybookFragment, fragment_layout, activity);
 
@@ -2067,8 +2491,15 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				isNotePageShow = true;
 				addButton.setVisibility(View.INVISIBLE);
 				fragment_layout.setEnabled(false);
-	}
+	}*/
 
+	@Override
+	public void updateRankList()
+	{
+		updateDiaryHandler.sendEmptyMessage(0);
+
+		sv.fullScroll(View.FOCUS_DOWN);
+	}
 
 	@Override
 	public int writeQuestionFile(int day, int slot, int type, int items, int impact, String action, String feeling,
@@ -2122,13 +2553,14 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 				rankingList[index] = new RankingCount(noteAdds[i].getItems(), noteAdds[i].getType());
 			}
 			
+			rankingList[index].AddImpact(noteAdds[i].getImpact());
 			if(db.getNoteAddReflection(noteAdds[i].getKey()))
 				rankingList[index].AddTrue();
 			else
 				rankingList[index].AddFalse();
 		}
-		Log.d("GG", "Num:"+ typeNum + "  Len:" + l);
-		Arrays.sort(rankingList, RankingCount.RankingCountTypeComparator);
+		//Log.d("GG", "Num:"+ typeNum + "  Len:" + l);
+		Arrays.sort(rankingList, RankingCount.RankingCountTypeComparatorValue);
 		
 		View[] rankItem = new View[5];
 		for(int i = 0; i < 5; i++)
@@ -2144,12 +2576,85 @@ public class DaybookFragment extends Fragment implements ChartCaller, TestQuesti
 			
 			descript.setText(noteCategory.dictionary.get(rankingList[i].getId()));
 			type_image.setImageResource(iconId[rankingList[i].getId2()]);
-			Log.d("GG", rankingList[i].getNumerator()+"/"+rankingList[i].getDenominator());
+			//Log.d("GG", rankingList[i].getNumerator()+"/"+rankingList[i].getDenominator());
 			progress.setMax(rankingList[i].getDenominator());
 			progress.setProgress(rankingList[i].getNumerator());
 			rankList.addView(rankItem[i]);
+			
+			rankItem[i].setOnClickListener(new QuickReflectionClickListener(rankingList[i].getId()));
 		}
 
+	}
+
+	
+	private class QuickReflectionClickListener implements View.OnClickListener{ 
+		private int type;
+		
+		public QuickReflectionClickListener(int type){
+			this.type = type;
+		}
+		@Override
+		public void onClick(View v) {
+			Log.d("GG", "type : "+type);
+			NoteAdd[] _list = db.getNoteAddType(type);
+			
+			//Random ran = new Random();
+			int randomNote = (int)(Math.random()*_list.length);
+			//int randomNote = 0;
+			
+			if(_list[randomNote].getFinished() == 0){
+				//想法
+				int date = _list[randomNote].getRecordTv().getDay();
+				int month = _list[randomNote].getRecordTv().getMonth();
+				int year = _list[randomNote].getRecordTv().getYear();
+				int dayOfweek = _list[randomNote].getRecordTv().getDayOfWeek();
+				int items = _list[randomNote].getItems();
+				AddNoteDialogThinking notePggethinking = new AddNoteDialogThinking(daybookFragment, fragment_layout,activity, null,true, _list[randomNote].getKey());
+				notePggethinking.initialize();
+				notePggethinking.setAllText( year+"年"+month+"月"+date+"日",noteCategory.dictionary.get(type),  _list[randomNote].getFeeling(), _list[randomNote].getAction());
+				notePggethinking.setAddNoteDetail(dayOfweek, _list[randomNote].getTimeSlot(), type, items, 
+										_list[randomNote].getImpact(), _list[randomNote].getAction(), _list[randomNote].getFeeling());
+				
+				notePggethinking.show();
+				
+				isNotePageShow = true;
+				addButton.setVisibility(View.INVISIBLE);
+				fragment_layout.setEnabled(false);
+				//dialog.cancel();
+			}
+			else{
+				//反思
+				int date = _list[randomNote].getRecordTv().getDay();
+				int month = _list[randomNote].getRecordTv().getMonth();
+				int year = _list[randomNote].getRecordTv().getYear();
+				int dayOfweek = _list[randomNote].getRecordTv().getDayOfWeek();
+				int items = _list[randomNote].getItems();
+				ReflectionFirstPage reflectionPage1 = new ReflectionFirstPage(daybookFragment, fragment_layout,activity, _list[randomNote].getKey(),null);
+				reflectionPage1.initialize();
+				reflectionPage1.setAllText(month+"月"+date+"日",noteCategory.dictionary.get(items), 
+								_list[randomNote].getAction(), _list[randomNote].getThinking());
+				reflectionPage1.show();
+				
+				isNotePageShow = true;
+				addButton.setVisibility(View.INVISIBLE);
+				fragment_layout.setEnabled(false);
+				//dialog.cancel();
+			}
+		}
+	}
+
+	@Override
+	public void blockView() {
+		// TODO Auto-generated method stub
+		addButton.setVisibility(View.INVISIBLE);
+		fragment_layout.setEnabled(false);
+	}
+
+
+	@Override
+	public void updateList() {
+		// TODO Auto-generated method stub
+		updateDiaryHandler.sendEmptyMessage(0);
 	}
 
 }

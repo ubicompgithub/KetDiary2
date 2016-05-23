@@ -7,9 +7,11 @@ import android.graphics.Bitmap;
 
 public interface BluetoothListener {
 
-	public Activity activity = null;
+    Context getContext();
+
+//	public Activity activity = null;
 	
-    void onActivityResult(int requestCode, int resultCode, Intent data);
+//    void onActivityResult(int requestCode, int resultCode, Intent data);
 
     /* BLE is not supported in this device */
     void bleNotSupported();
@@ -30,20 +32,29 @@ public interface BluetoothListener {
     void bleWriteStateFail();
 
     /* Can not detect test plug */
-    void bleNoPlug();
+    void bleNoPlugDetected();
 
     /* Test plug is detected with its ID */
     void blePlugInserted(int cassetteId);
 
     /* Update battery level */
-    void bleUpdateBattLevel(int level);
+    void bleUpdateBattLevel(int battVolt);
+
+    /* Notify device information */
+    void notifyDeviceVersion(int version);
 
     /* Update saliva voltage */
-    void bleUpdateSalivaVolt(int volt);
+    void bleUpdateSalivaVolt(int salivaVolt);
 
     /* Image is retrieved successfully */
     void bleGetImageSuccess(Bitmap bitmap);
 
     /* Failed to retrieve image */
     void bleGetImageFailure(float dropoutRate);
+
+    /* Notify detection result */
+    void bleNotifyDetectionResult(double score);
+
+    void bleReturnDeviceVersion(int version);
+
 }

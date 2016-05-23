@@ -9,12 +9,20 @@ import org.opencv.android.OpenCVLoader;
 
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.download.CassetteIDCollector;
+import com.ubicomp.ketdiary.data.download.SvmModelDownloader;
+import com.ubicomp.ketdiary.data.download.TriggerListCollect;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.Cassette;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TestResult;
 import com.ubicomp.ketdiary.data.structure.TimeValue;
+import com.ubicomp.ketdiary.dialog.AddNoteDialog2;
+import com.ubicomp.ketdiary.dialog.AddNoteDialogThinking;
 import com.ubicomp.ketdiary.dialog.CheckResultDialog;
 import com.ubicomp.ketdiary.dialog.NoteDialog4;
+import com.ubicomp.ketdiary.dialog.QuestionIdentityDialog;
+import com.ubicomp.ketdiary.dialog.ReflectionFirstPage;
+import com.ubicomp.ketdiary.dialog.ReflectionSecondPage;
 import com.ubicomp.ketdiary.main.fragment.DaybookFragment;
 import com.ubicomp.ketdiary.main.fragment.StatisticFragment;
 import com.ubicomp.ketdiary.main.fragment.TestFragment2;
@@ -151,7 +159,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 
 	private static final int RESULT_SPEECH = 0;
 	
-	public static boolean networkState; 
+	public static boolean networkState, identityScore = false; 
 	
 	private ImageDetectionValidate imageDetectionValidate;
 	
@@ -369,14 +377,21 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 	protected void onStart() {
 		UploadService.startUploadService(this);
 		
-		UpdateCassetteTask updateTask = new UpdateCassetteTask();
-		updateTask.execute();
+		UpdateCassetteTask updateCassetteTask = new UpdateCassetteTask();
+		updateCassetteTask.execute();
+		
+		UpdateSvmTask updateSvmTask = new UpdateSvmTask();
+		updateSvmTask.execute();
+		
+		UpdateTriggerTask updateTriggerTask = new UpdateTriggerTask();
+		updateTriggerTask.execute();
 		
 		super.onStart();
 	}
 
 	protected void onResume() {
 		super.onResume();
+		//Log.d("GGG", "resume main");
 		if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
@@ -413,15 +428,16 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 		int state = PreferenceControl.getAfterTestState();
 		Log.d("InApp",String.valueOf(state));
 		
-		if(state == NoteDialog4.STATE_NOTE || state == NoteDialog4.STATE_COPE){
+		if(state == NoteDialog4.STATE_NOTE || state == NoteDialog4.STATE_COPE || QuestionIdentityDialog.inState){
 			enableTabAndClick(false);
-			//Log.d("InApp","Disable click");
+			//Log.d("GGG", "resume main");
 		}
 		else{
 			clickable = true;
 		}
 		
 		if(!resultServiceRun){
+			//Log.d("GGG", "resume 1");
 			enableTabAndClick(true);
 		}
 		if(PreferenceControl.getCheckResult() && countTime > 0)
@@ -435,7 +451,13 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 			}
 		}
 		else{
+			//Log.d("GGG", "resume 2");
 			enableTabAndClick(true);
+		}
+		
+		if(QuestionIdentityDialog.inState){
+			enableTabAndClick(false);
+			//Log.d("GGG", "resume main");
 		}
 		
 		Log.d("InApp",String.valueOf(clickable));
@@ -681,6 +703,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 		@Override
 		public void onFinish() {
 			loading_page.setVisibility(View.INVISIBLE);
+			//Log.d("GGG", "resume 4");
 			enableTabAndClick(true);
 		}
 		@Override
@@ -760,11 +783,12 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 			} else {
 				if (menu != null && menu.isShowing())
 					closeOptionsMenu();
-				else
+				else if(clickable)
 					openOptionsMenu();
 			}
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_BACK) {
+			//return false;
 			ClickLog.Log(ClickLogId.MAIN_BACK_PRESS);
 			if (menu != null && menu.isShowing()) {
 				closeOptionsMenu();
@@ -959,11 +983,12 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 		long timestamp = PreferenceControl.getUpdateDetectionTimestamp();
 		int result = PreferenceControl.getTestResult();//TODO: check if no data
 		int isFilled = PreferenceControl.getIsFilled();
+		int isPrime = db.isPrimeTestResult(timestamp);
 		TestDetail testDetail = db.getLatestTestDetail();
 		String cassetteId = testDetail.getCassetteId();
 		if(cassetteId == null)
 			cassetteId = "CT_Test";
-		TestResult testResult = new TestResult(result, timestamp, cassetteId,	1, isFilled, 0, 0);
+		TestResult testResult = new TestResult(result, timestamp, cassetteId,	isPrime, isFilled, 0, 0);
 		
 		/* Check appeal (Pos) */
 		if(result == 1)
@@ -1017,17 +1042,33 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 		PreferenceControl.setPoint(addScore);
 		Log.d(TAG, "AddScore:"+addScore);
 		int addPos = 0;
+		if(identityScore)
+		{
+			Log.d("GG", "identityScore is true");
+			addScore += 1;
+			identityScore = false;
+		}
 		if (addScore == 0 && result == 1){ // TestFail & get no credit 
+			Log.d("GG", "main is 1");
 			CustomToast.generateToast(R.string.after_test_fail, -1);
 			addPos = -1;
+			
 		}
 		else if(result == 1){
+			Log.d("GG", "main is 2");
 			CustomToast.generateToast(R.string.after_test_fail, addScore);
 			addPos = -1;
+			AddScore preScore = db.getLastestAddScore();
+			AddScore nowScore = new AddScore(System.currentTimeMillis(), addScore, preScore.getAccumulation()+addScore, "檢測陽性");
+			db.insertAddScore(nowScore);
 		}
 		else{
+			Log.d("GG", "main is 3");
 			CustomToast.generateToast(R.string.after_test_pass, addScore);
 			addPos = 1;
+			AddScore preScore = db.getLastestAddScore();
+			AddScore nowScore = new AddScore(System.currentTimeMillis(), addScore, preScore.getAccumulation()+addScore, "檢測陰性");
+			db.insertAddScore(nowScore);
 		}
 		
 		if(StartDateCheck.afterStartDate())
@@ -1141,6 +1182,57 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 		}
 
 	}
+	
+	private SvmModelDownloader svmModelDownloader;
+	
+	private class UpdateSvmTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			svmModelDownloader = new SvmModelDownloader(mainActivity);
+			svmModelDownloader.update();
+			return null;
+		}
+
+		/*@Override
+		protected void onPostExecute(Void result) {
+			if (cassettes == null ) {
+				return;
+			}
+
+			db.clearCassette(); //delete table and Insert table from db
+			
+			for (int i = 0; i < cassettes.length; ++i)
+				db.updateCassette(cassettes[i]);
+		}*/
+
+	}
+	
+	private TriggerListCollect triggerListCollect;
+	
+	private class UpdateTriggerTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			triggerListCollect = new TriggerListCollect(mainActivity);
+			triggerListCollect.update();
+			return null;
+		}
+
+		/*@Override
+		protected void onPostExecute(Void result) {
+			if (cassettes == null ) {
+				return;
+			}
+
+			db.clearCassette(); //delete table and Insert table from db
+			
+			for (int i = 0; i < cassettes.length; ++i)
+				db.updateCassette(cassettes[i]);
+		}*/
+
+	}
+	
 	private void generateDialog(String textResource){
 		// Create custom dialog object
         final Dialog dialog = new Dialog(this);
@@ -1180,18 +1272,41 @@ public class MainActivity extends FragmentActivity implements OnFragmentListener
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-	   
         switch (requestCode) {
-        case RESULT_SPEECH: {
-        	Log.i("GG", "inin");
+        case 0: {
+        	
+            if (resultCode == RESULT_OK && null != data) {
+   
+               ArrayList<String> text = data
+                       .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+               //EditText thinking_text = (EditText)findViewById(R.id.edit_thinking_content);
+               if (text.size() > 0)
+               {
+                //thinking_text.setText(thinking_text.getText().toString() + text.get(0));
+            	if(AddNoteDialog2.thinking_text != null)
+            		AddNoteDialog2.thinking_text.setText(AddNoteDialog2.thinking_text.getText().toString() + text.get(0));
+            	if(ReflectionFirstPage.thinking_text != null)
+            		ReflectionFirstPage.thinking_text.setText(ReflectionFirstPage.thinking_text.getText().toString() + text.get(0));
+               }
+            }
+           break;
+        }
+        case 1: {
+        	
             if (resultCode == RESULT_OK && null != data) {
    
                ArrayList<String> text = data
                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                
-               EditText thinking_text = (EditText)findViewById(R.id.edit_thinking_content);
+               //EditText thinking_text = (EditText)findViewById(R.id.edit_thinking_content2);
                if (text.size() > 0)
-                thinking_text.setText(thinking_text.getText().toString() + text.get(0));
+               {
+            	   //thinking_text.setText(thinking_text.getText().toString() + text.get(0));
+            	   if(AddNoteDialogThinking.thinking_text != null)
+            		   AddNoteDialogThinking.thinking_text.setText(AddNoteDialogThinking.thinking_text.getText().toString() + text.get(0));
+            	   if(ReflectionSecondPage.thinking_text != null)
+            		   ReflectionSecondPage.thinking_text.setText(ReflectionSecondPage.thinking_text.getText().toString() + text.get(0));
+               }
             }
            break;
         }

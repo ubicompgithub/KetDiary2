@@ -37,7 +37,12 @@ public class AlarmReceiver extends BroadcastReceiver {
 			Log.d(TAG, Config.ACTION_DAILY_EVENT);
 			Intent a_intent = new Intent(context, DailyService.class);
 			context.startService(a_intent);
+		} else if (intent.getAction().equals(Config.ACTION_THINKING_NOTIFICATION)) {
+			Log.d(TAG, Config.ACTION_THINKING_NOTIFICATION);
+			Intent a_intent = new Intent(context, NoteThinkingService.class);
+			context.startService(a_intent);
 		}
+		
 	}
 
 }

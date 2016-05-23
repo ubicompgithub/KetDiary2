@@ -26,9 +26,11 @@ import android.util.Log;
 
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.file.MainStorage;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.Appeal;
 import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.data.structure.ExchangeHistory;
+import com.ubicomp.ketdiary.data.structure.IdentityScore;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.QuestionTest;
 import com.ubicomp.ketdiary.data.structure.Reflection;
@@ -181,13 +183,40 @@ public class DataUploader {
 						Log.d(TAG, "FAIL TO UPLOAD - Appeal");
 				}
 			}
-			Log.d("GG", "??");
+			
 			//Reflection
 			Reflection[] reflections = db.getNotUploadedReflection();
 			if (reflections != null) {
 				for (int i = 0; i < reflections.length; ++i) {
 					if (connectToServer(reflections[i]) == ERROR)
 						Log.d(TAG, "FAIL TO UPLOAD - Reflection");
+				}
+			}
+			
+			//AddScore
+			AddScore[] addScores = db.getNotUploadedAddScore();
+			if (addScores != null) {
+				for (int i = 0; i < addScores.length; ++i) {
+					if (connectToServer(addScores[i]) == ERROR)
+						Log.d(TAG, "FAIL TO UPLOAD - AddScore");
+				}
+			}
+			
+			//NoteAdd update thinking
+			NoteAdd noteAdds2[] = db.getNotUploadedNoteAdd2();
+			if (noteAdds2 != null) {
+				for (int i = 0; i < noteAdds2.length; ++i) {
+					if (connectToServerAddNoteThinking(noteAdds2[i]) == ERROR)
+						Log.d(TAG, "FAIL TO UPLOAD - NOTEADD [Thinking]");
+				}
+			}
+			
+			//Identity update thinking
+			IdentityScore identityScore[] = db.getNotUploadedIdentityScore();
+			if (identityScore != null) {
+				for (int i = 0; i < identityScore.length; ++i) {
+					if (connectToServer(identityScore[i]) == ERROR)
+						Log.d(TAG, "FAIL TO UPLOAD - IdentityScore");
 				}
 			}
 			
@@ -334,6 +363,24 @@ public class DataUploader {
 			return SUCCESS;
 		}
 		
+		private int connectToServerAddNoteThinking(NoteAdd data) {
+			try {
+				DefaultHttpClient httpClient = HttpSecureClientGenerator
+						.getSecureHttpClient();
+				HttpPost httpPost = HttpPostGenerator.genPostAddNoteThinking(data);
+				if (upload(httpClient, httpPost)){
+					db.setNoteAddUploaded(data.getTv().getTimestamp());
+					Log.d(TAG, "Upload NoteAdd Thinking Success.");
+				}
+				else
+					return ERROR;
+			} catch (Exception e) {
+				Log.d(TAG, "EXCEPTION:" + e.toString());
+				return ERROR;
+			}
+			return SUCCESS;
+		}
+		
 		private int connectToServer(TestDetail data) {
 			try {
 				DefaultHttpClient httpClient = HttpSecureClientGenerator
@@ -446,6 +493,44 @@ public class DataUploader {
 			return SUCCESS;
 		}
 		
+		private int connectToServer(AddScore data) {// AddScore
+			try {
+				
+				DefaultHttpClient httpClient = HttpSecureClientGenerator
+						.getSecureHttpClient();
+				HttpPost httpPost = HttpPostGenerator.genPost(data);
+				if (upload(httpClient, httpPost)){
+					db.setAddScoreUploaded(data.getTv().getTimestamp());
+					Log.d(TAG, "Upload Score Success.");
+				}
+				else
+					return ERROR;
+			} catch (Exception e) {
+				Log.d(TAG, "EXCEPTION:" + e.toString());
+				return ERROR;
+			}
+			return SUCCESS;
+		}
+		
+		private int connectToServer(IdentityScore data) {// AddScore
+			try {
+				
+				DefaultHttpClient httpClient = HttpSecureClientGenerator
+						.getSecureHttpClient();
+				HttpPost httpPost = HttpPostGenerator.genPost(data);
+				if (upload(httpClient, httpPost)){
+					db.setAddScoreUploaded(data.getTv().getTimestamp());
+					Log.d(TAG, "Upload Score Success.");
+				}
+				else
+					return ERROR;
+			} catch (Exception e) {
+				Log.d(TAG, "EXCEPTION:" + e.toString());
+				return ERROR;
+			}
+			return SUCCESS;
+		}
+		
 		private int connectToServer(File data) {// ClickLog
 			try {
 				DefaultHttpClient httpClient = HttpSecureClientGenerator.getSecureHttpClient();
@@ -462,6 +547,8 @@ public class DataUploader {
 			}
 			return SUCCESS;
 		}
+		
+		
 		
 		
 		// handle upload respond message

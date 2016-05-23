@@ -18,6 +18,7 @@ import com.ubicomp.ketdiary.App;
 import com.ubicomp.ketdiary.MainActivity;
 import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.QuestionTest;
 import com.ubicomp.ketdiary.system.PreferenceControl;
 import com.ubicomp.ketdiary.system.clicklog.ClickLog;
@@ -272,6 +273,9 @@ public class QuestionDialog2 {
 			else{//答對換題目
 				CustomToast.generateToast(R.string.question_correct, addScore);
 				change = true;
+				AddScore preScore = db.getLastestAddScore();
+				AddScore nowScore = new AddScore(System.currentTimeMillis(), addScore, preScore.getAccumulation()+addScore, "答對題目");
+				db.insertAddScore(nowScore);
 			}
 			
 			PreferenceControl.setPoint(addScore);			

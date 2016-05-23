@@ -21,6 +21,8 @@ public class NoteAdd {
 	private int weeklyScore;
 	private int score;
 	private int key;
+	private int reflection;
+	private int result;
 
 	public NoteAdd(int isAfterTest, long tv, int rYear, int rMonth, int rDay, int timeslot,
 			int category, int type, int items, int impact, String action, String feeling, String thinking, int finished, int weeklyScore, int score, int key) {
@@ -141,12 +143,71 @@ public class NoteAdd {
 		return key;
 	}
 	
+	public int getReflection() {
+		return reflection;
+	}
+	
+	public void setReflection(int reflection) {
+		this.reflection = reflection;
+	}
+	
+	public void setResult(int result) {
+		this.result = result;
+	}
+	
 	public static Comparator<NoteAdd> NoteAddTypeComparator = new Comparator<NoteAdd>() {
 
 		public int compare(NoteAdd Note1, NoteAdd Note2) {
 		
 			int type1 = Note1.getItems();
 			int type2 = Note2.getItems();
+			
+			//ascending order
+			return type1 - type2;
+			
+			//descending order
+			//return fruitName2.compareTo(fruitName1);
+			
+		}
+	};
+	
+	public static Comparator<NoteAdd> ImpactComparator = new Comparator<NoteAdd>() {
+
+		public int compare(NoteAdd Note1, NoteAdd Note2) {
+		
+			int type1 = Note1.getImpact();
+			int type2 = Note2.getImpact();
+			
+			//ascending order
+			return type1 - type2;
+			
+
+			
+		}
+	};
+	
+	public static Comparator<NoteAdd> ResultComparator = new Comparator<NoteAdd>() {
+
+		public int compare(NoteAdd Note1, NoteAdd Note2) {
+		
+			int type1 = Note1.getIsAfterTest();
+			int type2 = Note2.getIsAfterTest();
+			
+			//ascending order
+			return type1 - type2;
+			
+			//descending order
+			//return fruitName2.compareTo(fruitName1);
+			
+		}
+	};
+	
+	public static Comparator<NoteAdd> ReflectionComparator = new Comparator<NoteAdd>() {
+
+		public int compare(NoteAdd Note1, NoteAdd Note2) {
+		
+			int type1 = Note1.getReflection();
+			int type2 = Note2.getReflection();
 			
 			//ascending order
 			return type1 - type2;

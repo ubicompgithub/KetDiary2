@@ -173,7 +173,8 @@ public class SectionsPagerAdapter extends PagerAdapter {
                 
                 LayoutParams params = cellView.getLayoutParams();
                 params.width = (int)convertDpToPixel((float)39.33);
-                params.height =(int)convertDpToPixel((float)43.33);
+                //params.height =(int)convertDpToPixel((float)43.33);
+                params.height =(int)convertDpToPixel((float)30);
                 cellView.setLayoutParams(params);
                 continue;
             }
@@ -200,7 +201,7 @@ public class SectionsPagerAdapter extends PagerAdapter {
             cellView.setTag(TAG_CAL_CELL_YEAR, mCalendar.get(Calendar.YEAR));
             cellView.setTag(TAG_CAL_CELL_TS, mCalendar.getTimeInMillis());
             
-            cellView.setOnClickListener(new View.OnClickListener() {
+            /*cellView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                 	
@@ -253,7 +254,7 @@ public class SectionsPagerAdapter extends PagerAdapter {
                     
                     // sv.smoothScrollTo(0 , 270*(Integer.parseInt(parsed_date[0])+4)-1350-900);
                 }
-            });
+            });*/
             
             calDateText.setGravity(Gravity.CENTER);
             
@@ -269,8 +270,8 @@ public class SectionsPagerAdapter extends PagerAdapter {
             		noteAdds = db.getDayNoteAdd(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
             		cellView.setTag(TAG_ADDNOTE, noteAdds);
             		
-            		if(noteAdds!= null)
-            			updateNoteAdd(cellView, noteAdds);
+            		//if(noteAdds!= null)
+            		//	updateNoteAdd(cellView, noteAdds);
             		
             		
 
@@ -324,7 +325,7 @@ public class SectionsPagerAdapter extends PagerAdapter {
                 if (mCalendar.get(Calendar.DAY_OF_MONTH) == selectedDay && mCalendar.get(Calendar.MONTH) == selectedMonth && mCalendar.get(Calendar.YEAR) == selectedYear) {
                     selectedView = cellView;
                     calDateText.setTextColor(context.getResources().getColor(R.color.black));
-                    calDateText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                    calDateText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
                     
                     ImageView selectedDayIV = (ImageView) selectedView.findViewById(R.id.iv_date_result);
                     if(result==0)
@@ -341,7 +342,8 @@ public class SectionsPagerAdapter extends PagerAdapter {
             
             LayoutParams params = cellView.getLayoutParams();
             params.width = (int)convertDpToPixel((float)39.33);
-            params.height =(int)convertDpToPixel((float)43.33);
+            //params.height =(int)convertDpToPixel((float)43.33);
+            params.height =(int)convertDpToPixel((float)30);
             //params.width=118;
             //params.height=130;
             cellView.setLayoutParams(params);
@@ -355,9 +357,9 @@ public class SectionsPagerAdapter extends PagerAdapter {
 	    	for(int i = 0 ; i < glCalendar[ii].getChildCount(); i++){
 	    		View cellView = glCalendar[ii].getChildAt(i);
 	    		NoteAdd[] noteAdds = (NoteAdd[]) cellView.getTag(TAG_ADDNOTE);
-	    		if(noteAdds != null){
+	    		/*if(noteAdds != null){
 	    			updateNoteAdd(cellView, noteAdds);
-	    		}
+	    		}*/
 	    	}
     	}
     }
@@ -375,9 +377,9 @@ public class SectionsPagerAdapter extends PagerAdapter {
 	    		if( day >= today.get(Calendar.DAY_OF_MONTH)-2 && day <= today.get(Calendar.DAY_OF_MONTH)){
 	    			NoteAdd[] noteAdds = db.getDayNoteAdd(year, month, day);
 	    			cellView.setTag(TAG_ADDNOTE, noteAdds);
-	    			if(noteAdds!= null){
+	    			/*if(noteAdds!= null){
 	    				updateNoteAdd(cellView, noteAdds);
-	    			}
+	    			}*/
 	    		}    		
 	    		if( day > today.get(Calendar.DAY_OF_MONTH))
 	    			break;
@@ -385,7 +387,7 @@ public class SectionsPagerAdapter extends PagerAdapter {
     	}
     }
     	
-    private void updateNoteAdd(View cellView, NoteAdd[] noteAdds){
+    /*private void updateNoteAdd(View cellView, NoteAdd[] noteAdds){
     	ImageView calDot1 = (ImageView) cellView.findViewById(R.id.iv_calendar_dot1);
 		ImageView calDot2 = (ImageView) cellView.findViewById(R.id.iv_calendar_dot2);
 		ImageView calDot3 = (ImageView) cellView.findViewById(R.id.iv_calendar_dot3);
@@ -449,7 +451,7 @@ public class SectionsPagerAdapter extends PagerAdapter {
 			calDot15.setVisibility(View.INVISIBLE);
 			calDot25.setVisibility(View.INVISIBLE);
 		}   
-    }
+    }*/
 
     public View getSelectedView(){
         return selectedView;

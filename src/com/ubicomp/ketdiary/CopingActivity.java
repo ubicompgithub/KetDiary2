@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.CopingSkill;
 import com.ubicomp.ketdiary.system.PreferenceControl;
 import com.ubicomp.ketdiary.system.clicklog.ClickLog;
@@ -1067,6 +1068,10 @@ public class CopingActivity extends Activity {
 			// }
 			CustomToast.generateToast(R.string.emotionDIY_end_toast, addScore);
 			PreferenceControl.setPoint(addScore);
+			AddScore preScore = db.getLastestAddScore();
+			AddScore nowScore = new AddScore(System.currentTimeMillis(), addScore, preScore.getAccumulation()+addScore, "coping skill");
+			db.insertAddScore(nowScore);
+			
 			
 			ClickLog.Log(ClickLogId.COPING_SELECTION);
 			activity.finish();

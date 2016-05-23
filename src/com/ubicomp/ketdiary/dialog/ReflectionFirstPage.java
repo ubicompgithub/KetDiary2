@@ -1,6 +1,7 @@
 package com.ubicomp.ketdiary.dialog;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -20,6 +21,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,8 +67,9 @@ import com.ubicomp.ketdiary.ui.Typefaces;
 public class ReflectionFirstPage implements ChooseItemCaller{
 	
 	private Activity activity;
-	private ReflectionFirstPage addNoteDialog = this;
+	private ReflectionFirstPage reflectionFirstPage = this;
 	private ReflectionSecondPage reflectionPage2 = null;
+	private AddNoteDialog2 preAddNote = null;
 	private static final String TAG = "ADD_PAGE";
 	
 	private TestQuestionCaller2 testQuestionCaller;
@@ -80,8 +83,9 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 						//description_date_layout, description_event_layout, description_mood_layout, description_thinking_layout;
 	
 	private ImageView speech_button;
-	private EditText thinking_text;
+	public static EditText thinking_text;
 	private TextView date_text, mood_text, event_text, reaction_text;
+	private QuestionIdentityDialog questionBox = null;
 	
 	private RelativeLayout mainLayout;
 	private View view;
@@ -128,7 +132,7 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 	private int type;
 	private int items, items2;
 	private int impact;
-	private int moodNum;
+	private int moodNum = 20;
 	private boolean[] moodFlag = new boolean[20];
 	private String description;
 	private boolean viewshow = false, viewshow2 = false;
@@ -153,7 +157,11 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 	
 	private int nowKey;
 	
-	public ReflectionFirstPage(TestQuestionCaller2 testQuestionCaller, RelativeLayout mainLayout, Activity activity, int nowKey){
+	private TextView date_title, event_title, reflection_title, thinking_title, reaction_title,text_title, only_text,dec_title;
+
+	private boolean notification_yes, testing = false;
+	
+	public ReflectionFirstPage(TestQuestionCaller2 testQuestionCaller, RelativeLayout mainLayout, Activity activity, int nowKey, AddNoteDialog2 preAddNote){
 		
 		this.activity = activity;
 		this.testQuestionCaller = testQuestionCaller;
@@ -162,6 +170,7 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.mainLayout = mainLayout;
 		this.nowKey = nowKey;
+		this.preAddNote = preAddNote;
 		resource = context.getResources();
 		
 		coping_msg = resource.getStringArray(R.array.coping_list);
@@ -210,13 +219,13 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 		date_txt = (TextView)title.findViewById(R.id.note_tx_date);
 		timeslot_txt= (TextView)title.findViewById(R.id.note_tx_timeslot);
 		
-		checkAndSetTimeSlot();
+		//checkAndSetTimeSlot();
 			
 		title_txt.setTypeface(wordTypefaceBold);
 		date_txt.setTypeface(wordTypefaceBold);
 		timeslot_txt.setTypeface(wordTypefaceBold);
 		
-		title_txt.setText("事件反思");
+		title_txt.setText("反省自己");
 		
 		/*date_layout.setOnClickListener(new OnClickListener(){
 			
@@ -269,19 +278,21 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 		null_layout = (LinearLayout) inflater.inflate(
 				R.layout.bar_null, null);
 		
-		TextView date_title, event_title, reflection_title, thinking_title, reaction_title,text_title;
 		date_title = (TextView) description_date_layout.findViewById(R.id.description_date_title);
 		event_title = (TextView) description_event_layout.findViewById(R.id.description_event_title);
 		thinking_title = (TextView) description_thinking_layout.findViewById(R.id.description_thinking_title);
 		reflection_title = (TextView) description_reflection_layout.findViewById(R.id.edit_thinking_title);
 		reaction_title = (TextView) description_reaction_layout.findViewById(R.id.description_reaction_title);
 		text_title = (TextView) text_layout.findViewById(R.id.only_text);
+
+		TextView event_content =  (TextView) description_event_layout.findViewById(R.id.description_event_content);
 		
 		thinking_title.setText("當時想法 :");
 		date_title.setText("發生日期 :");
-		event_title.setText("發生事件 :");
-		reflection_title.setText("我想要有怎樣的結果 :");
+		event_title.setText("發生情境 :");
+		reflection_title.setText("我該怎麼做？");
 		reaction_title.setText("當時反應 :");
+		
 		
 		date_title.setTypeface(wordTypefaceBold);
 		event_title.setTypeface(wordTypefaceBold);
@@ -411,8 +422,8 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 		LinearLayout discription_layout = (LinearLayout) inflater.inflate(
 				R.layout.bar_description, null);
 		
-		TextView dec_title = (TextView)discription_layout.findViewById(R.id.description_title);
-		dec_title.setText("我該怎麼感覺才能夠...");
+		dec_title = (TextView)discription_layout.findViewById(R.id.description_title);
+		dec_title.setText("如果再"+event_content.getText().toString()+ "，我該感覺＿＿，\n才能「上述行為」");
 		dec_title.setTypeface(wordTypefaceBold);
 		
 		/*TODO*/
@@ -567,6 +578,7 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 		View bottom = BarButtonGenerator.createOneButtonView( R.string.Iknow, endOnClickListener );
 		bottom_layout.addView(bottom);
 		
+		
 	}
 	
 	
@@ -671,8 +683,8 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 	/** close the dialog */
 	public void close() {
 		ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_LEAVE);
-		testQuestionCaller.resetView();
-		MainActivity.getMainActivity().enableTabAndClick(true);
+		//testQuestionCaller.resetView();
+		//MainActivity.getMainActivity().enableTabAndClick(true);
 		if (boxLayout != null)
 			boxLayout.setVisibility(View.INVISIBLE);
 	}
@@ -778,6 +790,7 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 							//testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
 							close();
 							clear();
+						
 							//copingSetting();
 							//testQuestionCaller.resetView();
 							
@@ -792,6 +805,7 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 					//testQuestionCaller.resetView();
 					close();
 					clear();
+					
 				}
 			}
 	    }
@@ -804,11 +818,13 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 			ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_CANCEL);
 			
 			//testQuestionCaller.writeQuestionFile(day, timeslot, -1, -1, -1, edtext.getText().toString());
+			
+			if(testing)
+			{
+				preAddNote.copingSetting();
+			}
 			close();
 			clear();
-			//testQuestionCaller.resetView();
-			
-				//copingSetting();
 
 		}
 	}
@@ -819,18 +835,24 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 				date_text = (TextView) description_date_layout.findViewById(R.id.description_date_content);
 				event_text = (TextView) description_event_layout.findViewById(R.id.description_event_content);
 				TextView _thinking_text = (TextView) description_thinking_layout.findViewById(R.id.description_thinking_content);
-				reflectionPage2 = new ReflectionSecondPage(testQuestionCaller, mainLayout, activity, nowKey);
+							
+				if(thinking_text.getText().toString().length() == 0 || edtext.getText().toString().length() == 0)
+				{
+					CustomToastSmall.generateToast("請先填寫完畢");
+					return;
+				}
+				
+				reflectionPage2 = new ReflectionSecondPage(testQuestionCaller, mainLayout, activity, nowKey, reflectionFirstPage, preAddNote);
+				
+				
 				
 				reflectionPage2.initialize();
 				
 				reflectionPage2.setAllText(date_text.getText().toString(),event_text.getText().toString(), 
 										_thinking_text.getText().toString(), thinking_text.getText().toString(), 
 										edtext.getText().toString());
-				Log.d("GG","04");
+				reflectionPage2.setIsTesting(testing, type);
 				reflectionPage2.show();
-				
-				close();
-				clear();
 
 			}
 		}
@@ -1131,11 +1153,11 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 		        int numberOfItems = listAdapter.getCount();
 		        
 		        //listview2 : mood
-		        if(listview == listView2)
+		        /*if(listview == listView2)
 		        {
 		        	moodNum = numberOfItems;
 		   
-		        }
+		        }*/
 		        
 		        // Get total height of all items.
 		        int totalItemsHeight = 0;
@@ -1200,24 +1222,35 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 			//listView2.setVisibility(View.GONE);
 			//viewshow2 = false;
 			
-			String[] type1 = PreferenceControl.getTypeMood();
+			String[] type1 = PreferenceControl.getTypeMoodReflection();
 			String[] after = clean(type1);
 			
 			final Integer[] imageId = {
-		            R.drawable.mood_happy,
 		            R.drawable.mood_calm,
-		            R.drawable.mood_excited,
 		            R.drawable.mood_objective,
-		            R.drawable.mood_relax
+		            R.drawable.mood_relax,
+		            R.drawable.mood_happy,
+		            R.drawable.mood_energy,
+		            R.drawable.mood_loved
 		    };
 			
-			final Integer[] imageIdClicked = {
+			/*final Integer[] imageIdClicked = {
+					R.drawable.mood_angry_clicked,
+		            R.drawable.mood_sad_clicked,
+		            R.drawable.mood_nervous_clicked,
+		            R.drawable.mood_hate_clicked,
 		            R.drawable.mood_happy_clicked,
+		            R.drawable.mood_afraid_clicked,
 		            R.drawable.mood_calm_clicked,
+		            R.drawable.mood_relax_clicked,
 		            R.drawable.mood_excited_clicked,
 		            R.drawable.mood_objective_clicked,
-		            R.drawable.mood_relax_clicked
-		    };
+		            R.drawable.mood_happy_clicked,
+		            R.drawable.mood_boring_clicked,
+		            R.drawable.mood_energy_clicked,
+		            R.drawable.mood_loved_clicked,
+		            R.drawable.mood_objective_clicked
+		    };*/
 			
 			//ArrayAdapter adapter = new ArrayAdapter<String>(context, R.layout.my_listitem, after);
 			CustomList adapter = new CustomList(activity, after, imageId);
@@ -1237,7 +1270,7 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 				    
 				    int nowMood = noteCategory.myNewHashMap.get(playerChanged);
 				    
-				    int tm = 0;
+				    /*int tm = 0;
 					for(int i = 0; i < moodNum; i++)
 					{
 					    if(!moodFlag[i])
@@ -1272,11 +1305,11 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 				    	showText += ts;
 				    	
 				    		
-				    }
+				    }*/
 				   	
-					edtext.setText(showText);
-				    //listView2.setVisibility(View.GONE);
-				    //viewshow2 = false;
+					edtext.setText(playerChanged);
+				    listView2.setVisibility(View.GONE);
+				    viewshow2 = false;
 			   }
 			   
 			});
@@ -1301,5 +1334,20 @@ public class ReflectionFirstPage implements ChooseItemCaller{
 		_event_text.setText(s_event);
 		_thinking_text.setText(s_thinking);
 		_reaction_text.setText(s_reaction);
+		
+		text_title.setText("如果再"+s_event);
+		
+		dec_title.setText("如果再"+s_event+ "，我該感覺＿＿，\n才能「上述行為」");
+	}
+	
+	public void closeall(){
+		close();
+		clear();
+	}
+	
+	public void setIsTesting(boolean is, int _type)
+	{
+		testing = is;
+		type = _type;
 	}
 }

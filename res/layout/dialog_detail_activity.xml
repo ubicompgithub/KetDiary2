@@ -1,17 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="272dp"
-        android:layout_height="wrap_content"
+        android:layout_height="350dp"
         android:layout_gravity="center"
-        android:paddingRight="40dp"
+        android:paddingRight="5dp"
+        android:paddingLeft="5dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
         android:background="@drawable/daybook_detail_bg"
         android:splitMotionEvents="true"
         android:translationX="5dp"
         android:translationY="-5dp"
         android:orientation="vertical" >
         
+        <ScrollView
+            android:layout_width="match_parent"
+        	android:layout_height="match_parent"
+        	android:orientation="vertical">
+       	<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" 
+            android:orientation="vertical"
+            android:paddingRight="35dp"
+            android:paddingLeft="35dp">
+        	
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
@@ -20,8 +35,8 @@
             android:id="@+id/type_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             android:src="@drawable/type_icon1" />
 
 	        <TextView
@@ -29,12 +44,13 @@
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_marginLeft="32dp"
-	            android:layout_marginTop="35dp"
+	            android:layout_marginTop="15dp"
 	            android:textColor="@color/text_gray2"
 	            android:lineSpacingMultiplier="1.2"
 	            android:textSize="14sp"
 	            android:layout_toRightOf="@+id/type_icon"
 	            android:text="時間們" />
+	       
         </RelativeLayout>
         
         <RelativeLayout
@@ -45,7 +61,7 @@
 	            android:id="@+id/detail_category"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="50dp"
+	            android:layout_marginLeft="10dp"
 	            android:layout_marginTop="32dp"
 	            android:textColor="@color/text_gray2"
 	            android:textSize="@dimen/large_text_size"
@@ -54,11 +70,10 @@
 	            android:id="@+id/detail_type_content"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="40dp"
+	            android:layout_marginLeft="90dp"
 	            android:layout_marginTop="32dp"
 	            android:textColor="@color/text_gray2"
 	            android:textSize="@dimen/large_text_size"
-	            android:layout_toRightOf="@+id/detail_category"
 	            android:text="時間們" />
         </RelativeLayout>
         
@@ -70,7 +85,7 @@
             android:id="@+id/detail_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="26dp"
             android:textColor="@color/text_gray2"
             android:textSize="@dimen/large_text_size"
@@ -80,11 +95,10 @@
             android:id="@+id/detail_item_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="90dp"
             android:layout_marginTop="26dp"
             android:textColor="@color/text_gray2"
             android:textSize="@dimen/large_text_size"
-            android:layout_toRightOf="@+id/detail_item"
             android:text="時間們" />
         </RelativeLayout>
         
@@ -93,52 +107,99 @@
             android:layout_height="wrap_content" >
 
             <TextView
-            android:id="@+id/detail_impact"
+            android:id="@+id/detail_text_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="26dp"
             android:textColor="@color/text_gray2"
             android:textSize="@dimen/large_text_size"
-            android:text="影響" />
+            android:text="行為" />
             <TextView
-            android:id="@+id/detail_impact_content"
+            android:id="@+id/detail_text_1_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="90dp"
             android:layout_marginTop="26dp"
             android:textColor="@color/text_gray2"
             android:textSize="@dimen/large_text_size"
-            android:layout_toRightOf="@+id/detail_impact"
             android:text="時間們" />
         </RelativeLayout>
         
-            <RelativeLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
             <TextView
-            android:id="@+id/detail_description"
+            android:id="@+id/detail_text_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="26dp"
             android:textColor="@color/text_gray2"
             android:textSize="@dimen/large_text_size"
-            android:text="說明" />
+            android:text="預期行為" />
             <TextView
-            android:id="@+id/detail_description_content"
+            android:id="@+id/detail_text_2_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="90dp"
             android:layout_marginTop="26dp"
             android:textColor="@color/text_gray2"
             android:textSize="@dimen/large_text_size"
-            android:layout_toRightOf="@+id/detail_description"
+            
             android:text="時間們" />
         </RelativeLayout>
         
-         
+           
+        
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+            android:id="@+id/detail_text_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="26dp"
+            android:textColor="@color/text_gray2"
+            android:textSize="@dimen/large_text_size"
+            android:text="預期想法" />
+            <TextView
+            android:id="@+id/detail_text_3_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="90dp"
+            android:layout_marginTop="26dp"
+            android:textColor="@color/text_gray2"
+            android:textSize="@dimen/large_text_size"
+            android:text="時間們" />
+        </RelativeLayout>
+        
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+            android:id="@+id/detail_text_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="26dp"
+            android:textColor="@color/text_gray2"
+            android:textSize="@dimen/large_text_size"
+            android:text="預期想法" />
+            <TextView
+            android:id="@+id/detail_text_4_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="90dp"
+            android:layout_marginTop="26dp"
+            android:textColor="@color/text_gray2"
+            android:textSize="@dimen/large_text_size"
+            android:text="時間們" />
+        </RelativeLayout>
          
          
          
@@ -327,7 +388,7 @@
                 android:layout_marginTop="6dp"
                 android:textColor="@color/text_gray2" />
         </RelativeLayout> -->
-
-       
-
+		</LinearLayout>
+       </ScrollView>
+	
     </LinearLayout>

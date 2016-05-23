@@ -10,11 +10,14 @@ import com.ubicomp.ketdiary.data.file.PicFileHandler;
 import com.ubicomp.ketdiary.data.file.TestDataParser2;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 import com.ubicomp.ketdiary.data.structure.TimeValue;
+import com.ubicomp.ketdiary.dialog.AddNoteDialog2;
 import com.ubicomp.ketdiary.dialog.NoteDialog4;
 import com.ubicomp.ketdiary.main.fragment.TestFragment2;
+import com.ubicomp.ketdiary.system.Config;
 import com.ubicomp.ketdiary.system.PreferenceControl;
 import com.ubicomp.ketdiary.test.bluetoothle.BluetoothLE;
 import com.ubicomp.ketdiary.test.bluetoothle.BluetoothListener;
+import com.ubicomp.ketdiary.test.camera.Tester;
 import com.ubicomp.ketdiary.test.color.ColorDetectListener;
 import com.ubicomp.ketdiary.test.color.ImageDetection;
 import com.ubicomp.ketdiary.ui.CustomToastSmall;
@@ -108,8 +111,15 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 	private boolean active_disconnect = false;
 	private boolean result2 = false;
 	private boolean checkResultOnce = false;
+	private boolean startFlag = false;
 	
 	private Calendar today = Calendar.getInstance(); 
+	private int testResult = 0;
+	private boolean svmTest = false;
+	public static boolean savePic = false, firstPic = false;
+	private int firstFailTimes;
+	private boolean getFirstPic;
+	private boolean failed;
 	
     @Override  
     public  void onCreate() {  
@@ -123,6 +133,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
     }
     /**Use startService to call ResultService*/
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		
 	    notification =  new  Notification(R.drawable.k_logo, "有通知到來" , System.currentTimeMillis());  
 	    Intent notificationIntent =  new  Intent( this , MainActivity.class );  
 	    pendingIntent = PendingIntent.getActivity( this ,  0 ,  
@@ -147,11 +158,15 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 		colorReading = 0;
 		colorReading1 = 0;
 		colorReading2 = 0;
+		firstFailTimes = 0;
+		getFirstPic = false;
+		failed = false;
 		
 		timeout = PreferenceControl.getAfterCountDown()*1000;
 		
 		spentTime = timeout;
 		isConnect = false;
+		//isConnect = true;
 		pictureSending = false;
 		first = true;
 		second = true;
@@ -163,19 +178,24 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 		debug = PreferenceControl.isDebugMode();
         db = new DatabaseControl();
         openSensorMsgTimer = new OpenSensorMsgTimer();
-        imageDetection = new ImageDetection(this);
+        imageDetection = new ImageDetection(null);
 		ts = PreferenceControl.getUpdateDetectionTimestamp();
 		File dir = MainStorage.getMainStorageDirectory();
 		mainDirectory = new File(dir, String.valueOf(ts));
         colorRawFileHandler = new ColorRawFileHandler(mainDirectory,String.valueOf(ts));
         if(ble == null ) {
         	//activity = (Activity) context;
-	    	ble = new BluetoothLE( myservice , PreferenceControl.getDeviceId());	
-	    }
+        	Log.d("GG", "Service start connect");
+	    	ble = new BluetoothLE( myservice , PreferenceControl.getDeviceId(), ts);	
+        }
+        //ble = Config.ble;
 	            
 	    PreferenceControl.setTestFail();
 	    stateSuccess = false;
 	    startTime = System.currentTimeMillis();	
+	    
+	    //
+	    AddNoteDialog2.testFinished = false;
 	}
     
 	private Runnable updateTimer = new Runnable() {
@@ -201,7 +221,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 	        
 	        //mhandler.postDelayed(this, 1000);
 	        if(state == BEGIN_STATE){
-	        	if(spentTime > 2*60*1000 && spentTime > 8*60*1000){                  //最晚兩分鐘前要把第一張照拍好
+	        	if(spentTime > 3*60*1000){                  //最晚兩分鐘前要把第一張照拍好
 		        	
 		        	if(first){                                                   									
 						if(openSensorMsgTimer!=null){
@@ -212,71 +232,134 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 					}
 		        	if(isConnect){
 		        		openSensorMsgTimer.cancel();
+		        		/*Handler handler = new Handler(); 
+		                handler.postDelayed(new Runnable() {
+		                     @Override 
+		                     public void run() { 
+		                     	if(ble != null)
+		 		        		{
+		                     		if(PreferenceControl.isSkip())
+		                     		{
+		                     			Log.d("GG", "skip : request cassette");
+		                     			ble.bleRequestCassetteInfo();
+		                     		}
+		                     		Handler handler2 = new Handler(); 
+		    		                handler2.postDelayed(new Runnable() {
+		    		                	@Override 
+		    		                	public void run() { 
+		    		                		byte[] command = new byte[]{BluetoothLE.BLE_REQUEST_SALIVA_VOLTAGE};
+				 		        	        ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_FETCH_INFO;
+				 		        	        ble.bleWriteCharacteristic1(command);
+		    		                	}
+		    		                }, 1000);
+		                     		
+		 		        		}
+		                     } 
+		                }, 3000);*/
+		        		getFirstPic = false;
+		        		pictureSending = true;
+		        		savePic = false;
+		        		writeToColorRawFile("snap shot");
+		        		ble.bleTakePicture();
+		        		state = FRAME_STATE;
 		        	}
-				    if(!stateSuccess && isConnect && picNum == 0){
-						
-				    	/*GG*/
-				    	/*exposed image*/
-				    	/*ble.bleWriteState((byte)0x03);
-				    	writeToColorRawFile("Write State : 0x03");*/
-				    	byte [] command = new byte[] {BluetoothLE.BLE_REQUEST_IMAGE_INFO};
-		                ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_IMAGE_GET_HEADER;
-		                ble.bleWriteCharacteristic1(command);
-		                writeToColorRawFile("Write State : Snapshot");
-				    }
+		        	
+				    
 	        	}
-	        	else{
-	        		setTestFail("過曝照片未傳完");
-	        	}
+	        	if(spentTime <=0){;
+        		writeToColorRawFile("Time's up!");
+        		goResultSuccess();
+	        	/*if(svmTest)
+        			goResultSuccess();
+        		else
+        			setTestFail("無法判斷檢測結果");*/
+	        	
+	        	state = END_STATE;
+        	}
 	        }
 	        else if(state == FRAME_STATE){
-	        	if(spentTime > 7*60*1000 && picNum == 0 && !pictureSending && isConnect){
-	        		//在7分鐘以前可以一直重傳過曝照片
-	        		writeToColorRawFile("send 1st picture again");
-	        		
-	        		/*GG*/
-	        		/*exposed image*/
-	        		/*writeToColorRawFile("Write State : 0x03");
-					ble.bleWriteState((byte)0x03);*/
-	        		byte [] command = new byte[] {BluetoothLE.BLE_REQUEST_IMAGE_INFO};
-	                ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_IMAGE_GET_HEADER;
-	                ble.bleWriteCharacteristic1(command);
-	                writeToColorRawFile("Write State : Snapshot");
-	        	}
-	        	if(spentTime < 5*60*1000 ){
-	        		//setTestFail("過曝照片未傳完2");
-	        		picNum = 1;
+	        	if(getFirstPic)
+	        	{
+	        		pictureSending = false;
 	        		state = REGULAR_STATE;
-	        		writeToColorRawFile("use default xy range");
-	    			writeToColorRawFile("State = " + state);
-	    			
-	    			if(ble!=null){
-	    				active_disconnect = true;
-	    				ble.bleDisconnect();
-	    			}
 	        	}
+	        		
+	        	else if(!getFirstPic && !pictureSending)
+	        	{
+	        		pictureSending = true;
+	        		savePic = false;
+	        		if(ble != null)
+	        		{
+	        			writeToColorRawFile("snap shot");
+	        			ble.bleTakePicture();
+	        		}
+	        	}
+	        	
+	        	else if(spentTime < 10*60*1000 && !getFirstPic)
+	        	{
+	        		setTestFail("無法獲取試紙照片");
+		        	active_disconnect = true;
+		        	if(ble != null)	{
+		        		//ble.bleHardTermination();
+		        		clearDevice();
+		        	}
+		        		
+		        	//!!
+		        	ble = null;
+	        	}
+	        	if(spentTime <=0){;
+        		writeToColorRawFile("Time's up!");
+        		goResultSuccess();
+	        	/*if(svmTest)
+        			goResultSuccess();
+        		else
+        			setTestFail("無法判斷檢測結果");*/
+	        	
+	        	state = END_STATE;
+        	}
 	        }
 	        else if(state == REGULAR_STATE){
 	        	if(spentTime > 3*60*1000 ){ 
-		        	if(seconds == 0 && picNum == 1){    //Regular connect after take  picture.
+		        	if(seconds == 0){    //Regular connect after take  picture.
 		        		if(connectSensorTimer != null)
 		        			//connectSensorTimer.cancel();
 		        			Log.i(TAG, "second = 0");
 		        			if(!isConnect){
+		        				Log.d("GG", "why!!!");
 		        				connect = false;
 		        				writeToColorRawFile("Connect Timer Start");
 		        				connectSensorTimer.cancel();
 		        				connectSensorTimer.start();
 		        			}
 		        	}
-		        	else if(picNum == 0){
-		        		
-		        		setTestFail("過曝照片未傳成功");
-		        	}
 	        	}
-	        	else if(spentTime < 2*60*1000 ){
-	        		state = DETECT_STATE;
+	        	else if(spentTime < 2*60*1000 && picNum == 0 && !pictureSending){
+	        		//state = DETECT_STATE;
+	        		//state = RESULT_STATE;
+	        		pictureSending = true;
 	        		writeToColorRawFile("State = " + state);
+	        		savePic = true;
+	        		ble.bleTakePicture();
+	                writeToColorRawFile("Write State : Snapshot");
+	        	}
+	        	else if(spentTime < 1*60*1000 && picNum == 1 && !pictureSending){
+	        		//state = DETECT_STATE;
+	        		pictureSending = true;
+	        		state = RESULT_STATE;
+	        		writeToColorRawFile("State = " + state);
+	        		
+	        		savePic = true;
+	        		ble.bleTakePicture();
+	                writeToColorRawFile("Write State : Snapshot");
+	        	}
+	        	else if(spentTime <= 0)
+	        	{
+	        		setTestFail("無法獲取試紙照片");
+		        	active_disconnect = true;
+		        	//ble.bleHardTermination();
+		        	clearDevice();
+		        	//!!
+		        	ble = null;
 	        	}
 	        }
 	        else if(state == DETECT_STATE){
@@ -285,7 +368,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 	        		if(picNum == 1){
 	        			setTestFail("無法獲得照片");
 	        		}
-	        		result2 = checkResult();
+	        		//result2 = checkResult();
 	        		writeToColorRawFile("checkResult");
 	        		checkResultOnce = true;
 				}
@@ -316,33 +399,42 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 						/*regular image*/
 						/*writeToColorRawFile("Write State : 0x06");
 			        	ble.bleWriteState((byte)0x06);*/
-						byte [] command = new byte[] {BluetoothLE.BLE_REQUEST_IMAGE_INFO};
-		                ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_IMAGE_GET_HEADER;
-		                ble.bleWriteCharacteristic1(command);
+						ble.bleTakePicture();
 		                writeToColorRawFile("Write State : Snapshot2");
 			        	
 			        	
 			        	first = true;
 					}
+					
 				}
 	        	else if(picNum == 0){
 	        		setTestFail("無過曝照片");
-	        	}	        	
+	        	}	  
+	        	if(spentTime <=0){;
+        		writeToColorRawFile("Time's up!");
+        		goResultSuccess();
+	        	/*if(svmTest)
+        			goResultSuccess();
+        		else
+        			setTestFail("無法判斷檢測結果");*/
+	        	
+	        	state = END_STATE;
+        	}
 	        }
 	        else if(state == RESULT_STATE){
-	        	
-	        	if(seconds <= 10 && minutes == 0 && !checkResultOnce){
+	    
+	        	/*if(seconds <= 10 && minutes == 0 && !checkResultOnce){
 	        		result2 = checkResult();
 	        		writeToColorRawFile("checkResult");
 	        		checkResultOnce = true;
-				}
-	        	else if(spentTime <=0){
+				}*/
+	        	if(spentTime <=0){;
 	        		writeToColorRawFile("Time's up!");
-	        		
-		        	if(result2)
+	        		goResultSuccess();
+		        	/*if(svmTest)
 	        			goResultSuccess();
 	        		else
-	        			setTestFail("無法判斷檢測結果");
+	        			setTestFail("無法判斷檢測結果");*/
 		        	
 		        	state = END_STATE;
 	        	}
@@ -434,14 +526,14 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 		        	}
 	        	}
 	        	else if(spentTime < 2*60*1000 ){
-	        		state = DETECT_STATE;
+	        		state = RESULT_STATE;
 	        		writeToColorRawFile("State = " + state);
 	        	}
 	        }
 	        else if(state == DETECT_STATE){
 	        	
 	        	if(seconds <= 10 && minutes == 0 && !checkResultOnce){
-	        		result2 = checkResult();
+	        		//result2 = checkResult();
 	        		writeToColorRawFile("checkResult");
 	        		checkResultOnce = true;
 				}
@@ -482,24 +574,27 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 				}
 	        	else if(picNum == 0){
 	        		setTestFail("無過曝照片");
-	        	}	        	
+	        	}
+	        	
 	        }
 	        else if(state == RESULT_STATE){
 	        	
-	        	if(seconds <= 10 && minutes == 0 && !checkResultOnce){
+	        	/*if(seconds <= 10 && minutes == 0 && !checkResultOnce){
 	        		result2 = checkResult();
 	        		writeToColorRawFile("checkResult");
 	        		checkResultOnce = true;
-				}
-	        	else if(spentTime <=0){
+				}*/
+	        	//Log.d("GG", "zzzzzz");
+	        	if(spentTime <=0){
 	        		writeToColorRawFile("Time's up!");
 	        		
-		        	if(result2)
+		        	if(testResult != 0)
 	        			goResultSuccess();
 	        		else
 	        			setTestFail("無法判斷檢測結果");
 		        	
 		        	state = END_STATE;
+		        	MainActivity.getMainActivity().enableTabAndClick(true);
 	        	}
 	        }
 	        long endTime = System.currentTimeMillis();
@@ -514,6 +609,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
     
     @SuppressWarnings("deprecation")
 	private void goResultSuccess(){   //檢測成功的話
+    	writeToColorRawFile("goResult");
     	notification.defaults = Notification.DEFAULT_ALL;
 		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.setLatestEventInfo( myservice , "檢測倒數結束", "前往測試結果", pendingIntent);
@@ -538,7 +634,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 			ble.bleWriteState((byte)0x05);
 			ble = null;*/
 			byte[] command = new byte[]{BluetoothLE.BLE_SHUTDOWN};
-            ble.setManualDisconnectFlag(true);
+            /* GG ble.setManualDisconnectFlag(true);*/
             ble.bleWriteCharacteristic1(command);
             writeToColorRawFile("Write State : Disconnet");
 
@@ -696,10 +792,9 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 			/*writeToColorRawFile("Write State : 0x05");
 			ble.bleWriteState((byte)0x05);
 			ble = null;*/
-			byte[] command = new byte[]{BluetoothLE.BLE_SHUTDOWN};
-            ble.setManualDisconnectFlag(true);
-            ble.bleWriteCharacteristic1(command);
-            writeToColorRawFile("Write State : Disconnet");
+			//byte[] command = new byte[]{BluetoothLE.BLE_SHUTDOWN};
+            /*GG ble.setManualDisconnectFlag(true);*/
+            ble.bleSelfDisconnection();
             
         	ble = null;
         }
@@ -772,23 +867,29 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 					writeToColorRawFile("Regular Connect: " + regular_connect);
 				}
 			}
-			else if(isConnect && connect){
+			/*if(isConnect && connect){
 				count++;
 				if(count > 3){
 					regular_connect++;
 					if(ble!=null){
 						active_disconnect = true;
-						ble.bleDisconnect();
+						ble.bleSelfDisconnection();
 						writeToColorRawFile("Regular DisConnect: " + regular_connect);
 					}
 					count = 0;
 				}
-			}
+			}*/
 			//Toast.makeText(myservice, "請開啟檢測器", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
+	
+	
 	private void setTestFail(String reason){
+		Log.d("GG", "GG reason : "+reason);
+		if(failed)
+			return;
+		failed = true;
 		PreferenceControl.setTestFail();
 		PreferenceControl.setAfterTestState(NoteDialog4.STATE_TEST);
 		
@@ -820,14 +921,15 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 	}
 
 
-	@Override
+	/*@Override
+	  GG
+	 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		if(ble!=null)
-			/*GG*/
-			/*ble.onBleActivityResult(requestCode, resultCode, data);*/
+			ble.onBleActivityResult(requestCode, resultCode, data);
 			ble.onBLEActivityResult(requestCode, resultCode, data);
-	}
+	}*/
 
     @Override
     public void bleNotSupported() {
@@ -848,6 +950,8 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 
     @Override
     public void bleConnected() {
+    	Log.d("GG", "Service ble connected");
+    	
     	isConnect = true;
     	
     	if(state == BEGIN_STATE)
@@ -855,6 +959,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
     	else if(state == DETECT_STATE)
     		second = false;
     	
+    	Log.i("GG", "ResultService BLE connected");
         Log.i(TAG, "BLE connected");
         writeToColorRawFile("BLE connected");
         if(debug)
@@ -864,10 +969,41 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 			openSensorMsgTimer.cancel();
 		}
         //PreferenceControl.setTestSuccess();
+        Handler handler = new Handler(); 
+        handler.postDelayed(new Runnable() {
+             @Override 
+             public void run() { 
+            	 //ble.bleRequestCassetteInfo();
+            	 writeToColorRawFile("ble request voltage");
+            	 byte[] command = new byte[]{BluetoothLE.BLE_REQUEST_SALIVA_VOLTAGE};
+            	 if(ble != null)
+            	 {
+            		 ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_FETCH_INFO;
+                 	ble.bleWriteCharacteristic1(command);
+            	 }
+            	 Handler handler = new Handler(); 
+                 handler.postDelayed(new Runnable() {
+                      @Override 
+                      public void run() { 
+                     	 //ble.bleRequestCassetteInfo();
+                     	 writeToColorRawFile("ble request id");
+                     	 if(ble != null)
+                     	 {
+                     		ble.bleRequestCassetteInfo();
+                     	 }
+                      } 
+                 }, 1000); 
+             } 
+        }, 1000); 
+        /*writeToColorRawFile("ble request voltage");
+        byte[] command = new byte[]{BluetoothLE.BLE_REQUEST_SALIVA_VOLTAGE};
+        ble.mAppStateTypeDef = BluetoothLE.AppStateTypeDef.APP_FETCH_INFO;
+        ble.bleWriteCharacteristic1(command);*/
     }
 
     @Override
     public void bleDisconnected() { //如果被動斷線的話就主動重連
+    	writeToColorRawFile("call back : ble dissconnect!");
     	isConnect = false;
     	stateSuccess = false;
     	pictureSending = false;
@@ -924,6 +1060,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 
     @Override
     public void bleWriteStateFail() {
+    	writeToColorRawFile("call back : write state fail");
         Log.i(TAG, "BLE ACTION_DATA_WRITE_FAIL");
         writeToColorRawFile("BLE ACTION_DATA_WRITE_FAIL");
         if(debug)
@@ -932,7 +1069,8 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
     }
     
     private boolean noplug = false;
-    @Override
+    /*@Override
+     * GG
     public void bleNoPlug() {
     	
         Log.i(TAG, "No test plug");
@@ -944,7 +1082,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
         }
         
        //Toast.makeText(this, "No test plug", Toast.LENGTH_SHORT).show();
-    }
+    }*/
 
     /*GG*/
     /*
@@ -1066,7 +1204,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 	}
 	*/
 	
-	private boolean checkSingleColor(int color){
+	/*private boolean checkSingleColor(int color){
 		colorReading = color;
 		
 		if(colorReading == -1000){
@@ -1078,13 +1216,13 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 		else{
 			writeToColorRawFile("Line Good");
 			int result2 = colorReading > DETECT_THRESHOLD ? 0:1;
-        	PreferenceControl.setTestResult(result2);
+        	PreferenceControl.setTestResult(testResult);
         	setResultSuccess();
         	return true;
 		}			
-	}
+	}*/
 	
-	private boolean checkResult(){
+	/*private boolean checkResult(){
 		boolean isSuccess = true;
 		if(picNum == 2){
 			writeToColorRawFile("check First Pic");
@@ -1108,7 +1246,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 			}
 		}
 		return isSuccess;
-	}
+	}*/
 	
 	protected void writeToColorRawFile(String str) {
 		Message msg = new Message();
@@ -1193,6 +1331,7 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 	@Override
 	public void bleWriteCharacteristic1Success() {
 		// TODO Auto-generated method stub
+		writeToColorRawFile("call back : write character success");
 		Log.i(TAG, "BLE ACTION_DATA_WRITE_SUCCESS");
         
         //if(ble != null)
@@ -1210,7 +1349,9 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 	}
 	@Override
 	public void blePlugInserted(int cassetteId) {
-		// TODO Auto-generated method stub
+		Log.d("GG", "call back : cassetteId = "+ cassetteId);
+		writeToColorRawFile("call back : cassetteId = "+ cassetteId);
+			
 		
 	}
 	@Override
@@ -1221,82 +1362,114 @@ public class ResultService3 extends Service implements BluetoothListener, ColorD
 	@Override
 	public void bleUpdateSalivaVolt(int volt) {
 		// TODO Auto-generated method stub
-		
+		Log.d("GG", "call back : volt = "+ volt);
+		writeToColorRawFile("call back : volt = "+ volt);
 	}
 	@Override
 	public void bleGetImageSuccess(Bitmap bitmap) {
+		writeToColorRawFile("call back : get image success");
 		// TODO Auto-generated method stub
-		picNum++;
+		if(savePic)
+			picNum++;
+		else
+			getFirstPic = true;
 		Log.i(TAG, "Picture: " + picNum + " Save");
 		pictureSending = false;
 		//Toast.makeText(this, "Picture: " + picNum + " Save", Toast.LENGTH_SHORT).show();
 		
 		writeToColorRawFile("Picture: " + picNum + " Save");
-		if(picNum == 1){
-			imageDetection.roiDetectionOnWhite(bitmap);
-			state = REGULAR_STATE;
-			writeToColorRawFile("State = " + state);
-			
-			if(ble!=null){
-				active_disconnect = true;
-				ble.bleDisconnect();
-			}
-			
-			return;
-		}
-		else if(picNum == 2){
-			state = RESULT_STATE;
-			writeToColorRawFile("State = " + state);
-			
-			colorReading1 = imageDetection.testStripDetection(bitmap);
-			writeToColorRawFile("ColorReading1: " + colorReading1);
-			
-//			if(colorReading1  == -1000){
-//				Log.i(TAG, "Reading: " + colorReading);
-//				setTestFail("無法判斷檢測結果");
-//			}
-			blehandler.postDelayed(writeBle, 10*1000);
-//			else{
-//				blehandler.postDelayed(writeBle, 10*1000);
-//			}
-		}
-		else if(picNum == 3){
-			
-			colorReading2 = imageDetection.testStripDetection(bitmap);
-			writeToColorRawFile("ColorReading2: " + colorReading2);
-			
-//			state = SUCCESS_STATE;
-//			writeToColorRawFile("State = " + state);
-//			setResultSuccess();
-//			picFileHandler = new PicFileHandler(5, bitmap);
-//			picFileHandler.save();		
-		}	
+		
 		
 	}
 	@Override
 	public void bleGetImageFailure(float dropoutRate) {
-		// TODO Auto-generated method stub
-		if(picNum == 1 || picNum == 2)
-			blehandler.postDelayed(writeBle, 10*1000);
-		else if(picNum == 0){
-			//setTestFail("過曝照片傳送失敗，重新傳送");
-			/*GG*/
-			//writeToColorRawFile("Picture 1 sending fail: "+dropRate);
-			writeToColorRawFile("Picture 1 sending fail: ");
+		writeToColorRawFile("call back : get image fail");
+		pictureSending = false;
+		if(!savePic)
+		{
+			if(firstFailTimes < 3)
+			{
+				firstFailTimes++;
+				ble.bleTakePicture();
+			}
+			else
+			{
+				setTestFail("無法獲取試紙照片");
+	        	active_disconnect = true;
+	        	//ble.bleHardTermination();
+	        	clearDevice();
+	        	//!!
+	        	ble = null;
+			}
 			
-			blehandler.postDelayed(writeBle3, 10*1000);
-//			failedState = PIC_SEND_FAIL;
-//			connectionFailRate = dropRate;
-//			Log.i(TAG, "DropRate: " + dropRate);
-//			writeToColorRawFile("Picture sending fail: "+dropRate);
-//			setTestFail("照片傳送失敗");
 		}
+		
+		// TODO Auto-generated method stub
+		/*if(picNum == 1 || picNum == 2)
+			ble.bleTakePicture();
+		else if(picNum == 0){
+			writeToColorRawFile("Picture 1 sending fail: ");
+			ble.bleTakePicture();
+			
+		}*/
 		
 	}
 	@Override
 	public void colorDetectSuccess(int check) {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public Context getContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void bleNoPlugDetected() {
+		// TODO Auto-generated method stub
+		//todo:noplug
+        writeToColorRawFile("ble No test plug");
+
+        if(!noplug){
+        	setTestFail("試紙匣被拔出");
+        	active_disconnect = true;
+        	//ble.bleHardTermination();
+        	clearDevice();
+        	//!!
+        	ble = null;
+        	noplug = true;
+        }
+	}
+	@Override
+	public void notifyDeviceVersion(int version) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void bleNotifyDetectionResult(double score) {
+		// TODO Auto-generated method stub
+		
+		if(score == 1)
+			testResult = 1;
+		else if(score == -1)
+			testResult = 0;
+		
+		svmTest = true;
+		checkResultOnce = true;
+		PreferenceControl.setTestResult(testResult);
+		setResultSuccess();
+	}
+	@Override
+	public void bleReturnDeviceVersion(int version) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void clearDevice()
+	{
+		ble.bleUnlockDevice();
+		ble.bleCancelCassetteInfo();
+		ble.bleSelfDisconnection();
 	}
 
 }

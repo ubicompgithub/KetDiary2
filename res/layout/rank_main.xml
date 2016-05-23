@@ -22,7 +22,7 @@
 	          <TextView
 	              android:layout_width="wrap_content"
 	              android:layout_height="wrap_content"
-	              android:text="事件類型"
+	              android:text="情境類型"
 	              android:textAppearance="?android:attr/textAppearanceMedium"
 	              android:textColor="@color/text_gray3"
 	              android:textSize="16sp" />

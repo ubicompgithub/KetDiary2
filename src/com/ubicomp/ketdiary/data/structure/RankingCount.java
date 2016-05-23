@@ -4,13 +4,14 @@ import java.util.Comparator;
 
 public class RankingCount {
 	private int id, id2, numerator, denominator;
-	private double value;
+	private int value;
 	public RankingCount(int id, int id2)
 	{	
 		this.id = id;
 		this.id2 = id2;
 		this.numerator = 0;
 		this.denominator = 0;
+		this.value = 0;
 	}
 	
 	public void setId(int id)
@@ -29,11 +30,15 @@ public class RankingCount {
 		denominator++;
 	}
 	
-	public double getValue()
+	public void AddImpact(int x)
 	{
-		double ans = numerator;
-		double t = denominator;
-		return ans/t;
+		value += x;
+	}
+	
+	
+	public int getValue()
+	{
+		return value;
 	}
 	
 	public int getId()
@@ -67,4 +72,15 @@ public class RankingCount {
 		}
 	};
 	
+	public static Comparator<RankingCount> RankingCountTypeComparatorValue = new Comparator<RankingCount>() {
+
+		public int compare(RankingCount Note1, RankingCount Note2) {
+		
+			int t1 = Note1.getValue();
+			int t2 = Note2.getValue();
+		
+			return t2 - t1;
+			
+		}
+	};
 }

@@ -64,7 +64,9 @@ public class ChooseItemDialog implements OnClickListener{
 	private static final int TODAY = 0;
 	private static final int OTHERDAY = 1;
 	
-	public ChooseItemDialog(ChooseItemCaller caller, RelativeLayout mainLayout, int type , int day){
+	private boolean isTest;
+	
+	public ChooseItemDialog(ChooseItemCaller caller, RelativeLayout mainLayout, int type , int day, boolean isTest){
 		
 		this.context = App.getContext();
 		this.inflater = (LayoutInflater) context
@@ -73,6 +75,7 @@ public class ChooseItemDialog implements OnClickListener{
 		this.caller = caller;
 		this.type = type;
 		this.day = day;
+		this.isTest = isTest;
 		
 		wordTypeface = Typefaces.getWordTypeface();
 		wordTypefaceBold = Typefaces.getWordTypefaceBold();
@@ -197,7 +200,11 @@ public class ChooseItemDialog implements OnClickListener{
 	public void close() {
 		if (boxLayout != null)
 			boxLayout.setVisibility(View.INVISIBLE);
-		MainActivity.getMainActivity().enableTabAndClick(true);
+		
+		if(isTest)
+			MainActivity.getMainActivity().enableTabAndClick(false);
+		else
+			MainActivity.getMainActivity().enableTabAndClick(true);
 		
 		caller.resetView(type, select);
 		Log.d(TAG, "Select:"+select);

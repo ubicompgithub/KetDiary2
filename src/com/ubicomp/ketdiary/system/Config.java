@@ -1,5 +1,8 @@
 package com.ubicomp.ketdiary.system;
 
+import com.ubicomp.ketdiary.ResultService3;
+import com.ubicomp.ketdiary.test.bluetoothle.BluetoothLE;
+
 /**
  * Class defines constants of RehabDiary
  * 
@@ -51,4 +54,12 @@ public class Config {
 	public static final String ACTION_REGULAR_CHECK = "Regular_check";
 	/** Action of regular Set Daily event */
 	public static final String ACTION_DAILY_EVENT = "Daily_event";
+	/** Action of thinking notification */
+	public static final String ACTION_THINKING_NOTIFICATION = "Thinking_notification";
+	
+	
+	/** TestFragment, ResultService */
+	public static BluetoothLE ble = null;
+	
+	public static ResultService3 resultService = null;
 }

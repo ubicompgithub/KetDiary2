@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ubicomp.ketdiary2"
-    android:versionCode="21"
-    android:versionName="1.21" >
+    android:versionCode="34"
+    android:versionName="1.34" >
 
     
     <uses-sdk android:minSdkVersion="14" />
@@ -97,10 +97,24 @@
             android:enabled="true" >
         </service>
         
+        <service 
+            android:name="com.ubicomp.ketdiary.NoteThinkingService"
+            android:enabled="true" >
+        </service>
+        
         <service
             android:name="com.ubicomp.ketdiary.test.bluetoothle.BluetoothDataParserService"
             android:enabled="true" >
         </service>
+        
+        <service 
+            android:name="com.ubicomp.ketdiary.SvmService" 
+            android:enabled="true">  
+        </service>  
+        <service 
+            android:name="com.ubicomp.ketdiary.test.bluetoothle.ImageDetection" 
+            android:enabled="true">  
+        </service> 
 
 
         <activity

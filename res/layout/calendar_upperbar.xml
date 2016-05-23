@@ -11,7 +11,7 @@
            
 	    <ImageView
 			android:id="@+id/linechart_icon"
-			android:src="@drawable/titleicon"
+			android:src="@drawable/ranking_icon"
 			android:layout_width="60dp"
 			android:layout_height="match_parent"
 			android:layout_marginBottom="10dp" />
@@ -43,7 +43,7 @@
 	        	android:layout_marginLeft="8dp" />
 	    </LinearLayout>
 	    
-	    <TextView
+	    <!-- <TextView
 	        android:id="@+id/back_to_today"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -52,15 +52,15 @@
 	        android:textColor="@color/text_color"
 	        android:layout_toLeftOf="@+id/calendar_filter"
 	        android:gravity="center"
-	        android:paddingTop="7dp" />	 
+	        android:paddingTop="7dp" />	 -->
 	        
 	     <ImageView
 	        android:id="@+id/calendar_filter"
-	        android:layout_width="35dp"
-	        android:layout_height="35dp"
-	        android:background="@drawable/button_filter"
+	        android:layout_width="30dp"
+	        android:layout_height="30dp"
+	        android:src="@drawable/filter_time_true"
 	        android:layout_gravity="center_vertical"
 	        android:layout_alignParentRight="true"
-	        android:layout_marginTop="-4dp"
+	        android:layout_marginTop="0dp"
 	        android:layout_marginLeft="7dp" />
 </RelativeLayout>

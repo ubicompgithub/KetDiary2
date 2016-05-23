@@ -4,25 +4,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.ubicomp.ketdiary.data.db.DatabaseControl;
+import com.ubicomp.ketdiary.data.structure.TriggerItem;
+
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 @SuppressLint("UseSparseArrays")
 public class NoteCatagory3 {
 	
 	
 	@SuppressLint("UseSparseArrays")
-	public HashMap <Integer, String> negative = new HashMap< Integer, String >();
-	public HashMap <Integer, String> notgood = new HashMap< Integer, String >();
-	public HashMap <Integer, String> positive = new HashMap< Integer, String >();
-	public HashMap <Integer, String> selftest = new HashMap< Integer, String >();
-	public HashMap <Integer, String> temptation = new HashMap< Integer, String >();
-	public HashMap <Integer, String> conflict = new HashMap< Integer, String >();
-	public HashMap <Integer, String> social = new HashMap< Integer, String >();
-	public HashMap <Integer, String> play = new HashMap< Integer, String >();
-	public HashMap <Integer, String> mood = new HashMap< Integer, String >();
+	public Map <Integer, String> negative = new TreeMap< Integer, String >();
+	public Map <Integer, String> notgood = new TreeMap< Integer, String >();
+	public Map <Integer, String> positive = new TreeMap< Integer, String >();
+	public Map <Integer, String> selftest = new TreeMap< Integer, String >();
+	public Map <Integer, String> temptation = new TreeMap< Integer, String >();
+	public Map <Integer, String> conflict = new TreeMap< Integer, String >();
+	public Map <Integer, String> social = new TreeMap< Integer, String >();
+	public Map <Integer, String> play = new TreeMap< Integer, String >();
+	public Map <Integer, String> mood = new TreeMap< Integer, String >();
 	
 	public Map <String, Integer> myNewHashMap = new HashMap<String, Integer>();
 	public HashMap <Integer, String> dictionary = new HashMap< Integer, String >();
+	
+	private DatabaseControl db = new DatabaseControl();
 	//public HashMap <Integer, String>[] array = new HashMap[8]; 
 		
 		
@@ -35,7 +41,7 @@ public class NoteCatagory3 {
 	
 
 	public void noteSetting(){
-		negative.put(100, "沮喪");
+		/*negative.put(100, "沮喪");
 		negative.put(101, "走投無路");
 		negative.put(102, "對自己失望");
 		negative.put(103, "無聊");
@@ -100,13 +106,24 @@ public class NoteCatagory3 {
 		play.put(800, "與老朋友共度美好時光");
 		play.put(801, "跟朋友們同樂");
 		play.put(802, "希望對性行為有幫助");
-		play.put(803, "與動物相處");
+		play.put(803, "與動物相處");*/
+		loadFromDatabase();
 		
-		mood.put(900, "快樂");
-		mood.put(901, "冷靜");
-		mood.put(902, "興奮");
-		mood.put(903, "客觀");
-		mood.put(904, "放鬆");
+		mood.put(900, "生氣");
+		mood.put(901, "難過");
+		mood.put(902, "緊張");
+		mood.put(903, "厭惡");
+		mood.put(904, "開心");
+		mood.put(905, "驚恐");
+		mood.put(906, "冷靜");
+		mood.put(907, "放鬆");
+		mood.put(908, "興奮");
+		mood.put(909, "客觀");
+		mood.put(910, "快樂");
+		mood.put(911, "無聊");
+		mood.put(912, "活力十足");
+		mood.put(913, "感覺被愛");
+		mood.put(914, "堅定");
 		
 		for(Map.Entry<Integer, String> entry : negative.entrySet()){
 		    myNewHashMap.put(entry.getValue(), entry.getKey());
@@ -141,6 +158,55 @@ public class NoteCatagory3 {
 		}
 
 	}
+	
+	public void loadFromDatabase()
+	{
+		//Log.d("GG", "in loadFromDatabase");
+		TriggerItem[] triggerList = db.getAllTriggerItem();
+		int len;
+		if(triggerList == null)
+			len = 0;
+		else
+			len = triggerList.length;
+		//Log.d("GG", "length : "+ len);
+		for(int i = 0; i < len; i++)
+		{
+			int c = triggerList[i].getItem() / 100;
+			//Log.d("GG", "insert("+triggerList[i].getItem()+","+triggerList[i].getContent()+")");
+			
+			switch(c)
+			{
+			case 1:
+				negative.put(triggerList[i].getItem(), triggerList[i].getContent());
+				break;
+			case 2:
+				notgood.put(triggerList[i].getItem(), triggerList[i].getContent());
+				break;
+			case 3:
+				positive.put(triggerList[i].getItem(), triggerList[i].getContent());
+				break;
+			case 4:
+				selftest.put(triggerList[i].getItem(), triggerList[i].getContent());
+				break;
+			case 5:
+				temptation.put(triggerList[i].getItem(), triggerList[i].getContent());
+				break;
+			case 6:
+				conflict.put(triggerList[i].getItem(), triggerList[i].getContent());
+				break;
+			case 7:
+				social.put(triggerList[i].getItem(), triggerList[i].getContent());
+				break;
+			case 8:
+				play.put(triggerList[i].getItem(), triggerList[i].getContent());
+				break;
+			
+			}
+			
+		}
+	}
+	
+	
 	
 	
 	

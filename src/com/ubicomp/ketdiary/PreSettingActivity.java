@@ -36,6 +36,7 @@ import com.ubicomp.ketdiary.ui.CustomToastSmall;
 import com.ubicomp.ketdiary2.R;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.db.DatabaseRestoreControl;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.NoteAdd;
 import com.ubicomp.ketdiary.data.structure.TestDetail;
 
@@ -545,15 +546,26 @@ public class PreSettingActivity extends Activity {
 			//addPos = -1;
 			addPos = 0;
 		}
+		if(MainActivity.identityScore)
+		{
+			MainActivity.identityScore = false;
+			addScore++;
+		}
 		else if(result == 1){
 			CustomToast.generateToast(R.string.after_test_fail, addScore);
 			//addPos = -1;
 			addPos = 0;
+			AddScore preScore = db.getLastestAddScore();
+			AddScore nowScore = new AddScore(System.currentTimeMillis(), addScore, preScore.getAccumulation()+addScore, "檢測陽性");
+			db.insertAddScore(nowScore);
 		}
 		else{
 			CustomToast.generateToast(R.string.after_test_pass, addScore);
 			//addPos = 1;
 			addPos = 2;
+			AddScore preScore = db.getLastestAddScore();
+			AddScore nowScore = new AddScore(System.currentTimeMillis(), addScore, preScore.getAccumulation()+addScore, "檢測陰性");
+			db.insertAddScore(nowScore);
 		}
 		
 		if(StartDateCheck.afterStartDate())

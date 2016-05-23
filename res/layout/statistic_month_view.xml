@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id = "@+id/statistic_week_layout" 
+    >
+
+    <TextView
+        android:id="@+id/statistic_week_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="每月測試統計"
+        android:textSize="@dimen/small_title_size"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="34dp"
+        android:textColor="@color/text_gray2" />
+    <LinearLayout 
+	    android:id="@+id/weekdays"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"  
+	    android:clickable="true"        
+	    android:orientation="horizontal"
+	    android:layout_marginTop="30dp"
+	    android:layout_marginLeft="34dp">
+	     <TextView
+	         android:id="@+id/week1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"    
+	     android:text="一"
+	     android:textColor="@color/text_color"
+	     android:layout_weight="1" />
+	     <TextView
+	         android:id="@+id/week2"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"    
+	     android:text="二"
+	     android:textColor="@color/text_color"
+	     android:layout_weight="1" />
+	     <TextView
+	         android:id="@+id/week3"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"    
+	     android:text="三"
+	     android:textColor="@color/text_color"
+	     android:layout_weight="1" />
+	     <TextView
+	         android:id="@+id/week4"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"    
+	     android:text="四"
+	     android:textColor="@color/text_color"
+	     android:layout_weight="1" />
+	     <TextView
+	         android:id="@+id/week5"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"    
+	     android:text="五"
+	     android:textColor="@color/text_color"
+	     android:layout_weight="1" />
+	     <TextView
+	         android:id="@+id/week6"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"    
+	     android:text="六"
+	     android:textColor="@color/text_color"
+	     android:layout_weight="1" />
+	     <TextView
+	         android:id="@+id/week7"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"    
+	     android:text="日"
+	     android:textColor="@color/text_color"
+	     android:layout_weight="1" />		        
+	</LinearLayout>
+    
+    
+    
+    
+    
+</RelativeLayout>

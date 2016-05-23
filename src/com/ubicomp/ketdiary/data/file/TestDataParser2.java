@@ -30,7 +30,7 @@ public class TestDataParser2 {
 	protected long ts;
 	protected Context context;
 	protected double sensorResult = 0;
-	protected DatabaseControl db;
+	protected static DatabaseControl db;
 	//protected DBControl db;
 	
 	public NoteAdd noteAdd = null;
@@ -86,7 +86,7 @@ public class TestDataParser2 {
 		
 		int nowKey;
 		nowKey = lastNoteAdd.getKey()+1;
-		Log.d("GG", "nowKey = "+nowKey);
+		//Log.d("GG", "nowKey = "+nowKey);
 		noteAdd = new NoteAdd(isAfterTest, ts, year, month, date, timeslot, category, type, items, impact, action, feeling, thinking, finished, 0, 0, nowKey);
 		
 		int addScore  = db.insertNoteAdd(noteAdd);
@@ -130,7 +130,12 @@ public class TestDataParser2 {
 		
 		long ts = PreferenceControl.getUpdateDetectionTimestamp();
 		
-		NoteAdd noteAdd = new NoteAdd(isAfterTest, ts, year, month, date, timeslot, category, type, items, impact, action, feeling, thinking, finished, 0, 0, key);
+		NoteAdd lastNoteAdd = db.getLatestNoteAdd();
+		
+		int nowKey;
+		nowKey = lastNoteAdd.getKey()+1;
+		
+		NoteAdd noteAdd = new NoteAdd(isAfterTest, ts, year, month, date, timeslot, category, type, items, impact, action, feeling, thinking, finished, 0, 0, nowKey);
 		boolean update = false;
 		if (ts == PreferenceControl.getUpdateDetectionTimestamp())
 			update = true;
@@ -162,6 +167,14 @@ public class TestDataParser2 {
 		Reflection reflection = new Reflection(ts, action, feeling, thinking, key);
 		
 		db.insertReflection(reflection);
+
+	}
+	
+	public void startUpdateThinking(String thinking, int key) {
+		
+		long ts = System.currentTimeMillis();
+		
+		db.updateThinking( thinking, key);
 
 	}
 	

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/shadow" >
+
+    <LinearLayout
+        android:layout_width="232.7dp"
+        android:layout_height="340dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:background="@drawable/quesion_bg2"
+        android:orientation="vertical">
+       
+      <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal" 
+            android:gravity="center">
+            
+            <TextView
+                android:id="@+id/question_question"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="填寫完成"
+                android:textColor="@color/text_gray3"
+                android:paddingTop="15dp"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+         
+     <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical" >
+     <RelativeLayout
+         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:splitMotionEvents="false" >
+		
+         <LinearLayout
+            	android:layout_width="232.7dp"
+            	android:layout_height="40dp"
+            	android:orientation="horizontal"
+            	android:layout_centerHorizontal="true"
+            	android:gravity="center"
+            	android:layout_above="@+id/notify_answer1_layout">
+         <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:gravity="center"
+	            android:text="確認送出？"
+	            android:textColor="@color/text_gray"
+	            android:textSize="@dimen/large_text_size" />
+	        
+	     </LinearLayout>
+         <LinearLayout
+                android:id="@+id/notify_answer4_layout"
+            	android:layout_width="232.7dp"
+            	android:layout_height="40dp"
+            	android:orientation="horizontal"
+            	android:layout_alignParentBottom="true"
+            	android:layout_centerHorizontal="true"
+            	android:layout_marginBottom="-10dp"
+            	android:gravity="center|left"
+            	android:paddingLeft="20dp">
+        
+             <ImageView
+	            android:id="@+id/notify_radio4"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:src="@drawable/radio_node" 
+	            android:layout_toLeftOf="@+id/choose_item_4hour"/>
+             
+	        <TextView
+	            android:id="@+id/choose_item_4hour"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:gravity="center"
+	            android:text="提醒我四小時後填寫想法"
+	            android:textColor="@color/text_gray"
+	            android:textSize="@dimen/normal_text_size" 
+	            android:paddingLeft="5dp"/>
+	        
+	     </LinearLayout>
+	     
+          <LinearLayout
+                android:id="@+id/notify_answer3_layout"
+            	android:layout_width="232.7dp"
+            	android:layout_height="40dp"
+            	android:orientation="horizontal"
+            	android:layout_centerHorizontal="true"
+            	android:gravity="center|left"
+            	android:layout_above="@+id/notify_answer4_layout"
+            	android:paddingLeft="20dp">
+        
+             <ImageView
+	            android:id="@+id/notify_radio3"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:src="@drawable/radio_node" 
+	            android:layout_toLeftOf="@+id/choose_item_2hour"/>
+             
+	        <TextView
+	            android:id="@+id/choose_item_2hour"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:gravity="center"
+	            android:text="提醒我兩小時後填寫想法"
+	            android:textColor="@color/text_gray"
+	            android:textSize="@dimen/normal_text_size" 
+	            android:paddingLeft="5dp"/>
+	        
+	     </LinearLayout>
+	     
+          
+          <LinearLayout
+                android:id="@+id/notify_answer2_layout"
+            	android:layout_width="232.7dp"
+            	android:layout_height="40dp"
+            	android:orientation="horizontal"
+            	android:layout_centerHorizontal="true"
+            	android:gravity="center|left"
+            	android:layout_above="@+id/notify_answer3_layout"
+            	android:paddingLeft="20dp">
+        
+             <ImageView
+	            android:id="@+id/notify_radio2"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:src="@drawable/radio_node" 
+	            android:layout_toLeftOf="@+id/choose_item_1hour"/>
+             
+	        <TextView
+	            android:id="@+id/choose_item_1hour"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:gravity="center"
+	            android:text="提醒我一小時後填寫想法"
+	            android:textColor="@color/text_gray"
+	            android:textSize="@dimen/normal_text_size" 
+	            android:paddingLeft="5dp"/>
+	        
+	     </LinearLayout>
+	     
+           <LinearLayout
+                android:id="@+id/notify_answer1_layout"
+            	android:layout_width="232.7dp"
+            	android:layout_height="40dp"
+            	android:orientation="horizontal"
+            	android:layout_centerHorizontal="true"
+            	android:gravity="center|left"
+            	android:layout_above="@+id/notify_answer2_layout"
+            	android:paddingLeft="20dp">
+        
+             <ImageView
+	            android:id="@+id/notify_radio1"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:src="@drawable/radio_node" 
+	            android:layout_toLeftOf="@+id/choose_item_0hour"/>
+             
+	        <TextView
+	            android:id="@+id/choose_item_0hour"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:gravity="center"
+	            android:text="不用提醒我填寫想法"
+	            android:textColor="@color/text_gray"
+	            android:textSize="@dimen/normal_text_size" 
+	            android:paddingLeft="5dp"/>
+	        
+	     </LinearLayout>
+        
+	</RelativeLayout>
+	</LinearLayout>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:gravity="bottom"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/notify_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="取消"
+                android:textColor="@drawable/text_color"
+                android:textSize="@dimen/large_text_size" />
+
+            <TextView
+                android:id="@+id/notify_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="確定"
+                android:textColor="@drawable/text_color"
+                android:textSize="@dimen/large_text_size" />
+
+        </LinearLayout>
+        
+	</LinearLayout>
+</RelativeLayout>

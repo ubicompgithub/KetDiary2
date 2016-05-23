@@ -1,6 +1,7 @@
 package com.ubicomp.ketdiary.dialog;
 
 import java.io.File;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -13,6 +14,7 @@ import com.ubicomp.ketdiary.MainActivity;
 import com.ubicomp.ketdiary.data.db.DatabaseControl;
 import com.ubicomp.ketdiary.data.file.QuestionFile;
 import com.ubicomp.ketdiary.data.file.TestDataParser2;
+import com.ubicomp.ketdiary.data.structure.AddScore;
 import com.ubicomp.ketdiary.data.structure.Reflection;
 import com.ubicomp.ketdiary.dialog.ReflectionFirstPage.CancelOnClickListener;
 import com.ubicomp.ketdiary.dialog.ReflectionFirstPage.EndOnClickListener;
@@ -45,9 +47,11 @@ import android.speech.RecognizerIntent;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Html;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +73,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class ReflectionSecondPage {
 	private Activity activity;
-	private ReflectionSecondPage addNoteDialog = this;
+	private ReflectionFirstPage reflectionFirstPage = null;
+	private AddNoteDialog2 preAddNote = null;
 	private static final String TAG = "ADD_PAGE";
 	
 	private TestQuestionCaller2 testQuestionCaller;
@@ -83,8 +88,9 @@ public class ReflectionSecondPage {
 						//description_date_layout, description_event_layout, description_mood_layout, description_thinking_layout;
 	
 	private ImageView speech_button;
-	private EditText thinking_text;
+	public static EditText thinking_text;
 	private TextView date_text, mood_text, event_text;
+	private QuestionIdentityDialog questionBox = null;
 	
 	private RelativeLayout mainLayout;
 	private View view;
@@ -99,6 +105,10 @@ public class ReflectionSecondPage {
 	private SeekBar impactSeekBar;
 	private TextView text_self, text_other, text_item, text_impact, text_description,
 	     tv_knowdlege, tv_title, note_title, sp_content, date_txt, timeslot_txt, title_txt, typetext;
+	
+	private static final int[] Coping_list = {R.array.coping_list0,R.array.coping_list1,
+			R.array.coping_list2,R.array.coping_list3,R.array.coping_list4,R.array.coping_list5,
+			R.array.coping_list6,R.array.coping_list7,R.array.coping_list8};
 	
 	private TextView edtext;
 	private ListView listView;
@@ -146,7 +156,7 @@ public class ReflectionSecondPage {
 	
 	private static final String[] Timeslot_str = {"上午", "下午", "晚上"};
 	private static final String[] Date_str = {"今天", "昨天", "前天"};
-	protected static final int RESULT_SPEECH = 0;
+	protected static final int RESULT_SPEECH = 1;
 	
 	private static Typeface wordTypefaceBold = Typefaces.getWordTypefaceBold();
 	private static Typeface wordTypeface = Typefaces.getWordTypeface();
@@ -158,8 +168,13 @@ public class ReflectionSecondPage {
 	private TestDataParser2 TDP;
 	
 	private int nowKey;
+	private TextView date_title, event_title, mood_title, thinking_title, reaction_title,text_title,edit_thinking_title;
 	
-	public ReflectionSecondPage(TestQuestionCaller2 testQuestionCaller, RelativeLayout mainLayout, Activity activity, int nowKey){
+	private boolean notification_yes, testing = false;
+	private DatabaseControl db;
+	
+	public ReflectionSecondPage(TestQuestionCaller2 testQuestionCaller, RelativeLayout mainLayout, Activity activity, int nowKey, 
+								ReflectionFirstPage reflectionFirstPage, AddNoteDialog2 preAddNote){
 		
 		this.activity = activity;
 		this.testQuestionCaller = testQuestionCaller;
@@ -168,10 +183,15 @@ public class ReflectionSecondPage {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.mainLayout = mainLayout;
 		this.nowKey = nowKey;
+		this.reflectionFirstPage = reflectionFirstPage;
+		this.preAddNote = preAddNote;
 		resource = context.getResources();
 		
 		coping_msg = resource.getStringArray(R.array.coping_list);
-		
+		knowing_msg = context.getResources().getStringArray(R.array.knowing_list);
+		Random rand = new Random();
+		if( knowing_index < 0 )
+			knowing_index = rand.nextInt(knowing_msg.length);
 	    
 		//view = inflater.inflate(R.layout.fragment_note, container, false);
 		endOnClickListener = new EndOnClickListener();
@@ -179,6 +199,7 @@ public class ReflectionSecondPage {
 		goCopingToResultOnClickListener = new GoCopingToResultOnClickListener();
 				
 		noteCategory = new NoteCatagory3();
+		db = new DatabaseControl();
 	    
 	
 	}
@@ -221,7 +242,7 @@ public class ReflectionSecondPage {
 		date_txt.setTypeface(wordTypefaceBold);
 		timeslot_txt.setTypeface(wordTypefaceBold);
 		
-		title_txt.setText("事件反思");
+		title_txt.setText("反省自己");
 		
 		/*date_layout.setOnClickListener(new OnClickListener(){
 			
@@ -282,28 +303,30 @@ public class ReflectionSecondPage {
 				R.layout.bar_separate2, null);
 		//念頭
 		edit_thinking_layout = (LinearLayout) inflater.inflate(
-				R.layout.bar_edit_thinking, null);
+				R.layout.bar_edit_thinking2, null);
 		
 		text_layout = (LinearLayout) inflater.inflate(
 				R.layout.bar_text, null);
 		null_layout = (LinearLayout) inflater.inflate(
 				R.layout.bar_null, null);
 		
-		TextView date_title, event_title, mood_title, thinking_title, reaction_title,text_title,edit_thinking_title;
 		date_title = (TextView) description_date_layout.findViewById(R.id.description_date_title);
 		event_title = (TextView) description_event_layout.findViewById(R.id.description_event_title);
 		thinking_title = (TextView) description_thinking_layout.findViewById(R.id.description_thinking_title);
 		mood_title = (TextView) description_mood_layout.findViewById(R.id.description_mood_title);
 		reaction_title = (TextView) description_reaction_layout.findViewById(R.id.description_reaction_title);
-		edit_thinking_title = (TextView) edit_thinking_layout.findViewById(R.id.edit_thinking_title);
+		edit_thinking_title = (TextView) edit_thinking_layout.findViewById(R.id.edit_thinking_title2);
 		text_title = (TextView) text_layout.findViewById(R.id.only_text);
 		
+		TextView event_content =  (TextView) description_event_layout.findViewById(R.id.description_event_content);
+		TextView mood_content =  (TextView) description_mood_layout.findViewById(R.id.description_mood_content);
 		date_title.setText("發生日期 :");
-		event_title.setText("發生事件 :");
+		event_title.setText("發生情境 :");
 		thinking_title.setText("當時想法 :");
 		reaction_title.setText("期待行為 :");
 		mood_title.setText("期待情緒 :");
-		edit_thinking_title.setText("要有什麼樣的念頭，才能讓感覺冷靜 :");
+		edit_thinking_title.setText("如果再"+event_content.getText().toString()+"，我要怎麼想\n才能讓我感到"+
+							mood_content.getText().toString()+"，而「behavior」?");
 		
 		date_title.setTypeface(wordTypefaceBold);
 		event_title.setTypeface(wordTypefaceBold);
@@ -313,8 +336,8 @@ public class ReflectionSecondPage {
 		edit_thinking_title.setTypeface(wordTypefaceBold);
 		text_title.setTypeface(wordTypefaceBold);
 		
-		speech_button = (ImageView) edit_thinking_layout.findViewById(R.id.speech_to_text);
-		thinking_text = (EditText) edit_thinking_layout.findViewById(R.id.edit_thinking_content);
+		speech_button = (ImageView) edit_thinking_layout.findViewById(R.id.speech_to_text2);
+		thinking_text = (EditText) edit_thinking_layout.findViewById(R.id.edit_thinking_content2);
 		
 		thinking_text.setText("");
 		
@@ -436,7 +459,7 @@ public class ReflectionSecondPage {
 				R.layout.bar_description, null);
 		
 		TextView dec_title = (TextView)discription_layout.findViewById(R.id.description_title);
-		dec_title.setText("我該怎麼感覺才能夠...");
+		dec_title.setText("我該怎麼感覺，才能夠維持停藥");
 		dec_title.setTypeface(wordTypefaceBold);
 		
 		/*TODO*/
@@ -474,9 +497,10 @@ public class ReflectionSecondPage {
 		//main_layout.addView(discription_layout);
 		main_layout.addView(description_date_layout);
 		main_layout.addView(description_event_layout);
-		main_layout.addView(separate_line_layout2);
+		//main_layout.addView(separate_line_layout2);
 		main_layout.addView(description_thinking_layout);
 		main_layout.addView(separate_line_layout);
+		main_layout.addView(text_layout);
 		main_layout.addView(description_reaction_layout);
 		main_layout.addView(description_mood_layout);
 		main_layout.addView(edit_thinking_layout);
@@ -548,29 +572,38 @@ public class ReflectionSecondPage {
 	public void copingSetting(){
 		//boxLayout = (RelativeLayout) inflater.inflate(R.layout.activity_qtip, null);
 		//mainLayout.addView(boxLayout);
+		
+		boolean testFail = PreferenceControl.isTestFail();
+		boolean runService = PreferenceControl.getResultServiceRun();
+		
+		
+		ClickLog.Log(ClickLogId.TEST_COPE_ENTER);
 		state = STATE_COPE;
 		PreferenceControl.setAfterTestState(STATE_COPE);
 		
 		title_layout.removeAllViews();
 		main_layout.removeAllViews();
 		bottom_layout.removeAllViews();
+		
 		bottom_layout.setVisibility(View.VISIBLE);
 		
 		//Title View
 		LinearLayout layout = (LinearLayout) inflater.inflate(
-				R.layout.bar_addnote, null);
+				R.layout.bar_addnote3, null);
 		
 		note_title = (TextView) layout
 				.findViewById(R.id.note_title);
-		//Spinner sp_date = (Spinner)layout.findViewById(R.id.note_tx_date);
-	    //Spinner sp_timeslot = (Spinner)layout.findViewById(R.id.note_sp_timeslot);
 	    
 	    note_title.setTypeface(wordTypefaceBold);
-	    note_title.setTextColor(resource.getColor(R.color.text_gray2));
-	    note_title.setText(R.string.countdown);
+	    note_title.setTextColor(context.getResources().getColor(R.color.text_gray2));
 	    
-	    sp_date.setVisibility(View.INVISIBLE);
-	    sp_timeslot.setVisibility(View.INVISIBLE);
+	    if(!testFail && !runService){
+	    	note_title.setText(R.string.test_done);
+	    }
+	    else{
+	    	note_title.setText(R.string.countdown);
+	    }
+	      
 		title_layout.addView(layout);
 		
 		
@@ -583,14 +616,70 @@ public class ReflectionSecondPage {
 		
 		tv_title.setText(R.string.coping_page);
 		
+		coping_msg = context.getResources().getStringArray(Coping_list[type]);
 		Random rand = new Random();
 		int idx = rand.nextInt(coping_msg.length);
-		tv_knowdlege.setText(coping_msg[idx]);
+		tv_knowdlege.setText(Html.fromHtml(coping_msg[idx]));
 		main_layout.addView(center_layout);
 		
-		View bottom = BarButtonGenerator.createOneButtonView( R.string.Iknow, endOnClickListener );
+		
+		View bottom;
+		if(!testFail && !runService){
+			bottom = BarButtonGenerator.createOneButtonView( R.string.go_result, goResultOnClickListener );
+		}
+		else{
+			bottom = BarButtonGenerator.createOneButtonView( R.string.Iknow, endOnClickListener );
+		}
 		bottom_layout.addView(bottom);
 		
+	}
+	
+	
+	public void knowingSetting(){
+		ClickLog.Log(ClickLogId.TEST_KOWING_ENTER);
+		state = STATE_KNOW;
+		PreferenceControl.setAfterTestState(STATE_KNOW);
+		//MainActivity.getMainActivity().enableTabAndClick(true);
+		
+		title_layout.removeAllViews();
+		main_layout.removeAllViews();
+		bottom_layout.removeAllViews();
+		
+		LinearLayout layout = (LinearLayout) inflater.inflate(
+				R.layout.bar_addnote3, null);
+		
+		note_title = (TextView) layout
+				.findViewById(R.id.note_title);
+
+	    
+	    note_title.setTypeface(wordTypefaceBold);
+	    note_title.setTextColor(context.getResources().getColor(R.color.text_gray2));
+	    note_title.setText(R.string.countdown);
+	    
+
+		title_layout.addView(layout);
+		
+		//View title = BarButtonGenerator.createWaitingTitle();
+		//title_layout.addView(title);
+		
+		View bottom = BarButtonGenerator.createTwoButtonView(R.string.last, R.string.next_one, new CancelOnClickListener(), endOnClickListener);
+		bottom_layout.addView(bottom);
+		//main_layout.removeView(center_layout);
+		center_layout = (LinearLayout) inflater.inflate(R.layout.knowledge, null);
+		tv_knowdlege = (TextView)center_layout.findViewById(R.id.qtip_tv_tips);
+		//tv_knowdlege.setText(knowing_msg[knowing_index]); 
+		tv_knowdlege.setText(Html.fromHtml(knowing_msg[knowing_index]));
+		
+		tv_title = (TextView)center_layout.findViewById(R.id.text_knowing_title);
+		tv_title.setText(R.string.knowledge);
+		
+		main_layout.addView(center_layout);
+		
+		main_layout.getLayoutParams().height = center_layout.getLayoutParams().height;
+		
+		questionBox = new QuestionIdentityDialog((RelativeLayout) mainLayout);
+		questionBox.initialize();
+		questionBox.show(1);
 	}
 	
 	
@@ -635,7 +724,6 @@ public class ReflectionSecondPage {
 		main_layout.addView(center_layout);
 		
 		View bottom = BarButtonGenerator.createOneButtonView( R.string.go_result, goResultOnClickListener );
-		
 		bottom_layout.addView(bottom);
 		
 	}
@@ -643,15 +731,17 @@ public class ReflectionSecondPage {
 	
 	
 	public void setResult(){
-		bottom_layout.removeAllViews();
+		if(bottom_layout != null)
+			bottom_layout.removeAllViews();
 		//Toast.makeText(context, "倒數結束", Toast.LENGTH_SHORT).show();
-		
+		Log.d("GG", "result : 04");
 		if(state == STATE_NOTE){
+			Log.d("GG", "result : 4");
 			Toast.makeText(context, "請完成新增記事以查看檢測結果", Toast.LENGTH_SHORT).show();
 			View bottom = BarButtonGenerator.createTwoButtonView(R.string.cancel, R.string.ok, goCopingToResultOnClickListener, goCopingToResultOnClickListener);
 			bottom_layout.addView(bottom);
 		}
-		else if(state == STATE_COPE){
+		else{
 			Toast.makeText(context, "請點選以查看檢測結果", Toast.LENGTH_SHORT).show();
 			note_title.setText(R.string.test_done);
 			View bottom = BarButtonGenerator.createOneButtonView( R.string.go_result, goResultOnClickListener );
@@ -692,11 +782,12 @@ public class ReflectionSecondPage {
 			mainLayout.removeView(boxLayout);
 	}
 	
+	
 	/** close the dialog */
 	public void close() {
 		ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_LEAVE);
-		testQuestionCaller.resetView();
-		MainActivity.getMainActivity().enableTabAndClick(true);
+		//testQuestionCaller.resetView();
+		//MainActivity.getMainActivity().enableTabAndClick(true);
 		if (boxLayout != null)
 			boxLayout.setVisibility(View.INVISIBLE);
 	}
@@ -775,10 +866,32 @@ public class ReflectionSecondPage {
 	//把所選取的結果送出 
 	class EndOnClickListener implements View.OnClickListener{
 		public void onClick(View v){
-							
+			
+			/*if(state == STATE_COPE){
+				ClickLog.Log(ClickLogId.TEST_COPING_CONFIRM);				
+				knowingSetting();
+				return;
+			}
+			else if(state == STATE_KNOW){
+				ClickLog.Log(ClickLogId.TEST_KOWING_NEXT);
+				knowing_index++;
+				if(knowing_index>=knowing_msg.length)
+					knowing_index-=knowing_msg.length;
+				tv_knowdlege.setText(Html.fromHtml(knowing_msg[knowing_index]));
+				//tv_knowdlege.setText(DBTip.inst.getTip());
+				return;
+			}*/
+			
 			TextView _reaction_text = (TextView)description_reaction_layout.findViewById(R.id.description_reaction_content);
 			
 			TextView _mood_text = (TextView)description_mood_layout.findViewById(R.id.description_mood_content);
+			
+			if(thinking_text.getText().toString().length() == 0)
+			{
+				CustomToastSmall.generateToast("請先填寫完畢");
+				return;
+			}
+			
 			
 			TDP = new TestDataParser2(0); 
 			if( TDP!= null ){
@@ -789,9 +902,44 @@ public class ReflectionSecondPage {
 			
 			//Reflection tr = new Reflection(ts, _reaction_text.getText().toString(),_mood_text.getText().toString(),thinking_text.getText().toString(),0);
 			
+			testQuestionCaller.updateRankList();
 			
-			close();
-			clear();
+			if(reflectionFirstPage != null)
+				reflectionFirstPage.closeall();
+			
+			if(testing)
+			{
+				preAddNote.copingSetting();
+				close();
+				clear();
+			}
+			
+			else 
+			{
+				close();
+				clear();
+			}
+			
+			Calendar cal = Calendar.getInstance();
+			long ts = cal.getTimeInMillis();
+			
+			long pre_ts = PreferenceControl.getLastestReflectionTimestamp();
+			Date d = new Date(pre_ts);
+			Calendar pre_cal = Calendar.getInstance();
+			pre_cal.setTime(d);
+			
+			boolean sameDay = cal.get(Calendar.YEAR) == pre_cal.get(Calendar.YEAR) &&
+	                  cal.get(Calendar.DAY_OF_YEAR) == pre_cal.get(Calendar.DAY_OF_YEAR);
+			if(!sameDay)
+			{
+				CustomToast.generateToast(R.string.add_note_reflection, 1);
+				AddScore preScore = db.getLastestAddScore();
+				AddScore nowScore = new AddScore(System.currentTimeMillis(), 1, preScore.getAccumulation()+1, "填寫反思");
+				db.insertAddScore(nowScore);
+				
+			}
+			PreferenceControl.setLastestReflectionTimestamp(ts);
+
 		}
 	}
 	
@@ -801,12 +949,21 @@ public class ReflectionSecondPage {
 			
 			ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_CANCEL);
 			
-			//testQuestionCaller.writeQuestionFile(day, timeslot, -1, -1, -1, edtext.getText().toString());
-			close();
-			clear();
-			//testQuestionCaller.resetView();
-			
+			ClickLog.Log(ClickLogId.DAYBOOK_ADDNOTE_CANCEL);
+			if(state == STATE_NOTE){
+				close();
+				clear();
+				//testQuestionCaller.resetView();
 				//copingSetting();
+			}
+			else{
+				ClickLog.Log(ClickLogId.TEST_KOWING_LAST);
+				knowing_index--;
+				if(knowing_index<0)
+					knowing_index+=knowing_msg.length;
+				tv_knowdlege.setText(Html.fromHtml(knowing_msg[knowing_index]));
+				//tv_knowdlege.setText(DBTip.inst.getTip());
+			}
 
 		}
 	}
@@ -876,7 +1033,7 @@ public class ReflectionSecondPage {
 				impact = impactSeekBar.getProgress();
 				//testQuestionCaller.writeQuestionFile(day, timeslot, type, items, impact, edtext.getText().toString());
 			
-				Log.d(TAG, items+" "+impact);
+				//Log.d(TAG, items+" "+impact);
 
 				copingSettingToResult();
 			}
@@ -1204,19 +1361,31 @@ public class ReflectionSecondPage {
 			String[] after = clean(type1);
 			
 			final Integer[] imageId = {
+					R.drawable.mood_angry,
+		            R.drawable.mood_sad,
+		            R.drawable.mood_nervous,
+		            R.drawable.mood_hate,
 		            R.drawable.mood_happy,
+		            R.drawable.mood_afraid,
 		            R.drawable.mood_calm,
+		            R.drawable.mood_relax,
 		            R.drawable.mood_excited,
 		            R.drawable.mood_objective,
-		            R.drawable.mood_relax
+		            R.drawable.mood_happy,
 		    };
 			
 			final Integer[] imageIdClicked = {
+					R.drawable.mood_angry_clicked,
+		            R.drawable.mood_sad_clicked,
+		            R.drawable.mood_nervous_clicked,
+		            R.drawable.mood_hate_clicked,
 		            R.drawable.mood_happy_clicked,
+		            R.drawable.mood_afraid_clicked,
 		            R.drawable.mood_calm_clicked,
+		            R.drawable.mood_relax_clicked,
 		            R.drawable.mood_excited_clicked,
 		            R.drawable.mood_objective_clicked,
-		            R.drawable.mood_relax_clicked
+		            R.drawable.mood_happy,
 		    };
 			
 			//ArrayAdapter adapter = new ArrayAdapter<String>(context, R.layout.my_listitem, after);
@@ -1304,5 +1473,14 @@ public class ReflectionSecondPage {
 		_thinking_text.setText(s_thinking);
 		_reaction_text.setText(s_reaction);
 		_mood_text.setText(s_mood);
+		
+		edit_thinking_title.setText("如果再"+s_event+"，我要怎麼想\n才能讓我感到"+s_mood+"，而「behavior」?");
+	}
+
+	public void setIsTesting(boolean is, int _type)
+	{
+		testing = is;
+		type = _type;
 	}
 }
+

@@ -16,19 +16,19 @@
 	        
 	        <ImageView
 	            android:id="@+id/iv_date_result"
-	            android:layout_width="35dp"
-	            android:layout_height="35dp"
+	            android:layout_width="30dp"
+	            android:layout_height="30dp"
 	            android:gravity="center"/>
 	        
 	    	<TextView
 	        	android:id="@+id/tv_calendar_date"
-	        	android:layout_width="35dp"
-	        	android:layout_height="35dp"
+	        	android:layout_width="30dp"
+	        	android:layout_height="30dp"
 	        	android:textColor="#ffffffff"
 	        	android:text="0" />    	  	
 		</FrameLayout>
 		
-	    	<LinearLayout
+	    	<!--<LinearLayout
 	        	android:id="@+id/ll_calendar_dots"
 	        	android:layout_width="wrap_content"
 	        	android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
 	            android:src="@drawable/cell_dot3"
 	            android:visibility="gone" />
 	        
-	    </LinearLayout>
+	    </LinearLayout>-->
     </RelativeLayout>
 
 </LinearLayout>

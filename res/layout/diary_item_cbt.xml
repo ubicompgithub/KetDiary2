@@ -44,7 +44,7 @@
 			        <LinearLayout
 		             android:layout_width="match_parent"
 		             android:layout_height="match_parent"
-		             android:orientation="vertical"
+		             android:orientation="horizontal"
 		             android:layout_weight="1"
 		             android:gravity="left|top"
 		             android:paddingTop="3dp" >
@@ -56,6 +56,30 @@
 			                 android:textAppearance="?android:attr/textAppearanceMedium"
 			                 android:textColor="@color/text_color"
 			                 android:textSize="16sp"  />
+			             <ImageView
+			            	android:id="@+id/diary_check_reflection"
+			            	android:layout_width="15dp"
+			           		android:layout_height="15dp"
+			           		android:layout_marginTop="2dp"
+			           		android:layout_marginLeft="4dp"
+			           		android:src="@drawable/check_reflection_null"/>
+			            
+			             <ImageView
+			            	android:id="@+id/diary_check_thinking"
+			            	android:layout_width="15dp"
+			           		android:layout_height="15dp"
+			           		android:layout_marginTop="2dp"
+			           		android:layout_marginLeft="4dp"
+			           		android:src="@drawable/check_thinking_null"/>
+			              <ImageView
+			            	android:id="@+id/diary_check_event"
+			            	android:layout_width="15dp"
+			           		android:layout_height="15dp"
+			           		android:layout_marginTop="2dp"
+			           		android:layout_marginLeft="4dp"
+			           		android:src="@drawable/check_event"/>
+			             
+			             
 			        </LinearLayout>
 		             
 		       </LinearLayout>
@@ -90,7 +114,7 @@
 					    android:id="@+id/diary_impact_feeling"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"
-					    android:text="放鬆的"
+					    android:text="的"
 					    android:gravity="center_vertical"
 					    android:textAppearance="?android:attr/textAppearanceMedium"
 					    android:textColor="@color/text_color"
@@ -163,4 +187,5 @@
 	     android:layout_height="3dp"
 	     android:src="@drawable/list_line"
 	     android:layout_gravity="bottom"/>
+	
 </LinearLayout>

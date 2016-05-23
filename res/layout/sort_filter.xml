@@ -1,0 +1,96 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/linechart_filter_area"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:clickable="true"
+    android:background="@drawable/filter_bg2">    
+    <LinearLayout
+        android:id="@+id/sort_impact"
+        android:layout_width="0dp"
+    	android:layout_height="match_parent"
+    	android:orientation="horizontal"
+    	 android:gravity="center"
+    	android:layout_weight="7" >
+        <ImageView
+	        android:id="@+id/filter_impact"
+	        android:layout_width="20dp"
+	        android:layout_height="20dp"
+	        android:src="@drawable/filter_impact" 
+	        android:layout_gravity="center"/>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/page_gray"
+            android:textSize="12sp"
+            android:text="影響程度"/>
+    </LinearLayout>
+    
+     <LinearLayout
+        android:id="@+id/sort_reflection"
+        android:layout_width="0dp"
+    	android:layout_height="match_parent"
+    	android:orientation="horizontal"
+    	 android:gravity="center"
+    	android:layout_weight="7" >
+        <ImageView
+	        android:id="@+id/filter_reflection"
+	        android:layout_width="20dp"
+	        android:layout_height="20dp"
+	        android:src="@drawable/filter_reflection" 
+	        android:layout_gravity="center"/>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/page_gray"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:text="是否反思"/>
+   </LinearLayout>
+    
+     <LinearLayout
+        android:id="@+id/sort_result"
+        android:layout_width="0dp"
+    	android:layout_height="match_parent"
+    	android:orientation="horizontal"
+    	 android:gravity="center"
+    	android:layout_weight="7" >
+        <ImageView
+	        android:id="@+id/filter_result"
+	        android:layout_width="20dp"
+	        android:layout_height="20dp"
+	        android:src="@drawable/filter_result" 
+	        android:layout_gravity="center"/>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/page_gray"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:text="檢測結果"/>
+        </LinearLayout>
+    
+     <LinearLayout
+        android:id="@+id/sort_time"
+        android:layout_width="0dp"
+    	android:layout_height="match_parent"
+    	android:orientation="horizontal"
+    	 android:gravity="center"
+    	android:layout_weight="5" >
+        <ImageView
+	        android:id="@+id/filter_time"
+	        android:layout_width="20dp"
+	        android:layout_height="20dp"
+	        android:src="@drawable/filter_time" 
+	        android:layout_gravity="center"/>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/page_gray"
+            android:layout_gravity="center"
+            android:textSize="12sp"
+            android:text="時間"/>
+     </LinearLayout>
+       
+</LinearLayout>

@@ -191,7 +191,7 @@ public class NoteDialog4 implements ChooseItemCaller{
 				ClickLog.Log(ClickLogId.TEST_NOTE_SELECT_DATE);
 				setEnabledAll(boxLayout, false);
 				
-				chooseBox = new ChooseItemDialog(noteDialog, boxLayout, 1, day);
+				chooseBox = new ChooseItemDialog(noteDialog, boxLayout, 1, day, true);
 				chooseBox.initialize();
 				chooseBox.show();
 			}
@@ -206,7 +206,7 @@ public class NoteDialog4 implements ChooseItemCaller{
 				ClickLog.Log(ClickLogId.TEST_NOTE_SELECT_SLOT);
 				
 				setEnabledAll(boxLayout, false);
-				chooseBox = new ChooseItemDialog(noteDialog, boxLayout, 2, day);
+				chooseBox = new ChooseItemDialog(noteDialog, boxLayout, 2, day, true);
 				chooseBox.initialize();
 				chooseBox.show();			
 			}
@@ -235,7 +235,7 @@ public class NoteDialog4 implements ChooseItemCaller{
 				R.layout.bar_type_name, null);
 		
 		TextView type_title = (TextView)type_layout.findViewById(R.id.type_title);
-		type_title.setText("事件類型：");
+		type_title.setText("情境類型：");
 		type_title.setTypeface(wordTypefaceBold);
 		typetext = (TextView)type_layout.findViewById(R.id.type_content);
 		typetext.setTypeface(wordTypefaceBold);
@@ -249,7 +249,7 @@ public class NoteDialog4 implements ChooseItemCaller{
 		//SetItem(sp_item, R.array.item_select);
 		
 		TextView spin_title = (TextView)spinner_layout.findViewById(R.id.spinner_title);
-		spin_title.setText("發生事件：");
+		spin_title.setText("發生情境：");
 		spin_title.setTypeface(wordTypefaceBold);
 		
 		sp_content = (TextView)spinner_layout.findViewById(R.id.spinner_content);
@@ -490,7 +490,8 @@ public class NoteDialog4 implements ChooseItemCaller{
 	
 	
 	public void setResult(){
-		bottom_layout.removeAllViews();
+		if(bottom_layout != null)
+			bottom_layout.removeAllViews();
 		//Toast.makeText(context, "倒數結束", Toast.LENGTH_SHORT).show();
 		
 		if(state == STATE_NOTE){
